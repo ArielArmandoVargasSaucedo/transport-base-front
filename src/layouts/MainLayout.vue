@@ -23,7 +23,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-ss
+
   </q-layout>
 </template>
 
