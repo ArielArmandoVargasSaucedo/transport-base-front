@@ -1,19 +1,15 @@
 <template>
-  <q-route-tab :to="props.ruta"  />
+  <q-route-tab :to="props.ruta" :label="props.ruta.name?.toString()"  />
 </template>
 
 <script setup lang="ts">
-defineOptions({
-  name: 'EssentialLink'
-});
+import { RouteRecordRaw } from 'vue-router';
 
-export interface Props {
-  ruta: {
-    name: string
-  }
+// Se definen las Props (Parametros) del componente
+ interface Props {
+  ruta: RouteRecordRaw
 };
 
 const props: Props = defineProps<Props>()
-
 
 </script>

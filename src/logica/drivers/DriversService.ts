@@ -13,7 +13,7 @@ export class DriversService {
 
   async getDrivers(): Promise<Array<DriverDTO>> {
     let listDrivers: Array<DriverDTO> = new Array<DriverDTO>();
-    const url = 'http://localhost::5000/driver';
+    const url = 'http://localhost:5000/driver';
 
     try {
       const res = await fetch(url, {

@@ -1,6 +1,7 @@
 import MainLayout from 'src/layouts/MainLayout.vue';
 import DriverPage from 'src/pages/DriverPage.vue';
 import IndexPage from 'src/pages/IndexPage.vue';
+import NomencladoresPage from 'src/pages/NomencladoresPage.vue';
 import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
@@ -18,7 +19,14 @@ const routes: RouteRecordRaw[] = [
         path: '/driverPage',
         name: 'driverPage',
         component: DriverPage,
+        children: []
       },
+      {
+        path: '/NomencladoresPage',
+        name: 'nomencladoresPage',
+        component: NomencladoresPage,
+        children: []
+      }
     ],
   },
 ];
