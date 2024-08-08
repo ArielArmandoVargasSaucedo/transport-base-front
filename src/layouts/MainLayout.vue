@@ -12,7 +12,7 @@
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" behavior="desktop" elevated>
-      <q-tabs class="rutas" >
+      <q-tabs >
         <EssentialLink v-for="ruta in rutasList" :key="ruta.name" :ruta="ruta" />
       </q-tabs>
     </q-drawer>

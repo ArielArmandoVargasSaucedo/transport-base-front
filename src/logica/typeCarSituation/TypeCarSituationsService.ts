@@ -35,4 +35,55 @@ export class TypeCarSituationsService {
     
         return listTypeCarSituations;
       }
+
+      async postTypeCarSituation(nombre: string): Promise<void> {
+      
+        const url = 'http://localhost:5000/type-car-situation';
+    
+        try {
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type_cs_name: nombre
+            })
+          });
+    
+          // extraer el json de la respuesta
+          const json = await res.json();
+         
+        } catch (error) {
+            if(error instanceof Error)
+                console.log(error.message)
+              // se relanza la exeption
+        }
+     
+      }
+
+      async deleteTypeCarSituation(id: number): Promise<void> {
+      
+        const url = 'http://localhost:5000/type-car-situation/' + id;
+    
+        try {
+          const res = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+          });
+    
+          // extraer el json de la respuesta
+          const json = await res.json();
+         
+        } catch (error) {
+            if(error instanceof Error)
+                console.log(error.message)
+              // se relanza la exeption
+        }
+     
+      }
 }
