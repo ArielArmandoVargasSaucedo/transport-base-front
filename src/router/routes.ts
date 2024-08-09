@@ -12,19 +12,37 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '/indexPage',
-        name: 'indexPage',
+        name: 'Página Principal',
         component: IndexPage,
+        meta: {
+          icon: 'home'
+        }
       },
       {
         path: '/driverPage',
-        name: 'driverPage',
+        name: 'Chóferes',
         component: DriverPage,
+        meta: {
+          icon: 'supervisor_account'
+        },
+        children: []
+      },
+      {
+        path: '/vehiclesPage',
+        name: 'Vehículos',
+        component: DriverPage,
+        meta: {
+          icon: 'directions_car'
+        },
         children: []
       },
       {
         path: '/NomencladoresPage',
-        name: 'nomencladoresPage',
+        name: 'Nomencladores',
         component: NomencladoresPage,
+        meta: {
+          icon: 'settings'
+        },
         children: []
       }
     ],
