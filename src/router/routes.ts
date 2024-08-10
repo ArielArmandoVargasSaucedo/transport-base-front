@@ -1,5 +1,6 @@
 import MainLayout from 'src/layouts/MainLayout.vue';
 import DriverPage from 'src/pages/DriverPage.vue';
+import CarPage from 'src/pages/CarPage.vue';
 import IndexPage from 'src/pages/IndexPage.vue';
 import NomencladoresPage from 'src/pages/NomencladoresPage.vue';
 import { RouteRecordRaw } from 'vue-router';
@@ -15,36 +16,36 @@ const routes: RouteRecordRaw[] = [
         name: 'Página Principal',
         component: IndexPage,
         meta: {
-          icon: 'home'
-        }
+          icon: 'home',
+        },
       },
       {
         path: '/driverPage',
         name: 'Chóferes',
         component: DriverPage,
         meta: {
-          icon: 'supervisor_account'
+          icon: 'supervisor_account',
         },
-        children: []
+        children: [],
       },
       {
         path: '/vehiclesPage',
         name: 'Vehículos',
-        component: DriverPage,
+        component: CarPage,
         meta: {
-          icon: 'directions_car'
+          icon: 'directions_car',
         },
-        children: []
+        children: [],
       },
       {
         path: '/NomencladoresPage',
         name: 'Nomencladores',
         component: NomencladoresPage,
         meta: {
-          icon: 'settings'
+          icon: 'settings',
         },
-        children: []
-      }
+        children: [],
+      },
     ],
   },
 ];
