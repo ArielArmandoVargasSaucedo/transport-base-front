@@ -46,6 +46,18 @@ const routes: RouteRecordRaw[] = [
         },
         children: [],
       },
+      {
+        path: '/LoginPage',
+        name: 'LoginPage',
+        component: LoginPage,
+        children: [],
+      },
+      {
+        path: '/AdminPage',
+        name: 'AdminPage',
+        component: AdminPage,
+        children: [],
+      },
     ],
   },
 ];
