@@ -50,7 +50,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/LoginPage',
-        name: 'LoginPage',
+        name: 'Login',
         component: LoginPage,
         meta: {
           icon: 'login',
