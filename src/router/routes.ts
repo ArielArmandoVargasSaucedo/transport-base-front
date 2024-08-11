@@ -4,7 +4,7 @@ import CarPage from 'src/pages/CarPage.vue';
 import IndexPage from 'src/pages/IndexPage.vue';
 import NomencladoresPage from 'src/pages/NomencladoresPage.vue';
 import LoginPage from 'src/pages/LoginPage.vue';
-import LoginPage from 'src/pages/AdminPage.vue';
+import AdminPage from 'src/pages/AdminPage.vue';
 import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
@@ -52,12 +52,18 @@ const routes: RouteRecordRaw[] = [
         path: '/LoginPage',
         name: 'LoginPage',
         component: LoginPage,
+        meta: {
+          icon: 'login',
+        },
         children: [],
       },
       {
         path: '/AdminPage',
         name: 'AdminPage',
         component: AdminPage,
+        meta: {
+          icon: 'user',
+        },
         children: [],
       },
     ],
