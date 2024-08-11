@@ -3,6 +3,8 @@ import DriverPage from 'src/pages/DriverPage.vue';
 import CarPage from 'src/pages/CarPage.vue';
 import IndexPage from 'src/pages/IndexPage.vue';
 import NomencladoresPage from 'src/pages/NomencladoresPage.vue';
+import LoginPage from 'src/pages/LoginPage.vue';
+import LoginPage from 'src/pages/AdminPage.vue';
 import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
