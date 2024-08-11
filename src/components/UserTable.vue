@@ -3,8 +3,8 @@
     <q-table
       :table-header-class="'bg-primary'"
       :title-class="'text-h4'"
-      title="Usuarios"
-      :rows="Users"
+      title="Lista de Usuarios"
+      :rows="listTypesCarSituations"
       :columns="columns"
       row-key="id"
     >
@@ -30,7 +30,7 @@
           @click="showFilter = !showFilter"
           flat
         />
-        <q-btn icon="add_circle" @click="activarModalUsers()"></q-btn>
+        <q-btn icon="add_circle" @click="activarModalTypeCarSit()"></q-btn>
       </template>
 
       <template v-slot:body-cell-Action="props">
@@ -42,31 +42,50 @@
             class="q-ml-sm"
             flat
             dense
-            @click="deleteUser(props.row.id_user)"
+            @click="activarModlConfirmacion(props.row.id_aut_type_cs)"
           ></q-btn>
         </q-td>
       </template>
     </q-table>
-    <ModalUsers ref="modalUsers" @post-user-data="postDataUsers" />
+    <ModalTypeCarSit
+      ref="modalTypeCarSit"
+      @post-type-car-situations="postTypeCarSituations"
+    />
+
+    <ModalConfirmacion
+      ref="modalConfirmacion"
+      :text="'Seguro que desea eliminar?'"
+      @action-confirm="deleteTypeCarSituations"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Ref, onMounted, ref } from 'vue';
-import ModalUsers from './Modales/ModalUsers.vue';
-import { UserService } from 'src/logica/user/UserService';
-import { UserDTO } from 'src/logica/user/UserDTO';
+import { TypeCarSituationDTO } from 'src/logica/typeCarSituation/TypeCarSituationDTO';
+import { TypeCarSituationsService } from 'src/logica/typeCarSituation/TypeCarSituationsService';
+import { Ref, onMounted, ref, watch } from 'vue';
+import ModalTypeCarSit from './Modales/ModalTypeCarSit.vue';
+import { Notify } from 'quasar';
+import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 
 // Inyectar el Servicio de los Type Car Situations
 
-const userService: UserService = UserService.getInstancie();
+const typeCarSistuationService: TypeCarSituationsService =
+  TypeCarSituationsService.getInstancie();
 
 const columns = [
   {
-    name: 'nombre',
-    label: 'Nombre',
+    name: 'Usuario',
+    label: 'Usuario',
     align: 'left',
-    field: (row: UserDTO) => row.user_name,
+    field: (row: TypeCarSituationDTO) => row.type_cs_name,
+    sortable: true,
+  },
+  {
+    name: 'Contraseña',
+    label: 'Contraseña',
+    align: 'left',
+    field: (row: TypeCarSituationDTO) => row.type_cs_name,
     sortable: true,
   },
   {
@@ -83,56 +102,111 @@ interface FiltersTypeCarSit {
 }
 
 // se crea una variable para el modal
-const modalUsers: Ref<InstanceType<typeof ModalUsers> | null> = ref(null);
+const modalTypeCarSit: Ref<InstanceType<typeof ModalTypeCarSit> | null> =
+  ref(null);
+// se crea una variable para el modal
+const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
+  ref(null);
 // Se definen las variables reactivas del componente
 const filtersTypeCarSit: Ref<FiltersTypeCarSit> = ref({
   nombre: '',
 });
 
+// Se define uun watch para los filtros
+watch(filtersTypeCarSit.value, async (newFilters: FiltersTypeCarSit) => {
+  await getTypeCarSituations();
+});
+
 const showFilter = ref(false);
-const Users: Ref<Array<UserDTO>> = ref(new Array<UserDTO>());
+const listTypesCarSituations: Ref<Array<TypeCarSituationDTO>> = ref(
+  new Array<TypeCarSituationDTO>()
+);
+// representa el indentificador del elemento q se desea eliminar
+let idTipoSitCarSeleccionado = 0;
 
-onMounted(actualizarDataUser);
+onMounted(actualizarTypeCarSituations);
 
-async function actualizarDataUser() {
-  await getUsers();
+async function actualizarTypeCarSituations() {
+  await getTypeCarSituations();
 }
 
 // Funciones CRUD
-async function getUsers() {
+async function getTypeCarSituations() {
   try {
-    Users.value.UserService.getUsers();
+    listTypesCarSituations.value =
+      await typeCarSistuationService.getTypeCarSituations();
   } catch (error) {
     if (error instanceof Error) alert(error.message);
   }
 }
 
-async function postDataUsers(nombre: string) {
+async function postTypeCarSituations(nombre: string) {
   try {
-    await userService.postDataUsers(nombre);
+    await typeCarSistuationService.postTypeCarSituation(nombre);
+    // se notifica de la acción
+    Notify.create({
+      message: 'Tipo de Situación del Carro insertada con éxito',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
     // se actualiza la información
-    await actualizarDataUser();
+    await actualizarTypeCarSituations();
     // se cierra el modal
-    modalUsers.value?.setShowModal(false);
+    modalTypeCarSit.value?.setShowModal(false);
   } catch (error) {
     // se van a mostar los errores al usuario
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof Error)
+      Notify.create({
+        message: error.message,
+        type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'red', // Cambia el color de la notificación
+        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+        timeout: 3000, // Cambia la duración de la notificación en milisegundos
+        icon: 'check_circle', // Añade un icono a la notificación
+      });
   }
 }
-async function deleteUser(id: number) {
+async function deleteTypeCarSituations() {
   try {
-    await userService.deleteUser(id);
+    await typeCarSistuationService.deleteTypeCarSituation(
+      idTipoSitCarSeleccionado
+    );
+    // se notifica de la acción
+    Notify.create({
+      message: 'Se ha elimnado con éxito el Tipo de Situación del Carro',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
     // se actualiza la información
-    await actualizarDataUser();
+    await actualizarTypeCarSituations();
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof Error)
+      Notify.create({
+        message: error.message,
+        type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'red', // Cambia el color de la notificación
+        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+        timeout: 3000, // Cambia la duración de la notificación en milisegundos
+        icon: 'check_circle', // Añade un icono a la notificación
+      });
   }
 }
 
 // eventos del componente
-function activarModalUsers() {
+function activarModalTypeCarSit() {
   // activar el modal
-  modalUsers.value?.setShowModal(true);
+  modalTypeCarSit.value?.setShowModal(true);
+}
+
+function activarModlConfirmacion(idSitCar: number) {
+  idTipoSitCarSeleccionado = idSitCar;
+  modalConfirmacion.value?.activateModalConfirmacion();
 }
 </script>
 

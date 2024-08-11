@@ -1,4 +1,4 @@
-export class CreateUserDto {
+export class UserDto {
   user_name: string;
   password_user: string;
   dni_user: string;

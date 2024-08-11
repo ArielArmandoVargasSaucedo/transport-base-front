@@ -1,4 +1,4 @@
-import { UserDTO } from './UserDTO';
+import { UserDto } from 'src/logica/user/UserDTO';
 
 export class UserService {
   static UserService: UserService;
@@ -11,8 +11,8 @@ export class UserService {
     return this.UserService;
   }
 
-  async getUsers(): Promise<Array<UserDTO>> {
-    let listUsers: Array<UserDTO> = new Array<UserDTO>();
+  async getUsers(): Promise<Array<UserDto>> {
+    let listUsers: Array<UserDto> = new Array<UserDto>();
     const url = 'http://localhost:5000/user';
 
     try {
