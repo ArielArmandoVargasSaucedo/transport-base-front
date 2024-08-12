@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <CarTable></CarTable>
-    </div>
+  <div>
+    <CarTable />
+  </div>
 </template>
 
-<script setup >
+<script setup>
 import CarTable from 'src/components/CarTable.vue';
 </script>

@@ -21,7 +21,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/driverPage',
-        name: 'Chóferes',
+        name: 'Choferes',
         component: DriverPage,
         meta: {
           icon: 'supervisor_account',
