@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-card class="card-campo">
       <q-card-section class="bg-primary text-white row justify-center">
-        <div class="col-11 text-h5">Formulario Añadir Carro</div>
+        <div class="col-11 text-h5">Formulario Añadir Solicitud</div>
         <div class="col-1 container-icon">
           <q-btn icon="cancel" @click="setShowForm()"></q-btn>
         </div>
@@ -10,45 +10,30 @@
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <q-input
-            filled
-            v-model="datosCar.number"
-            label="Número del Carro *"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length > 0) || 'Por favor complete este campo',
-            ]"
-          />
-          <q-input
-            filled
-            v-model="datosCar.brand"
-            label="Chapa del Carro *"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length > 0) || 'Por favor complete este campo',
-            ]"
-          />
-          <q-input
-            filled
-            v-model="datosCar.numOfSeats"
-            :type="'number'"
-            label="Cantidad de Asientos del Carro *"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length > 0) || 'Por favor complete este campo',
-            ]"
-          />
-
-          <div class="text-h5">Situación del Carro</div>
+          <div class="text-h5">Programación</div>
           <q-separator color="primary" inset size="16px" />
-
+          <div class="text-h7">Fecha de Finalizado</div>
           <div class="seccion-car-situation">
-            <div>
-              <div class="text-h7">Fecha de Finalizado</div>
-              <q-date v-model="datosCar.carSituation.returnDate" />
+            <div class="q-pa-md">
+              <div class="q-gutter-sm">
+                <q-badge color="teal"> Model: {{ model }} </q-badge>
+                <q-badge color="purple" text-color="white" class="q-ma-md">
+                  Mask: YYYY-MM-DD HH:mm
+                </q-badge>
+              </div>
+
+              <div class="q-gutter-md row items-start">
+                <q-date
+                  v-model="model"
+                  mask="YYYY-MM-DD HH:mm"
+                  color="purple"
+                />
+                <q-time
+                  v-model="model"
+                  mask="YYYY-MM-DD HH:mm"
+                  color="purple"
+                />
+              </div>
             </div>
 
             <div class="select-container">
@@ -60,7 +45,7 @@
                 fill-input
                 input-debounce="0"
                 :options="listTypeCarSituation"
-                label="Tipo de Situación del Carro"
+                label="Programación"
                 option-label="type_cs_name"
                 style="width: 100%; padding-bottom: 32px"
               >
@@ -72,7 +57,93 @@
                   </q-item>
                 </template>
               </q-select>
+              <q-input
+                filled
+                v-model="datosCar.numOfSeats"
+                :type="'number'"
+                label="Kilometraje *"
+                lazy-rules
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) || 'Por favor complete este campo',
+                ]"
+              />
+              <q-input
+                filled
+                v-model="datosCar.numOfSeats"
+                :type="'number'"
+                label="Tiempo de demora *"
+                lazy-rules
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) || 'Por favor complete este campo',
+                ]"
+              />
             </div>
+          </div>
+
+          <div class="text-h5">Grupo Turístico</div>
+          <q-separator color="primary" inset size="16px" />
+
+          <div class="select-container">
+            <q-select
+              filled
+              v-model="datosCar.carSituation.typeCarSit"
+              use-input
+              hide-selected
+              fill-input
+              input-debounce="0"
+              :options="listTypeCarSituation"
+              label="Programación"
+              option-label="type_cs_name"
+              style="width: 100%; padding-bottom: 32px"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <q-input
+            filled
+            v-model="datosCar.number"
+            label="Descripción de la Programación *"
+            lazy-rules
+            :rules="[
+              (val) =>
+                (val && val.length > 0) || 'Por favor complete este campo',
+            ]"
+          />
+
+          <div>
+            <div class="text-h5">Carro Asignado</div>
+            <q-separator color="primary" inset size="16px" />
+          </div>
+
+          <div class="select-container">
+            <q-select
+              filled
+              v-model="datosCar.carSituation.typeCarSit"
+              use-input
+              hide-selected
+              fill-input
+              input-debounce="0"
+              :options="listTypeCarSituation"
+              label="Programación"
+              option-label="type_cs_name"
+              style="width: 100%; padding-bottom: 32px"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </div>
 
           <q-card-section class="panel-inferior">
@@ -113,14 +184,6 @@ const typeCarSitService: TypeCarSituationsService =
 // Se definen los emit del componente
 const emit = defineEmits<{
   (e: 'setShowFormCar'): void;
-  (
-    e: 'postCar',
-    car_number: string,
-    car_brand: string,
-    number_of_seats: number,
-    returnDate: Date,
-    id_aut_type_cs: number
-  ): Promise<void>;
 }>();
 
 // Se define la interfaz para representar los datos del Campo
@@ -167,18 +230,13 @@ async function getTypeCarSituation() {
   }
 }
 
-async function onSubmit() {
-  if (datosCar.value.carSituation.typeCarSit) {
-    await emit(
-      'postCar',
-      datosCar.value.number,
-      datosCar.value.brand,
-      datosCar.value.numOfSeats,
-      datosCar.value.carSituation.returnDate,
-      datosCar.value.carSituation.typeCarSit.id_aut_type_cs
-    );
-  } else alert('Se debe de seleccionar un tipo de situación');
+function model() {
+  return {
+    model: ref('2019-02-22 21:02'),
+  };
 }
+
+async function onSubmit() {}
 
 async function onReset() {
   datosCar.value.number = '';
@@ -199,8 +257,6 @@ function setShowForm() {
   justify-content: flex-end;
 }
 .seccion-car-situation {
-  display: flex;
-  flex-direction: row;
   gap: 15px;
 }
 .select-container {
