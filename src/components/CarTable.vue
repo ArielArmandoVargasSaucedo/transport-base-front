@@ -1,6 +1,10 @@
 <template>
   <div class="q-pa-md">
-    <FormCarTable v-show="showForm" @set-show-form-car="setShowFormCar" />
+    <FormCarTable
+      v-show="showForm"
+      @set-show-form-car="setShowFormCar"
+      @post-car="postCar"
+    />
     <q-table
       :table-header-class="'bg-primary'"
       :title-class="'text-h4'"
@@ -72,11 +76,16 @@
             class="q-ml-sm"
             flat
             dense
-            @click=""
+            @click="activateModalConfirmacion(props.row.id_car)"
           ></q-btn>
         </q-td>
       </template>
     </q-table>
+    <ModalConfirmacion
+      ref="modalConfirmacion"
+      :text="'Seguro que desea eliminar?'"
+      @action-confirm="deleteCar"
+    />
   </div>
 </template>
 
@@ -85,10 +94,14 @@ import { CarDTO } from 'src/logica/car/CarDTO';
 import { CarsService } from 'src/logica/car/CarsService';
 import { Ref, onMounted, ref } from 'vue';
 import FormCarTable from './forms/FormCarTable.vue';
+import { Notify } from 'quasar';
+import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
+import { watch } from 'vue';
 
 // Inyectar el Servicio de los Drivers
 
 const carsService: CarsService = CarsService.getInstancie();
+let id_car_delete = -1;
 
 const columns = [
   {
@@ -115,6 +128,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'car_situation',
+    label: 'Situación del Carro',
+    align: 'left',
+    field: (row: CarDTO) => row.car_situation?.type_car_situation?.type_cs_name,
+    sortable: true,
+  },
+  {
     name: 'Action',
     label: '',
     align: 'right',
@@ -138,21 +158,95 @@ const filtersCars: Ref<FiltersCars> = ref({
   number: '',
   numOfSeats: 0,
 });
+
+// Se define un watch para los filtros
+watch(filtersCars.value, async (newFilters: FiltersCars) => {
+  await getCars(newFilters.brand, newFilters.number, newFilters.numOfSeats);
+});
+
 const showForm = ref(false); // representa si el formulario se muestra o no
+
+// se crea una variable para el modal
+const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
+  ref(null);
 
 onMounted(actualizarCars);
 
 async function actualizarCars() {
-  await getCars();
+  await getCars(
+    filtersCars.value.brand,
+    filtersCars.value.number,
+    filtersCars.value.numOfSeats
+  );
 }
 
 // Funciones CRUD
-async function getCars() {
+//Funcion de obtener la lista de Carros
+async function getCars(brand: string, number: string, numOfSeats: number) {
   try {
-    listCars.value = await carsService.getCars();
+    listCars.value = await carsService.getCars(
+      brand === '' ? undefined : brand,
+      number === '' ? undefined : number,
+      numOfSeats === 0 ? undefined : numOfSeats
+    );
   } catch (error) {
     if (error instanceof Error) alert(error.message);
   }
+}
+
+//Funcion para insertar un carro
+async function postCar(
+  car_number: string,
+  car_brand: string,
+  number_of_seats: number,
+  returnDate: Date,
+  id_aut_type_cs: number
+) {
+  try {
+    await carsService.postCar(
+      car_number,
+      car_brand,
+      number_of_seats,
+      id_aut_type_cs,
+      returnDate
+    );
+
+    // se notifica de la acción
+    Notify.create({
+      message: 'Carro insertado con éxito',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+    // se cierra el formulario
+    setShowFormCar();
+
+    // se actualiza la información
+    await actualizarCars();
+  } catch (error) {
+    alert(error);
+  }
+}
+
+//Funcion para eliminar un carro
+async function deleteCar() {
+  try {
+    await carsService.deleteCar(id_car_delete);
+    // se notifica de la acción
+    Notify.create({
+      message: 'Se eliminó con éxito el carro',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+
+    // se actualiza la información
+    await actualizarCars();
+  } catch (error) {}
 }
 
 // Eventos
@@ -161,6 +255,11 @@ function setShowFormCar() {
   if (showForm.value) showForm.value = false; // se desactiva
   // esta desactivado
   else showForm.value = true; // se activa
+}
+
+function activateModalConfirmacion(id_car_selected: number) {
+  id_car_delete = id_car_selected;
+  modalConfirmacion.value?.activateModalConfirmacion();
 }
 </script>
 

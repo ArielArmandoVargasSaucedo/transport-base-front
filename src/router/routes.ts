@@ -4,6 +4,7 @@ import CarPage from 'src/pages/CarPage.vue';
 import IndexPage from 'src/pages/IndexPage.vue';
 import NomencladoresPage from 'src/pages/NomencladoresPage.vue';
 import { RouteRecordRaw } from 'vue-router';
+import SolicitudePage from 'src/pages/SolicitudePage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -34,6 +35,15 @@ const routes: RouteRecordRaw[] = [
         component: CarPage,
         meta: {
           icon: 'directions_car',
+        },
+        children: [],
+      },
+      {
+        path: '/SolicitudePage',
+        name: 'Solicitudes',
+        component: SolicitudePage,
+        meta: {
+          icon: 'newspaper',
         },
         children: [],
       },

@@ -10,37 +10,19 @@
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <q-input
-            filled
-            v-model="datosCar.number"
-            label="Número del Carro *"
-            lazy-rules
-            :rules="[
+          <q-input filled v-model="datosCar.number" label="Número del Carro *" lazy-rules :rules="[
+            (val) =>
+              (val && val.length > 0) || 'Por favor complete este campo',
+          ]" />
+          <q-input filled v-model="datosCar.brand" label="Chapa del Carro *" lazy-rules :rules="[
+            (val) =>
+              (val && val.length > 0) || 'Por favor complete este campo',
+          ]" />
+          <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Cantidad de Asientos del Carro *"
+            lazy-rules :rules="[
               (val) =>
                 (val && val.length > 0) || 'Por favor complete este campo',
-            ]"
-          />
-          <q-input
-            filled
-            v-model="datosCar.brand"
-            label="Chapa del Carro *"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length > 0) || 'Por favor complete este campo',
-            ]"
-          />
-          <q-input
-            filled
-            v-model="datosCar.numOfSeats"
-            :type="'number'"
-            label="Cantidad de Asientos del Carro *"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length > 0) || 'Por favor complete este campo',
-            ]"
-          />
+            ]" />
 
           <div class="text-h5">Situación del Carro</div>
           <q-separator color="primary" inset size="16px" />
@@ -52,18 +34,9 @@
             </div>
 
             <div class="select-container">
-              <q-select
-                filled
-                v-model="datosCar.carSituation.typeCarSit"
-                use-input
-                hide-selected
-                fill-input
-                input-debounce="0"
-                :options="listTypeCarSituation"
-                label="Tipo de Situación del Carro"
-                option-label="type_cs_name"
-                style="width: 100%; padding-bottom: 32px"
-              >
+              <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+                input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
+                option-label="type_cs_name" style="width: 100%; padding-bottom: 32px">
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -78,13 +51,7 @@
           <q-card-section class="panel-inferior">
             <div>
               <q-btn label="Submit" type="submit" color="primary" />
-              <q-btn
-                label="Reset"
-                type="reset"
-                color="primary"
-                flat
-                class="q-ml-sm"
-              />
+              <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
             </div>
 
             <q-btn color="primary" class="q-ml-sm" icon="contact_support" />
@@ -109,10 +76,18 @@ const typeCarSitService: TypeCarSituationsService =
 
 // Se definen las props del componente
 
-// Se definen las emits del componente
+
 // Se definen los emit del componente
 const emit = defineEmits<{
   (e: 'setShowFormCar'): void;
+  (
+    e: 'postCar',
+    car_number: string,
+    car_brand: string,
+    number_of_seats: number,
+    returnDate: Date,
+    id_aut_type_cs: number
+  ): Promise<void>;
 }>();
 
 // Se define la interfaz para representar los datos del Campo
@@ -159,7 +134,18 @@ async function getTypeCarSituation() {
   }
 }
 
-async function onSubmit() {}
+async function onSubmit() {
+  if (datosCar.value.carSituation.typeCarSit) {
+    await emit(
+      'postCar',
+      datosCar.value.number,
+      datosCar.value.brand,
+      datosCar.value.numOfSeats,
+      datosCar.value.carSituation.returnDate,
+      datosCar.value.carSituation.typeCarSit.id_aut_type_cs
+    );
+  } else alert('Se debe de seleccionar un tipo de situación');
+}
 
 async function onReset() {
   datosCar.value.number = '';
@@ -174,22 +160,28 @@ function setShowForm() {
 .card-campo {
   width: 100%;
 }
+
 .container-icon {
   display: flex;
 
   justify-content: flex-end;
 }
+
 .seccion-car-situation {
   display: flex;
   flex-direction: row;
   gap: 15px;
 }
+
 .select-container {
   width: 100%;
 }
+
 .panel-inferior {
   display: flex;
-  justify-content: space-between; /* Distribuye los botones en extremos opuestos */
-  padding: 10px; /* Espacio interno opcional */
+  justify-content: space-between;
+  /* Distribuye los botones en extremos opuestos */
+  padding: 10px;
+  /* Espacio interno opcional */
 }
 </style>
