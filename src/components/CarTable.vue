@@ -128,6 +128,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'car_situation',
+    label: 'Situación del Carro',
+    align: 'left',
+    field: (row: CarDTO) => row.car_situation?.type_car_situation?.type_cs_name,
+    sortable: true,
+  },
+  {
     name: 'Action',
     label: '',
     align: 'right',
