@@ -12,43 +12,23 @@
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
           <div class="text-h5">Programación</div>
           <q-separator color="primary" inset size="16px" />
-          <div class="text-h7">Fecha de Finalizado</div>
-          <div class="seccion-car-situation">
-            <div class="q-pa-md">
-              <div class="q-gutter-sm">
-                <q-badge color="teal"> Model: {{ model }} </q-badge>
-                <q-badge color="purple" text-color="white" class="q-ma-md">
-                  Mask: YYYY-MM-DD HH:mm
-                </q-badge>
-              </div>
 
-              <div class="q-gutter-md row items-start">
-                <q-date
-                  v-model="model"
-                  mask="YYYY-MM-DD HH:mm"
-                  color="purple"
-                />
-                <q-time
-                  v-model="model"
-                  mask="YYYY-MM-DD HH:mm"
-                  color="purple"
-                />
+          <div class="container-programacion">
+            <div class="programacion-fechas">
+              <div class="fecha-finalizado">
+                <div class="text-h7">Fecha de Finalizado</div>
+                <q-date v-model="model" mask="YYYY-MM-DD HH:mm" color="primary" />
+              </div>
+              <div>
+                <div class="text-h7">Hora</div>
+                <q-time v-model="model" mask="YYYY-MM-DD HH:mm" color="primary" />
               </div>
             </div>
 
-            <div class="select-container">
-              <q-select
-                filled
-                v-model="datosCar.carSituation.typeCarSit"
-                use-input
-                hide-selected
-                fill-input
-                input-debounce="0"
-                :options="listTypeCarSituation"
-                label="Programación"
-                option-label="type_cs_name"
-                style="width: 100%; padding-bottom: 32px"
-              >
+            <div class="select-container-programacion">
+              <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+                input-debounce="0" :options="listTypeCarSituation" label="Programación" option-label="type_cs_name"
+                style="width: 100%; padding-bottom: 32px">
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -57,85 +37,64 @@
                   </q-item>
                 </template>
               </q-select>
-              <q-input
-                filled
-                v-model="datosCar.numOfSeats"
-                :type="'number'"
-                label="Kilometraje *"
-                lazy-rules
+              <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Kilometraje *" lazy-rules :rules="[
+                (val) =>
+                  (val && val.length > 0) || 'Por favor complete este campo',
+              ]" />
+              <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Tiempo de demora *" lazy-rules
                 :rules="[
                   (val) =>
                     (val && val.length > 0) || 'Por favor complete este campo',
-                ]"
-              />
-              <q-input
-                filled
-                v-model="datosCar.numOfSeats"
-                :type="'number'"
-                label="Tiempo de demora *"
-                lazy-rules
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) || 'Por favor complete este campo',
-                ]"
-              />
+                ]" />
             </div>
           </div>
 
           <div class="text-h5">Grupo Turístico</div>
+          <q-checkbox v-model="showGrupoTuristico" label="Crear uno Nuevo?" />
           <q-separator color="primary" inset size="16px" />
+          <div class="container-grupo-turistico">
+            <div v-show="!showGrupoTuristico" class="container-grupo-turistico-seleccionar">
+              <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+                input-debounce="0" :options="listTypeCarSituation" label="Código del Grupo" option-label="type_cs_name"
+                style="width: 100%;">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
 
-          <div class="select-container">
-            <q-select
-              filled
-              v-model="datosCar.carSituation.typeCarSit"
-              use-input
-              hide-selected
-              fill-input
-              input-debounce="0"
-              :options="listTypeCarSituation"
-              label="Programación"
-              option-label="type_cs_name"
-              style="width: 100%; padding-bottom: 32px"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
-          <q-input
-            filled
-            v-model="datosCar.number"
-            label="Descripción de la Programación *"
-            lazy-rules
-            :rules="[
+            </div>
+
+            <div v-show="showGrupoTuristico" class="container-grupo-turistico-crear-nuevo">
+              <q-input filled v-model="datosCar.number" label="Código del Grupo Nuevo *" lazy-rules :rules="[
+                (val) =>
+                  (val && val.length > 0) || 'Por favor complete este campo',
+              ]" />
+              <q-input filled v-model="datosCar.number" label="País de procedencia *" lazy-rules :rules="[
+                (val) =>
+                  (val && val.length > 0) || 'Por favor complete este campo',
+              ]" />
+              <q-input filled v-model="datosCar.number" label="Cantidad de Turistas *" lazy-rules type="number" />
+            </div>
+
+            <q-input filled v-model="datosCar.number" label="Descripción de la Programación *" lazy-rules :rules="[
               (val) =>
                 (val && val.length > 0) || 'Por favor complete este campo',
-            ]"
-          />
-
-          <div>
-            <div class="text-h5">Carro Asignado</div>
-            <q-separator color="primary" inset size="16px" />
+            ]" />
           </div>
 
-          <div class="select-container">
-            <q-select
-              filled
-              v-model="datosCar.carSituation.typeCarSit"
-              use-input
-              hide-selected
-              fill-input
-              input-debounce="0"
-              :options="listTypeCarSituation"
-              label="Programación"
-              option-label="type_cs_name"
-              style="width: 100%; padding-bottom: 32px"
-            >
+
+          <div class="text-h5">Carro Asignado</div>
+          <q-separator color="primary" inset size="16px" />
+
+
+          <div class="carro-asignado-container">
+            <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+              input-debounce="0" :options="listTypeCarSituation" label="Número del Carro" option-label="type_cs_name"
+              style="width: 100%; padding-bottom: 32px">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -144,18 +103,25 @@
                 </q-item>
               </template>
             </q-select>
+          </div>
+
+          <div class="text-h5">Ruta</div>
+          <q-separator color="primary" inset size="16px" />
+
+          <div class="ruta-container">
+            <q-input filled v-model="datosCar.number" label="Kilómetros disponibles al comenzar *" lazy-rules type="number" />
+            <q-input filled v-model="datosCar.number" label="Kilómetros disponibles al finalizar *" lazy-rules type="number" />
+            <q-input filled v-model="datosCar.number" label="Duración *" lazy-rules type="number" />
+            <q-input filled v-model="datosCar.number" label="Lugar de recogida *" lazy-rules :rules="[
+              (val) =>
+                (val && val.length > 0) || 'Por favor complete este campo',
+            ]" />
           </div>
 
           <q-card-section class="panel-inferior">
             <div>
               <q-btn label="Submit" type="submit" color="primary" />
-              <q-btn
-                label="Reset"
-                type="reset"
-                color="primary"
-                flat
-                class="q-ml-sm"
-              />
+              <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
             </div>
 
             <q-btn color="primary" class="q-ml-sm" icon="contact_support" />
@@ -212,7 +178,7 @@ const datosCar: Ref<DatosCar> = ref<DatosCar>({
 const listTypeCarSituation: Ref<Array<TypeCarSituationDTO>> = ref(
   new Array<TypeCarSituationDTO>()
 );
-
+const showGrupoTuristico = ref(false)
 // Funciones del ciclo de vida del componente
 onMounted(actualizarListTypeCarSituation);
 
@@ -236,7 +202,7 @@ function model() {
   };
 }
 
-async function onSubmit() {}
+async function onSubmit() { }
 
 async function onReset() {
   datosCar.value.number = '';
@@ -251,20 +217,63 @@ function setShowForm() {
 .card-campo {
   width: 100%;
 }
+
 .container-icon {
   display: flex;
 
   justify-content: flex-end;
 }
+
 .seccion-car-situation {
   gap: 15px;
 }
+
 .select-container {
   width: 100%;
 }
+
+.container-programacion {
+  width: 100%;
+}
+
 .panel-inferior {
   display: flex;
-  justify-content: space-between; /* Distribuye los botones en extremos opuestos */
-  padding: 10px; /* Espacio interno opcional */
+  justify-content: space-between;
+  /* Distribuye los botones en extremos opuestos */
+  padding: 10px;
+  /* Espacio interno opcional */
+}
+
+.programacion-fechas {
+  display: flex;
+  gap: 16px;
+  /* Distribuye los botones en extremos opuestos */
+  padding: 10px;
+  /* Espacio interno opcional */
+}
+
+.container-programacion {
+  display: flex;
+  gap: 16px;
+  /* Distribuye los botones en extremos opuestos */
+  padding: 10px;
+  /* Espacio interno opcional */
+}
+
+.select-container-programacion {
+  padding-top: 30px;
+  width: 100%;
+}
+
+.container-grupo-turistico {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ruta-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 </style>

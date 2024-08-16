@@ -3,7 +3,7 @@ import { CarDTO } from './CarDTO';
 export class CarsService {
   static carsService: CarsService;
 
-  private constructor() {}
+  private constructor() { }
 
   static getInstancie(): CarsService {
     if (!this.carsService) this.carsService = new CarsService();
@@ -37,7 +37,7 @@ export class CarsService {
       // extraer el json de la respuesta
       const json = await res.json();
       listCars = json;
-    } catch (error) {}
+    } catch (error) { }
 
     return listCars;
   }
@@ -79,6 +79,7 @@ export class CarsService {
   }
 
   async deleteCar(id_car: number): Promise<void> {
+
     const url = 'http://localhost:5000/car/' + id_car;
 
     try {
@@ -97,4 +98,35 @@ export class CarsService {
       // se relanza la exeption
     }
   }
+
+  //Metodo para insertar un Carro
+  async updateCar(carDTO: CarDTO): Promise<void> {
+    const url = 'http://localhost:5000/car/' + carDTO.id_car;
+
+    try {
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          car_number: carDTO.car_number,
+          car_brand: carDTO.car_brand,
+          number_of_seats: carDTO.number_of_seats,
+          car_situation: {
+            return_date_cs: carDTO.car_situation?.return_date_cs,
+            id_aut_type_cs: carDTO.car_situation?.type_car_situation?.id_aut_type_cs,
+          }
+        }),
+      });
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+    } catch (error) {
+      if (error instanceof Error) console.log(error.message);
+      // se relanza la exeption
+    }
+  }
+
 }

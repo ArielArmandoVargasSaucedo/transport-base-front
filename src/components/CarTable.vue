@@ -1,91 +1,42 @@
 <template>
   <div class="q-pa-md">
-    <FormCarTable
-      v-show="showForm"
-      @set-show-form-car="setShowFormCar"
-      @post-car="postCar"
-    />
-    <q-table
-      :table-header-class="'bg-primary'"
-      :title-class="'text-h4'"
-      title="Cars"
-      :rows="listCars"
-      :columns="columns"
-      row-key="id"
-    >
+    <FormCarTable ref="formCarTable" v-show="showForm" :car-reactivo="carReactivo" @set-show-form-car="setShowFormCar"
+      @post-car="postCar" @update-car="updateCar" />
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Cars" :rows="listCars"
+      :columns="columns" row-key="id">
       <template v-slot:top-right>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersCars.brand"
-          placeholder="Buscar por Chapa"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.brand"
+          placeholder="Buscar por Chapa">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersCars.numOfSeats"
-          placeholder="Buscar por Número de Asientos"
-          :type="'number'"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
+          v-model="filtersCars.numOfSeats" placeholder="Buscar por Número de Asientos" :type="'number'">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersCars.number"
-          placeholder="Buscar por Número"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.number"
+          placeholder="Buscar por Número">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
 
-        <q-btn
-          class="q-ml-sm"
-          icon="filter_list"
-          @click="showFilter = !showFilter"
-          flat
-        />
-        <q-btn icon="add_circle" @click="setShowFormCar()"></q-btn>
+        <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
+        <q-btn icon="add_circle" @click="activarFomularioInsertar()"></q-btn>
       </template>
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="edit" size="sm" flat dense />
-          <q-btn
-            icon="delete"
-            size="sm"
-            class="q-ml-sm"
-            flat
-            dense
-            @click="activateModalConfirmacion(props.row.id_car)"
-          ></q-btn>
+          <q-btn icon="edit" size="sm" flat dense @click="activarFormularioEditar(props.row)" />
+          <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
+            @click="activateModalConfirmacion(props.row.id_car)"></q-btn>
         </q-td>
       </template>
     </q-table>
-    <ModalConfirmacion
-      ref="modalConfirmacion"
-      :text="'Seguro que desea eliminar?'"
-      @action-confirm="deleteCar"
-    />
+    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteCar" />
   </div>
 </template>
 
@@ -152,6 +103,11 @@ interface FiltersCars {
 
 // Se definen las variables reactivas del componente
 const listCars: Ref<Array<CarDTO>> = ref(new Array<CarDTO>());
+const carReactivo: Ref<{
+  carDTO?: CarDTO
+}> = ref({
+  carDTO: undefined
+})
 const showFilter = ref(false);
 const filtersCars: Ref<FiltersCars> = ref({
   brand: '',
@@ -169,7 +125,9 @@ const showForm = ref(false); // representa si el formulario se muestra o no
 // se crea una variable para el modal
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
-
+// se crea una variable para el formulario de car table
+const formCarTable: Ref<InstanceType<typeof FormCarTable> | null> =
+  ref(null);
 onMounted(actualizarCars);
 
 async function actualizarCars() {
@@ -220,6 +178,8 @@ async function postCar(
       timeout: 3000, // Cambia la duración de la notificación en milisegundos
       icon: 'check_circle', // Añade un icono a la notificación
     });
+    // se reinician los campos
+    formCarTable.value?.onReset()
     // se cierra el formulario
     setShowFormCar();
 
@@ -246,10 +206,45 @@ async function deleteCar() {
 
     // se actualiza la información
     await actualizarCars();
-  } catch (error) {}
+  } catch (error) {
+    alert(error)
+  }
+}
+
+// Funcion para editar un carro
+async function updateCar(carDTO: CarDTO /* representa la información del carro a modificar */) {
+  try {
+    await carsService.updateCar(carDTO)
+
+    // se notifica de la acción
+    Notify.create({
+      message: 'Se modificó con éxito el carro',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+
+    // se reinician los campos
+    formCarTable.value?.onReset()
+    // se cierra el formulario
+    setShowFormCar();
+
+    // se actualiza la información
+    await actualizarCars();
+  } catch (error) {
+    alert(error)
+  }
 }
 
 // Eventos
+function activarFomularioInsertar() {
+  // se deselecciona cualquier carro dto seleccionado
+  carReactivo.value.carDTO = undefined
+// se muestra el forumulario
+  setShowFormCar()
+}
 function setShowFormCar() {
   // si esta activado el form
   if (showForm.value) showForm.value = false; // se desactiva
@@ -257,7 +252,15 @@ function setShowFormCar() {
   else showForm.value = true; // se activa
 }
 
+function activarFormularioEditar(carDTOSeleccionado: CarDTO) {
+  carReactivo.value.carDTO = carDTOSeleccionado
+  // se muestra el forumulario
+  showForm.value = false
+  showForm.value = true
+}
+
 function activateModalConfirmacion(id_car_selected: number) {
+
   id_car_delete = id_car_selected;
   modalConfirmacion.value?.activateModalConfirmacion();
 }
