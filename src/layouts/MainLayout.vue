@@ -20,11 +20,12 @@
 </template>
 
 <script setup lang="ts">
-import { findRouteByName } from 'src/router/routes';
+
 import { ref } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
 import DraggerPrincipal from 'src/components/DraggerPrincipal.vue';
 import { Ref } from 'vue';
+import { getChildrensRouteAuth } from 'src/router/routes';
 
 
 
@@ -35,8 +36,8 @@ defineOptions({
 const draggerPrincipal: Ref<InstanceType<typeof DraggerPrincipal> | null> =
   ref(null);
 
-const rutaPrincipal: RouteRecordRaw | undefined = findRouteByName('principal')
-const rutasList = rutaPrincipal?.children
+
+const rutasList = getChildrensRouteAuth('principal')
 
 
 

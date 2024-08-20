@@ -7,12 +7,17 @@ import LoginPage from 'src/pages/LoginPage.vue';
 import AdminPage from 'src/pages/AdminPage.vue';
 import { RouteRecordRaw } from 'vue-router';
 import SolicitudePage from 'src/pages/SolicitudePage.vue';
+import { RolesEnum } from 'src/utils/RolesEnum';
+import { AuthService } from 'src/logica/auth/AuthService';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'principal',
     component: MainLayout,
+    meta: {
+      needLogin: true // indica que se requiere estar autenticado
+    },
     children: [
       {
         path: '/indexPage',
@@ -20,6 +25,7 @@ const routes: RouteRecordRaw[] = [
         component: IndexPage,
         meta: {
           icon: 'home',
+          needLogin: true // indica que se requiere estar autenticado
         },
       },
       {
@@ -28,6 +34,8 @@ const routes: RouteRecordRaw[] = [
         component: DriverPage,
         meta: {
           icon: 'supervisor_account',
+          needLogin: true, // indica que se requiere estar autenticado
+          roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
         },
         children: [],
       },
@@ -37,6 +45,8 @@ const routes: RouteRecordRaw[] = [
         component: CarPage,
         meta: {
           icon: 'directions_car',
+          needLogin: true, // indica que se requiere estar autenticado
+          roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
         },
         children: [],
       },
@@ -46,6 +56,8 @@ const routes: RouteRecordRaw[] = [
         component: SolicitudePage,
         meta: {
           icon: 'newspaper',
+          needLogin: true, // indica que se requiere estar autenticado
+          roles: [RolesEnum.Directivo, RolesEnum.Chofer] // lista de roles con autorización para entrar a la ruta
         },
         children: [],
       },
@@ -55,15 +67,8 @@ const routes: RouteRecordRaw[] = [
         component: NomencladoresPage,
         meta: {
           icon: 'settings',
-        },
-        children: [],
-      },
-      {
-        path: '/LoginPage',
-        name: 'Login',
-        component: LoginPage,
-        meta: {
-          icon: 'login',
+          needLogin: true, // indica que se requiere estar autenticado
+          roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
         },
         children: [],
       },
@@ -73,16 +78,84 @@ const routes: RouteRecordRaw[] = [
         component: AdminPage,
         meta: {
           icon: 'user',
+          needLogin: true, // indica que se requiere estar autenticado
+          roles: [RolesEnum.Administrador] // lista de roles con autorización para entrar a la ruta
         },
         children: [],
       },
     ],
   },
+  {
+    path: '/LoginPage',
+    name: 'Login',
+    component: LoginPage,
+    meta: {
+      icon: 'login',
+      needLogin: false // indica que no se requiere estar autenticado
+    },
+    children: [],
+  }
 ];
 
-// Función para encontrar una ruta por su nombre
-export function findRouteByName(name: string): RouteRecordRaw | undefined {
-  return routes.find((route) => route.name === name);
+// Función para obtener las rutas hijas de una ruta autorizadas para el usuario 
+export function getChildrensRouteAuth(nameRoute: string): Array<RouteRecordRaw> {
+  let routes: Array<RouteRecordRaw> = getChildrensRoute(nameRoute) // se obtiene la lista de hijos de la ruta
+
+
+  return routes.filter((ruta) => {
+    let isAuth = true // es una ruta autorizada hasta que se demuestre lo contrario
+    // si la ruta cuenta con permisos de roles y si la ruta no cuenta con los permisos necesarios
+    if (ruta.meta && 'roles' in ruta.meta && !AuthService.getInstancie().verificarRol(ruta.meta.roles as Array<RolesEnum>))
+      isAuth = false
+
+    return isAuth
+  })
+}
+
+// Función para obtener las rutas de hijas de una ruta en específico
+export function getChildrensRoute(nameRoute: string): Array<RouteRecordRaw> {
+  let routes: Array<RouteRecordRaw> = Array<RouteRecordRaw>()
+
+  // se encuentra a la ruta
+  const ruta: RouteRecordRaw | undefined = getRoute(nameRoute)
+
+  // si fue encontrada una ruta con ese nombre y si se encuentra, esa ruta tiene hijos
+  if (ruta && ruta.children)
+    routes = ruta.children
+
+
+  return routes // retorna una lista vacía si no tiene hijos la ruta
+}
+
+export function getRoute(nameRoute: string): RouteRecordRaw | undefined {
+  let ruta: RouteRecordRaw | undefined = undefined
+
+  for (let index = 0; index < routes.length && !ruta; index++) {
+    const route = routes[index];
+    if (route.name === nameRoute) // si el nombre de la ruta del recorrido es igual a la ruta que se buscar
+      ruta = route // se encuentra la ruta y se finaliza el ciclo
+    else // de forma contraria
+      ruta = getRouteInTheRoute(route, nameRoute) // se inicia un recorrido en profundidad por esa ruta para encontrar la ruta deseada
+  }
+
+  return ruta
+}
+
+function getRouteInTheRoute(rutaActual: RouteRecordRaw, nameRoute: string): RouteRecordRaw | undefined {
+  let ruta: RouteRecordRaw | undefined = undefined
+
+  if (rutaActual.children) {// si la ruta actual tiene childrens
+    const childrens = rutaActual.children
+    for (let index = 0; index < childrens.length && !ruta; index++) {
+      const route = childrens[index];
+      if (route.name === nameRoute)
+        ruta = route
+      else
+        ruta = getRouteInTheRoute(route, nameRoute)
+    }
+  }
+
+  return ruta
 }
 
 export default routes;
