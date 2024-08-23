@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
-    <FormCarTable ref="formCarTable" v-show="showForm" :car-reactivo="userReactivo" @set-show-form-car="setShowFormCar"
-      @post-car="postCar" @update-car="updateCar" />
+    <FormUserTable ref="formUserTable" v-show="showForm" :car-reactivo="userReactivo"
+      @set-show-form-car="setShowFormCar" @post-car="postCar" @update-car="updateCar" />
     <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Cars" :rows="listUser"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
@@ -44,7 +44,7 @@
 
 import { UserService } from 'src/logica/user/UserService';
 import { Ref, onMounted, ref } from 'vue';
-import FormCarTable from './forms/FormCarTable.vue';
+import FormUserTable from './forms/FormUserTable.vue';
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
@@ -54,7 +54,7 @@ import { UserDTO } from 'src/logica/user/UserDTO';
 // Inyectar el Servicio de los Drivers
 
 const userService: UserService = UserService.getInstancie();
-let id_car_delete = -1;
+let id_user_delete = -1;
 
 const columns = [
   {
@@ -93,8 +93,6 @@ const columns = [
 interface FiltersUser {
   user: string;
 
-
-
 }
 
 // Se definen las variables reactivas del componente
@@ -107,9 +105,6 @@ const userReactivo: Ref<{
 const showFilter = ref(false);
 const filtersUser: Ref<FiltersUser> = ref({
   user: '',
-  dni: '',
-
-
 
 });
 
@@ -124,7 +119,7 @@ const showForm = ref(false); // representa si el formulario se muestra o no
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
 // se crea una variable para el formulario de car table
-const formCarTable: Ref<InstanceType<typeof FormCarTable> | null> =
+const formUserTable: Ref<InstanceType<typeof FormUserTable> | null> =
   ref(null);
 onMounted(actualizarCars);
 
@@ -180,7 +175,7 @@ async function postCar(
       icon: 'check_circle', // Añade un icono a la notificación
     });
     // se reinician los campos
-    formCarTable.value?.onReset()
+    formUserTable.value?.onReset()
     // se cierra el formulario
     setShowFormCar();
 
@@ -194,7 +189,7 @@ async function postCar(
 //Funcion para eliminar un carro
 async function deleteCar() {
   try {
-    await userService.deleteCar(id_car_delete);
+    await userService.deleteCar(id_user_delete);
     // se notifica de la acción
     Notify.create({
       message: 'Se eliminó con éxito el carro',
@@ -228,7 +223,7 @@ async function updateCar(userDTO: UserDTO /* representa la información del carr
     });
 
     // se reinician los campos
-    formCarTable.value?.onReset()
+    formUserTable.value?.onReset()
     // se cierra el formulario
     setShowFormCar();
 
@@ -262,7 +257,7 @@ function activarFormularioEditar(carDTOSeleccionado: UserDTO) {
 
 function activateModalConfirmacion(id_car_selected: number) {
 
-  id_car_delete = id_car_selected;
+  id_user_delete = id_car_selected;
   modalConfirmacion.value?.activateModalConfirmacion();
 }
 </script>
