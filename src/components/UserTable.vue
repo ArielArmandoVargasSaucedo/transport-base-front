@@ -10,18 +10,20 @@
             <q-icon name="search" />
           </template>
         </q-input>
-        <!-- <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.role"
-          placeholder="Buscar por Role1">
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.dni"
+          placeholder="Buscar por DNI" type="number">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
-        </q-input> -->
-        <!-- <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.dni"
-          placeholder="Buscar por DNI2">
-          <template v-slot:append>
-            <q-icon name="search" />
+        </q-input>
+        <q-select v-if="showFilter" filled v-model="filtersUser.role" use-input hide-selected fill-input
+          input-debounce="0" :options="listRoles" label="Rol asignado" option-label="role_type">
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey"> No results </q-item-section>
+            </q-item>
           </template>
-        </q-input> -->
+        </q-select>
 
         <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
         <q-btn icon="add_circle" @click="activarFomularioInsertar()"></q-btn>
@@ -43,16 +45,18 @@
 
 import { UserService } from 'src/logica/user/UserService';
 import { Ref, onMounted, ref } from 'vue';
-
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
 import { UserDTO } from 'src/logica/user/UserDTO';
+import { RoleService } from 'src/logica/role/RoleService';
+import { RoleDTO } from 'src/logica/role/RoleDTO';
 
 
-// Inyectar el Servicio de los Drivers
+// Inyectar el Servicio de los users
 
 const userService: UserService = UserService.getInstancie();
+const rolesService: RoleService = RoleService.getInstancie();
 let id_user_delete = -1;
 
 const columns = [
@@ -70,6 +74,7 @@ const columns = [
     label: 'DNI',
     align: 'left',
     field: (row: UserDTO) => row.dni_user,
+    format: (val: any) => `${val}`,
     sortable: true,
   },
   {
@@ -91,10 +96,12 @@ const columns = [
 //Se define una interfaz para los Filtros
 interface FiltersUser {
   user: string;
-
+  dni: string;
+  role: RoleDTO | undefined;
 }
 
 // Se definen las variables reactivas del componente
+const listRoles: Ref<Array<RoleDTO>> = ref(new Array<RoleDTO>());
 const listUser: Ref<Array<UserDTO>> = ref(new Array<UserDTO>());
 const userReactivo: Ref<{
   userDTO?: UserDTO
@@ -104,12 +111,13 @@ const userReactivo: Ref<{
 const showFilter = ref(false);
 const filtersUser: Ref<FiltersUser> = ref({
   user: '',
-
+  dni: '',
+  role: undefined
 });
 
 // Se define un watch para los filtros
 watch(filtersUser.value, async (newFilters: FiltersUser) => {
-  await getUsers(newFilters.user);
+  await getUsers(newFilters.user, newFilters.dni, newFilters.role);
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
@@ -120,28 +128,48 @@ const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
 // se crea una variable para el formulario de car table
 //const formUserTable: Ref<InstanceType<typeof FormUserTable> | null> =
 // ref(null);
-onMounted(actualizarDrivers);
+onMounted(() => {
+  actualizarUsers()
+  actualizarRoles()
+});
 
-async function actualizarDrivers() {
-  await getUsers(filtersUser.value.user);
+async function actualizarUsers() {
+  await getUsers(
+    filtersUser.value.user,
+    filtersUser.value.dni,
+    filtersUser.value.role
+  );
+}
+
+async function actualizarRoles() {
+  await getRoles()
 }
 
 // Funciones CRUD
 //Funcion de obtener la lista de Carros
 
-// async function getUser(user: string, dni: string, role: string)
-
-async function getUsers(user: string) {
+async function getUsers(user: string, dni: string, role: RoleDTO | undefined) {
   try {
     listUser.value = await userService.getUser(
       user === '' ? undefined : user,
-      // dni === '' ? undefined : dni,
-      // role === '' ? undefined : role
+      undefined,
+      dni === '' ? undefined : dni,
+      role ? role.id_aut_role : undefined
     );
   } catch (error) {
     if (error instanceof Error) alert(error.message);
   }
 }
+
+async function getRoles() {
+  try {
+    listRoles.value = await rolesService.getRoles()
+  } catch (error) {
+    if (error instanceof Error) alert(error.message);
+  }
+}
+
+
 
 //Funcion para insertar un carro
 /*async function postCar(
@@ -218,7 +246,7 @@ async function updateCar(userDTO: UserDTO /* representa la información del carr
     });
 
     // se reinician los campos
-    formUserTable.value?.onReset()
+    //formUserTable.value?.onReset()
     // se cierra el formulario
     setShowFormCar();
 

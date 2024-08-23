@@ -42,6 +42,7 @@
 
 </template>
 <script setup lang="ts">
+import { Notify } from 'quasar';
 import { AuthService } from 'src/logica/auth/AuthService';
 import { BadRequestError } from 'src/utils/BadRequestError';
 import { ref, Ref } from 'vue';
@@ -69,7 +70,14 @@ async function onSubmit() {
     router.push({ name: 'principal' })
   } catch (error) {
     if (error instanceof BadRequestError)
-      alert(error.message)
+      Notify.create({
+        message: error.message,
+        type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'red', // Cambia el color de la notificación
+        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+        timeout: 3000, // Cambia la duración de la notificación en milisegundos
+        icon: 'cancel', // Añade un icono a la notificación
+      })
     else
       alert(error)
   }

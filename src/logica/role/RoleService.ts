@@ -14,7 +14,7 @@ export class RoleService {
     return this.roleService;
   }
 
-  async getRole(): Promise<Array<RoleDTO>> {
+  async getRoles(): Promise<Array<RoleDTO>> {
     let listRole: Array<RoleDTO> = new Array<RoleDTO>();
     const url = 'http://localhost:5000/role';
 
