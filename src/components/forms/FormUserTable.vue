@@ -10,26 +10,26 @@
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <q-input filled v-model="datosCar.number" label="Nombre del Usuario *" lazy-rules :rules="[
+          <q-input filled v-model="datosUser.user" label="Nombre del Usuario *" lazy-rules :rules="[
             (val) =>
               (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
-          <q-input filled v-model="datosCar.brand" label="Contraseña *" :rules="[
+          <q-input filled v-model="datosUser.password" label="Contraseña *" :rules="[
             (val) =>
               (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
-          <q-input filled v-model="datosCar.brand" label="DNI del Usuario *" :rules="[
+          <q-input filled v-model="datosUser.dni" label="DNI del Usuario *" :rules="[
             (val) =>
               (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
 
 
-          <div class="seccion-car-situation">
+          <div class="seccion-role">
 
             <div class="select-container">
-              <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
-                input-debounce="0" :options="listTypeCarSituation" label="Tipo de Rol del Usuario"
-                option-label="type_cs_name" style="width: 100%; padding-bottom: 32px">
+              <q-select filled v-model="datosUser.role.role_type" use-input hide-selected fill-input input-debounce="0"
+                :options="listRole" label="Tipo de Rol del Usuario" option-label="role_type"
+                style="width: 100%; padding-bottom: 32px">
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -55,24 +55,21 @@
 </template>
 
 <script lang="ts" setup>
-import { CarDTO } from 'src/logica/car/CarDTO';
-import { CarSituationDTO } from 'src/logica/carSituation/CarSituationDTO';
-import { DriverDTO } from 'src/logica/drivers/DriverDTO';
-import { TypeCarSituationDTO } from 'src/logica/typeCarSituation/TypeCarSituationDTO';
-import { TypeCarSituationsService } from 'src/logica/typeCarSituation/TypeCarSituationsService';
+import { UserDTO } from 'src/logica/user/UserDTO';
+import { RoleDTO } from 'src/logica/role/RoleDTO';
+import { RoleService } from 'src/logica/role/RoleService';
 import { computed, ComputedRef, onMounted, onUpdated, Prop, Ref, ref } from 'vue';
-import { format, parse } from 'date-fns';
-//Se inyecta el servicio de Tipo de Situaciones para Carro
+//Se inyecta el servicio de Tipo de Rol para Usuario
 
-const typeCarSitService: TypeCarSituationsService =
-  TypeCarSituationsService.getInstancie();
+const roleService: RoleService =
+  RoleService.getInstancie();
 
 // Se define lo q va a recibir el hijo del padre
 
 // Se definen las props del componente
 interface Props {
-  carReactivo: {
-    carDTO?: CarDTO
+  userReactivo: {
+    userDTO?: UserDTO
   }
 }
 
@@ -82,109 +79,114 @@ onUpdated(onReset)
 
 // Se definen los emit del componente
 const emit = defineEmits<{
-  (e: 'setShowFormCar'): void;
+  (e: 'setShowFormUser'): void;
   (
-    e: 'postCar',
-    car_number: string,
-    car_brand: string,
-    number_of_seats: number,
-    returnDate: Date,
-    id_aut_type_cs: number
+    e: 'postUser',
+    user_name: string,
+    dni_user: string,
+    password_user: string,
+    id_aut_role: number
   ): Promise<void>;
-  (e: 'updateCar', carDTO: CarDTO /* representa la información del carro a modificar */): Promise<void>;
+  (e: 'updateUser', userDTO: UserDTO /* representa la información del usuario a modificar */): Promise<void>;
 }>();
 
 // Se define la interfaz para representar los datos del Campo
-interface CarSituation {
-  returnDate: Date | string;
-  typeCarSit: TypeCarSituationDTO | undefined;
+interface Role {
+  id_aut_role: number;
+  role_type: string;
 }
-interface DatosCar {
-  number: string;
-  brand: string;
-  numOfSeats: number;
-  carSituation: CarSituation;
+interface DatosUser {
+  user: string;
+  dni: string;
+  password: string,
+  role: Role;
+  id_driver: number
 }
 
 // Se definen las variables reactivas del componente
-const datosCar: Ref<DatosCar> = ref<DatosCar>({
-  number: '',
-  brand: '',
-  numOfSeats: 1,
-  carSituation: {
-    returnDate: new Date(),
-    typeCarSit: undefined,
+const datosUser: Ref<DatosUser> = ref<DatosUser>({
+  user: '',
+  dni: '',
+  password: '',
+  role: {
+    id_aut_role: 1,
+    role_type: '',
   },
+  id_driver: 1,
 });
 
 
 
-const listTypeCarSituation: Ref<Array<TypeCarSituationDTO>> = ref(
-  new Array<TypeCarSituationDTO>()
+const listRole: Ref<Array<RoleDTO>> = ref(
+  new Array<RoleDTO>()
 );
 
 // Funciones del ciclo de vida del componente
-onMounted(actualizarListTypeCarSituation);
+onMounted(actualizarListRole);
 
 // Funciones
 
-async function actualizarListTypeCarSituation() {
-  await getTypeCarSituation();
+async function actualizarListRole() {
+  await getRole();
 }
 
-async function getTypeCarSituation() {
+async function getRole() {
   try {
-    listTypeCarSituation.value = await typeCarSitService.getTypeCarSituations();
+    listRole.value = await roleService.getRole();
   } catch (error) {
     alert(error);
   }
 }
 
 async function onSubmit() {
-  if (datosCar.value.carSituation.typeCarSit) {
+  if (datosUser.value.role.role_type) {
     // si el formulario fue abierto en modo insercción
-    if (!props.carReactivo.carDTO) {
+    if (!props.userReactivo.userDTO) {
       // se llama al metodo de insertar
       await emit(
-        'postCar',
-        datosCar.value.number,
-        datosCar.value.brand,
-        datosCar.value.numOfSeats,
-        datosCar.value.carSituation.returnDate as Date,
-        datosCar.value.carSituation.typeCarSit.id_aut_type_cs
+        'postUser',
+        datosUser.value.user,
+        datosUser.value.dni,
+        datosUser.value.password,
+        datosUser.value.role.id_aut_role
       );
     }
     else { // si el formulario fue abierto en modo modificación
       // se llama al método de modificar
-      await emit('updateCar', new CarDTO(props.carReactivo.carDTO.id_car, datosCar.value.number, datosCar.value.brand, datosCar.value.numOfSeats,
-        new CarSituationDTO(datosCar.value.carSituation.typeCarSit, datosCar.value.carSituation.returnDate as Date)))
+      await emit('updateUser', new UserDTO(
+        props.userReactivo.userDTO.id_user,
+        datosUser.value.user,
+        datosUser.value.password,
+        datosUser.value.dni,
+        new RoleDTO(datosUser.value.role.id_aut_role, datosUser.value.role.role_type),
+        datosUser.value.id_driver
+      ));
     }
 
 
-  } else alert('Se debe de seleccionar un tipo de situación');
+  } else alert('Se debe de seleccionar un tipo de rol');
 }
 
 async function onReset() {
   // se reinician los campos del formulario
   // si fue abierto en modo insercción
-  if (!props.carReactivo.carDTO) {
-    datosCar.value.number = ''
-    datosCar.value.brand = ''
-    datosCar.value.numOfSeats = 1
-    datosCar.value.carSituation.returnDate = new Date().toLocaleDateString('en-CA'); // Formato de Canadá
-    datosCar.value.carSituation.typeCarSit = undefined
+  if (!props.userReactivo.userDTO) {
+    datosUser.value.user = ''
+    datosUser.value.password = ''
+    datosUser.value.dni = ''
+    datosUser.value.role.id_aut_role = 1
+
   }
   else { // si el formulario fue abierto en modo modificación
-    datosCar.value.number = props.carReactivo.carDTO.car_number
-    datosCar.value.brand = props.carReactivo.carDTO.car_brand
-    datosCar.value.numOfSeats = props.carReactivo.carDTO.number_of_seats
-    datosCar.value.carSituation.returnDate = props.carReactivo.carDTO.car_situation?.return_date_cs as Date
-    datosCar.value.carSituation.typeCarSit = props.carReactivo.carDTO.car_situation?.type_car_situation
+    datosUser.value.user = props.userReactivo.userDTO.user_name
+    datosUser.value.password = props.userReactivo.userDTO.password_user
+    datosUser.value.dni = props.userReactivo.userDTO.dni_user
+    datosUser.value.role.id_aut_role = props.userReactivo.userDTO.role?.id_aut_role ?? 0;
   }
 }
 
 function setShowForm() {
-  emit('setShowFormCar');
+  emit('setShowFormUser');
 }
 
 // se definen las funciones que va a exponer el componente
@@ -202,7 +204,7 @@ defineExpose({ onReset })
   justify-content: flex-end;
 }
 
-.seccion-car-situation {
+.seccion-role {
   display: flex;
   flex-direction: row;
   gap: 15px;
