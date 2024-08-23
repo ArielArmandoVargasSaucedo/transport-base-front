@@ -1,28 +1,28 @@
 <template>
   <div class="q-pa-md">
-    <FormCarTable ref="formCarTable" v-show="showForm" :car-reactivo="carReactivo" @set-show-form-car="setShowFormCar"
+    <FormCarTable ref="formCarTable" v-show="showForm" :car-reactivo="userReactivo" @set-show-form-car="setShowFormCar"
       @post-car="postCar" @update-car="updateCar" />
     <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Cars" :rows="listUser"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
-        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.brand"
-          placeholder="Buscar por Chapa">
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.user"
+          placeholder="Buscar por Usuario">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-          v-model="filtersCars.numOfSeats" placeholder="Buscar por Número de Asientos" :type="'number'">
+        <!-- <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.role"
+          placeholder="Buscar por Role1">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
-        </q-input>
-        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.number"
-          placeholder="Buscar por Número">
+        </q-input> -->
+        <!-- <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.dni"
+          placeholder="Buscar por DNI2">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
-        </q-input>
+        </q-input> -->
 
         <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
         <q-btn icon="add_circle" @click="activarFomularioInsertar()"></q-btn>
@@ -49,7 +49,7 @@ import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
 import { UserDTO } from 'src/logica/user/UserDTO';
-import { RoleDTO } from 'src/logica/role/RoleDTO';
+
 
 // Inyectar el Servicio de los Drivers
 
@@ -90,29 +90,32 @@ const columns = [
 ];
 
 //Se define una interfaz para los Filtros
-interface FiltersCars {
-  brand: string;
-  number: string;
-  numOfSeats: number;
+interface FiltersUser {
+  user: string;
+
+
+
 }
 
 // Se definen las variables reactivas del componente
 const listUser: Ref<Array<UserDTO>> = ref(new Array<UserDTO>());
-const carReactivo: Ref<{
-  carDTO?: UserDTO
+const userReactivo: Ref<{
+  userDTO?: UserDTO
 }> = ref({
-  carDTO: undefined
+  userDTO: undefined
 })
 const showFilter = ref(false);
-const filtersCars: Ref<FiltersCars> = ref({
-  brand: '',
-  number: '',
-  numOfSeats: 0,
+const filtersUser: Ref<FiltersUser> = ref({
+  user: '',
+  dni: '',
+
+
+
 });
 
 // Se define un watch para los filtros
-watch(filtersCars.value, async (newFilters: FiltersCars) => {
-  await getUser(newFilters.brand, newFilters.number, newFilters.numOfSeats);
+watch(filtersUser.value, async (newFilters: FiltersUser) => {
+  await getUser(newFilters.user);
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
@@ -127,20 +130,23 @@ onMounted(actualizarCars);
 
 async function actualizarCars() {
   await getUser(
-    filtersCars.value.brand,
-    filtersCars.value.number,
-    filtersCars.value.numOfSeats
+    filtersUser.value.brand,
+    filtersUser.value.number,
+    filtersUser.value.numOfSeats
   );
 }
 
 // Funciones CRUD
 //Funcion de obtener la lista de Carros
-async function getUser(user: string, dni: string, role: RoleDTO) {
+
+// async function getUser(user: string, dni: string, role: string)
+
+async function getUser(user: string) {
   try {
     listUser.value = await userService.getUser(
       user === '' ? undefined : user,
-      dni === '' ? undefined : dni,
-      role.role_type === '' ? undefined : role.role_type
+      // dni === '' ? undefined : dni,
+      // role === '' ? undefined : role
     );
   } catch (error) {
     if (error instanceof Error) alert(error.message);
@@ -207,9 +213,9 @@ async function deleteCar() {
 }
 
 // Funcion para editar un carro
-async function updateCar(carDTO: UserDTO /* representa la información del carro a modificar */) {
+async function updateCar(userDTO: UserDTO /* representa la información del carro a modificar */) {
   try {
-    await userService.updateCar(carDTO)
+    await userService.updateCar(userDTO)
 
     // se notifica de la acción
     Notify.create({
@@ -236,7 +242,7 @@ async function updateCar(carDTO: UserDTO /* representa la información del carro
 // Eventos
 function activarFomularioInsertar() {
   // se deselecciona cualquier carro dto seleccionado
-  carReactivo.value.carDTO = undefined
+  userReactivo.value.userDTO = undefined
   // se muestra el forumulario
   setShowFormCar()
 }
@@ -248,7 +254,7 @@ function setShowFormCar() {
 }
 
 function activarFormularioEditar(carDTOSeleccionado: UserDTO) {
-  carReactivo.value.carDTO = carDTOSeleccionado
+  userReactivo.value.userDTO = carDTOSeleccionado
   // se muestra el forumulario
   showForm.value = false
   showForm.value = true
