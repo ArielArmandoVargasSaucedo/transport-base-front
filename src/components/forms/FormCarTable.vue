@@ -10,15 +10,16 @@
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <q-input filled v-model="datosCar.number" label="Número del Carro *" lazy-rules :rules="[
-            (val) =>
-              (val && val.length > 0) || 'Por favor complete este campo',
+          <q-input filled v-model="datosCar.number" label="Chapa del Carro *" lazy-rules :rules="[
+            val => /^[A-Z][0-9]{6}$/.test(val) || 'La chapa debe empezar con una letra mayúscula seguida de seis números',
           ]" />
-          <q-input filled v-model="datosCar.brand" label="Chapa del Carro *" lazy-rules :rules="[
-            (val) =>
-              (val && val.length > 0) || 'Por favor complete este campo',
+          <q-input filled v-model="datosCar.brand" label="Marca del Carro *" lazy-rules :rules="[
+            val => /^[A-Za-z\s]+$/.test(val) || 'La marca solo debe contener letras',
           ]" />
-          <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Cantidad de Asientos del Carro *" />
+          <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Cantidad de Asientos del Carro *"
+            lazy-rules :rules="[
+              val => val >= 3 || 'La cantidad mínima de asientos es 3',
+            ]" />
 
           <div class="text-h5">Situación del Carro</div>
           <q-separator color="primary" inset size="16px" />
@@ -26,7 +27,7 @@
           <div class="seccion-car-situation">
             <div>
               <div class="text-h7">Fecha de Finalizado</div>
-              <q-date v-model="datosCar.carSituation.returnDate" mask="YYYY-MM-DD"  />
+              <q-date v-model="datosCar.carSituation.returnDate" mask="YYYY-MM-DD" />
             </div>
 
             <div class="select-container">
@@ -57,6 +58,7 @@
     </q-card>
   </div>
 </template>
+
 
 <script lang="ts" setup>
 import { CarDTO } from 'src/logica/car/CarDTO';

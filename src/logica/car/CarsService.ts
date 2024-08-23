@@ -101,7 +101,7 @@ export class CarsService {
     }
   }
 
-  //Metodo para insertar un Carro
+  //Metodo para actualizar un Carro
   async updateCar(carDTO: CarDTO): Promise<void> {
     const url = 'http://localhost:5000/car/' + carDTO.id_car;
     

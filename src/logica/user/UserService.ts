@@ -1,40 +1,70 @@
-import { UserDto } from 'src/logica/user/UserDTO';
+import { AuthService } from '../auth/AuthService';
+import { UserDTO } from './UserDTO';
 
 export class UserService {
-  static UserService: UserService;
+  static userService: UserService;
 
-  private constructor() {}
+  private constructor() { }
 
   static getInstancie(): UserService {
-    if (!this.UserService) this.UserService = new UserService();
+    if (!this.userService) this.userService = new UserService();
 
-    return this.UserService;
+    return this.userService;
   }
 
-  async getUsers(): Promise<Array<UserDto>> {
-    let listUsers: Array<UserDto> = new Array<UserDto>();
-    const url = 'http://localhost:5000/user';
+  async getUser(
+    user?: string,
+    password?: string,
+    dni?: string,
+    role?: number,
+    id_driver?: number,
+  ): Promise<Array<UserDTO>> {
+    let listUser: Array<UserDTO> = new Array<UserDTO>();
 
-    try {
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    // se obtiene el token
+    const token = AuthService.getInstancie().getJwt()
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-      listUsers = json;
-    } catch (error) {
-      if (error instanceof Error) console.log(error.message);
+    // si el usuario esta logeado
+    if (token) {
+      try {
+        // se obtiene el id del usuario logeado
+        const id_applicant = token.payload.userId
+        //Se define los parámetros query de la petición
+        const params = new URLSearchParams();
+        if (user) params.append('user_name', user);
+        if (password) params.append('password_user', password);
+        if (dni) params.append('dni_user', dni);
+        if (role) params.append('role', role.toString());
+        if (id_driver) params.append('id_driver', id_driver.toString());
+        if (id_applicant) params.append('id_applicant', id_applicant.toString())
+
+        const url = 'http://localhost:5000/user?' + params;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // extraer el json de la respuesta
+        const json = await res.json();
+        listUser = json;
+      } catch (error) { }
     }
 
-    return listUsers;
+
+    return listUser;
   }
 
-  async postUser(user: string, password: string): Promise<void> {
+  //Metodo para insertar un Carro
+  async postUser(
+    user_name: string,
+    password_user: string,
+    dni_user: string,
+    role: number,
+    id_driver: number,
+  ): Promise<void> {
     const url = 'http://localhost:5000/user';
 
     try {
@@ -45,8 +75,14 @@ export class UserService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_name: user,
-          password_user: password,
+          user_name: user_name,
+          password_user: password_user,
+          dni_user: dni_user,
+          id_driver: id_driver,
+          role: {
+            id_aut_role: UserDTO.role?.id_aut_role,
+            role_type: UserDTO.role?.role_type,
+          },
         }),
       });
 
@@ -58,8 +94,9 @@ export class UserService {
     }
   }
 
-  async deleteUser(id: number): Promise<void> {
-    const url = 'http://localhost:5000/user/' + id;
+  async deleteUser(id_user: number): Promise<void> {
+
+    const url = 'http://localhost:5000/user/' + id_user;
 
     try {
       const res = await fetch(url, {
@@ -77,4 +114,35 @@ export class UserService {
       // se relanza la exeption
     }
   }
+
+  //Metodo para insertar un Carro
+  async updateUser(userDTO: UserDTO): Promise<void> {
+    const url = 'http://localhost:5000/user/' + userDTO.id_user;
+
+    try {
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_name: userDTO.user_name,
+          password_user: userDTO.password_user,
+          dni_user: userDTO.dni_user,
+          role: {
+            id_aut_role: userDTO.role?.id_aut_role,
+            role_type: userDTO.role?.role_type,
+          }
+        }),
+      });
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+    } catch (error) {
+      if (error instanceof Error) console.log(error.message);
+      // se relanza la exeption
+    }
+  }
+
 }

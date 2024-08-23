@@ -1,62 +1,31 @@
 <template>
   <div class="q-pa-md">
-    <q-table
-      :table-header-class="'bg-primary'"
-      :title-class="'text-h4'"
-      title="Tipos de Situaciones de los Carros"
-      :rows="listTypesCarSituations"
-      :columns="columns"
-      row-key="id"
-    >
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Tipos de Situaciones de los Carros"
+      :rows="listTypesCarSituations" :columns="columns" row-key="id">
       <template v-slot:top-right>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersTypeCarSit.nombre"
-          placeholder="Buscar por Nombre"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
+          v-model="filtersTypeCarSit.nombre" placeholder="Buscar por Nombre">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
 
-        <q-btn
-          class="q-ml-sm"
-          icon="filter_list"
-          @click="showFilter = !showFilter"
-          flat
-        />
+        <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
         <q-btn icon="add_circle" @click="activarModalTypeCarSit()"></q-btn>
       </template>
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
           <q-btn icon="edit" size="sm" flat dense />
-          <q-btn
-            icon="delete"
-            size="sm"
-            class="q-ml-sm"
-            flat
-            dense
-            @click="activarModlConfirmacion(props.row.id_aut_type_cs)"
-          ></q-btn>
+          <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
+            @click="activarModlConfirmacion(props.row.id_aut_type_cs)"></q-btn>
         </q-td>
       </template>
     </q-table>
-    <ModalTypeCarSit
-      ref="modalTypeCarSit"
-      @post-type-car-situations="postTypeCarSituations"
-    />
+    <ModalTypeCarSit ref="modalTypeCarSit" @post-type-car-situations="postTypeCarSituations" />
 
-    <ModalConfirmacion
-      ref="modalConfirmacion"
-      :text="'Seguro que desea eliminar?'"
-      @action-confirm="deleteTypeCarSituations"
-    />
+    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'"
+      @action-confirm="deleteTypeCarSituations" />
   </div>
 </template>
 
@@ -106,8 +75,8 @@ const filtersTypeCarSit: Ref<FiltersTypeCarSit> = ref({
 });
 
 // Se define uun watch para los filtros
-watch(filtersTypeCarSit.value, async (newFilters: FiltersTypeCarSit) =>{
-await getTypeCarSituations()
+watch(filtersTypeCarSit.value, async (newFilters: FiltersTypeCarSit) => {
+  await getTypeCarSituations()
 })
 
 const showFilter = ref(false);
@@ -158,7 +127,7 @@ async function postTypeCarSituations(nombre: string) {
         color: 'red', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
         timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'check_circle', // Añade un icono a la notificación
+        icon: 'cancel', // Añade un icono a la notificación
       });
   }
 }
@@ -184,7 +153,7 @@ async function deleteTypeCarSituations() {
         color: 'red', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
         timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'check_circle', // Añade un icono a la notificación
+        icon: 'cancel', // Añade un icono a la notificación
       });
   }
 }
