@@ -1,24 +1,24 @@
 <template>
   <div class="q-pa-md">
-    <FormUserTable ref="formUserTable" v-show="showForm" :user-reactivo="userReactivo"
-      @set-show-form-user="setShowFormUser" @post-user=".postUser" @update-user="updateUser" />
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="User" :rows="listUser"
+    <FormCarTable ref="formCarTable" v-show="showForm" :car-reactivo="carReactivo" @set-show-form-car="setShowFormCar"
+      @post-car="postCar" @update-car="updateCar" />
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Cars" :rows="listUser"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
-        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.name"
-          placeholder="Buscar por Usuario">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.dni"
-          placeholder="Buscar por DNI">
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.brand"
+          placeholder="Buscar por Chapa">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-          v-model="filtersUser.id_aut_role" placeholder="Buscar por Role">
+          v-model="filtersCars.numOfSeats" placeholder="Buscar por Número de Asientos" :type="'number'">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.number"
+          placeholder="Buscar por Número">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -36,23 +36,25 @@
         </q-td>
       </template>
     </q-table>
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteUser" />
+    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteCar" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { UserDTO } from 'src/logica/user/UserDTO';
+
 import { UserService } from 'src/logica/user/UserService';
 import { Ref, onMounted, ref } from 'vue';
-import FormUserTable from './forms/FormUserTable.vue';
+import FormCarTable from './forms/FormCarTable.vue';
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
+import { UserDTO } from 'src/logica/user/UserDTO';
+import { RoleDTO } from 'src/logica/role/RoleDTO';
 
 // Inyectar el Servicio de los Drivers
 
 const userService: UserService = UserService.getInstancie();
-let id_user_delete = -1;
+let id_car_delete = -1;
 
 const columns = [
   {
@@ -72,17 +74,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'id_aut_role',
-    label: 'Role',
+    name: 'role',
+    label: 'Role del Usuario',
     align: 'left',
-    field: (row: UserDTO) => row.id_aut_role.role_type,
-    sortable: true,
-  },
-  {
-    name: 'id_driver',
-    label: 'Numero de Driver',
-    align: 'left',
-    field: (row: UserDTO) => row.id_driver,
+    field: (row: UserDTO) => row.role?.role_type,
     sortable: true,
   },
   {
@@ -95,29 +90,29 @@ const columns = [
 ];
 
 //Se define una interfaz para los Filtros
-interface FiltersUser {
-  name: string;
-  dni: string;
-  id_aut_role: number;
+interface FiltersCars {
+  brand: string;
+  number: string;
+  numOfSeats: number;
 }
 
 // Se definen las variables reactivas del componente
 const listUser: Ref<Array<UserDTO>> = ref(new Array<UserDTO>());
-const userReactivo: Ref<{
-  userDTO?: UserDTO
+const carReactivo: Ref<{
+  carDTO?: UserDTO
 }> = ref({
-  userDTO: undefined
+  carDTO: undefined
 })
 const showFilter = ref(false);
-const filtersUser: Ref<FiltersUser> = ref({
-  name: '',
-  dni: '',
-  id_aut_role: 0,
+const filtersCars: Ref<FiltersCars> = ref({
+  brand: '',
+  number: '',
+  numOfSeats: 0,
 });
 
 // Se define un watch para los filtros
-watch(filtersUser.value, async (newFilters: FiltersUser) => {
-  await getUser(newFilters.name, newFilters.dni, newFilters.id_aut_role);
+watch(filtersCars.value, async (newFilters: FiltersCars) => {
+  await getUser(newFilters.brand, newFilters.number, newFilters.numOfSeats);
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
@@ -125,53 +120,53 @@ const showForm = ref(false); // representa si el formulario se muestra o no
 // se crea una variable para el modal
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
-// se crea una variable para el formulario de user table
-const formUserTable: Ref<InstanceType<typeof FormUserTable> | null> =
+// se crea una variable para el formulario de car table
+const formCarTable: Ref<InstanceType<typeof FormCarTable> | null> =
   ref(null);
-onMounted(actualizarUser);
+onMounted(actualizarCars);
 
-async function actualizarUser() {
+async function actualizarCars() {
   await getUser(
-    filtersUser.value.name,
-    filtersUser.value.dni,
-    filtersUser.value.id_aut_role
+    filtersCars.value.brand,
+    filtersCars.value.number,
+    filtersCars.value.numOfSeats
   );
 }
 
 // Funciones CRUD
-//Funcion de obtener la lista de usuarios
-async function getUser(name: string, dni: string, id_aut_role: number) {
+//Funcion de obtener la lista de Carros
+async function getUser(user: string, dni: string, role: RoleDTO) {
   try {
     listUser.value = await userService.getUser(
-      name === '' ? undefined : name,
+      user === '' ? undefined : user,
       dni === '' ? undefined : dni,
-      id_aut_role === 0 ? undefined : id_aut_role
+      role.role_type === '' ? undefined : role.role_type
     );
   } catch (error) {
     if (error instanceof Error) alert(error.message);
   }
 }
 
-//Funcion para insertar un usuario
-async function postUser(
-  user_name: string,
-  password_user: string,
-  dni_user: string,
-  id_aut_role: number,
-  id_driver: number,
+//Funcion para insertar un carro
+async function postCar(
+  car_number: string,
+  car_brand: string,
+  number_of_seats: number,
+  returnDate: Date,
+  id_aut_type_cs: number
 ) {
   try {
-    await userService.postUser(
-      user_name,
-      password_user,
-      dni_user,
-      id_aut_role,
-      id_driver
+    await userService.postCar(
+      car_number,
+      car_brand,
+      number_of_seats,
+      id_aut_type_cs,
+      returnDate
     );
 
     // se notifica de la acción
     Notify.create({
-      message: 'usuario insertado con éxito',
+      message: 'Carro insertado con éxito',
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -179,24 +174,24 @@ async function postUser(
       icon: 'check_circle', // Añade un icono a la notificación
     });
     // se reinician los campos
-    formUserTable.value?.onReset()
+    formCarTable.value?.onReset()
     // se cierra el formulario
-    setShowFormUser();
+    setShowFormCar();
 
     // se actualiza la información
-    await actualizarUser();
+    await actualizarCars();
   } catch (error) {
     alert(error);
   }
 }
 
-//Funcion para eliminar un usuario
-async function deleteUser() {
+//Funcion para eliminar un carro
+async function deleteCar() {
   try {
-    await userService.deleteUser(id_user_delete);
+    await userService.deleteCar(id_car_delete);
     // se notifica de la acción
     Notify.create({
-      message: 'Se eliminó con éxito el usuario',
+      message: 'Se eliminó con éxito el carro',
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -205,20 +200,20 @@ async function deleteUser() {
     });
 
     // se actualiza la información
-    await actualizarUser();
+    await actualizarCars();
   } catch (error) {
     alert(error)
   }
 }
 
-// Funcion para editar un usuario
-async function updateUser(userDTO: UserDTO /* representa la información del usuario a modificar */) {
+// Funcion para editar un carro
+async function updateCar(carDTO: UserDTO /* representa la información del carro a modificar */) {
   try {
-    await userService.updateUser(userDTO)
+    await userService.updateCar(carDTO)
 
     // se notifica de la acción
     Notify.create({
-      message: 'Se modificó con éxito el usuario',
+      message: 'Se modificó con éxito el carro',
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -227,12 +222,12 @@ async function updateUser(userDTO: UserDTO /* representa la información del usu
     });
 
     // se reinician los campos
-    formUserTable.value?.onReset()
+    formCarTable.value?.onReset()
     // se cierra el formulario
-    setShowFormUser();
+    setShowFormCar();
 
     // se actualiza la información
-    await actualizarUser();
+    await actualizarCars();
   } catch (error) {
     alert(error)
   }
@@ -240,28 +235,28 @@ async function updateUser(userDTO: UserDTO /* representa la información del usu
 
 // Eventos
 function activarFomularioInsertar() {
-  // se deselecciona cualquier usuario dto seleccionado
-  userReactivo.value.userDTO = undefined
+  // se deselecciona cualquier carro dto seleccionado
+  carReactivo.value.carDTO = undefined
   // se muestra el forumulario
-  setShowFormUser()
+  setShowFormCar()
 }
-function setShowFormUser() {
+function setShowFormCar() {
   // si esta activado el form
   if (showForm.value) showForm.value = false; // se desactiva
   // esta desactivado
   else showForm.value = true; // se activa
 }
 
-function activarFormularioEditar(userDTOSeleccionado: UserDTO) {
-  userReactivo.value.userDTO = userDTOSeleccionado
+function activarFormularioEditar(carDTOSeleccionado: UserDTO) {
+  carReactivo.value.carDTO = carDTOSeleccionado
   // se muestra el forumulario
   showForm.value = false
   showForm.value = true
 }
 
-function activateModalConfirmacion(id_user_selected: number) {
+function activateModalConfirmacion(id_car_selected: number) {
 
-  id_user_delete = id_user_selected;
+  id_car_delete = id_car_selected;
   modalConfirmacion.value?.activateModalConfirmacion();
 }
 </script>

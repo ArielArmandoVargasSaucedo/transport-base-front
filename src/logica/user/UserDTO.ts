@@ -1,6 +1,6 @@
 import { RoleDTO } from '../role/RoleDTO';
 
-export class UserDto {
+export class UserDTO {
   id_user: number;
   user_name: string;
   password_user: string;
