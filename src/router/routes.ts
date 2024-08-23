@@ -77,7 +77,7 @@ const routes: RouteRecordRaw[] = [
         name: 'AdminPage',
         component: AdminPage,
         meta: {
-          icon: 'user',
+          icon: 'supervisor_account',
           needLogin: true, // indica que se requiere estar autenticado
           roles: [RolesEnum.Administrador] // lista de roles con autorización para entrar a la ruta
         },

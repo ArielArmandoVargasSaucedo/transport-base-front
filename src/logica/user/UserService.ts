@@ -1,3 +1,4 @@
+import { AuthService } from '../auth/AuthService';
 import { UserDTO } from './UserDTO';
 
 export class UserService {
@@ -20,28 +21,38 @@ export class UserService {
   ): Promise<Array<UserDTO>> {
     let listUser: Array<UserDTO> = new Array<UserDTO>();
 
-    try {
-      //Se define los parámetros query de la petición
-      const params = new URLSearchParams();
-      if (user) params.append('user_name', user);
-      if (password) params.append('password_user', password);
-      if (dni) params.append('dni_user', dni);
-      if (role) params.append('role', role.toString());
-      if (id_driver) params.append('id_driver', id_driver.toString());
+    // se obtiene el token
+    const token = AuthService.getInstancie().getJwt()
 
-      const url = 'http://localhost:5000/user?' + params;
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    // si el usuario esta logeado
+    if (token) {
+      try {
+        // se obtiene el id del usuario logeado
+        const id_applicant = token.payload.userId
+        //Se define los parámetros query de la petición
+        const params = new URLSearchParams();
+        if (user) params.append('user_name', user);
+        if (password) params.append('password_user', password);
+        if (dni) params.append('dni_user', dni);
+        if (role) params.append('role', role.toString());
+        if (id_driver) params.append('id_driver', id_driver.toString());
+        if (id_applicant) params.append('id_applicant', id_applicant.toString())
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-      listUser = json;
-    } catch (error) { }
+        const url = 'http://localhost:5000/user?' + params;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // extraer el json de la respuesta
+        const json = await res.json();
+        listUser = json;
+      } catch (error) { }
+    }
+
 
     return listUser;
   }

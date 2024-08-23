@@ -1,7 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <FormUserTable ref="formUserTable" v-show="showForm" :car-reactivo="userReactivo"
-      @set-show-form-car="setShowFormCar" @post-car="postCar" @update-car="updateCar" />
+
     <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Cars" :rows="listUser"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
@@ -36,7 +35,7 @@
         </q-td>
       </template>
     </q-table>
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteCar" />
+    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="" />
   </div>
 </template>
 
@@ -44,7 +43,7 @@
 
 import { UserService } from 'src/logica/user/UserService';
 import { Ref, onMounted, ref } from 'vue';
-import FormUserTable from './forms/FormUserTable.vue';
+
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
@@ -110,7 +109,7 @@ const filtersUser: Ref<FiltersUser> = ref({
 
 // Se define un watch para los filtros
 watch(filtersUser.value, async (newFilters: FiltersUser) => {
-  await getUser(newFilters.user);
+  await getUsers(newFilters.user);
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
@@ -119,16 +118,12 @@ const showForm = ref(false); // representa si el formulario se muestra o no
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
 // se crea una variable para el formulario de car table
-const formUserTable: Ref<InstanceType<typeof FormUserTable> | null> =
-  ref(null);
-onMounted(actualizarCars);
+//const formUserTable: Ref<InstanceType<typeof FormUserTable> | null> =
+// ref(null);
+onMounted(actualizarDrivers);
 
-async function actualizarCars() {
-  await getUser(
-    filtersUser.value.brand,
-    filtersUser.value.number,
-    filtersUser.value.numOfSeats
-  );
+async function actualizarDrivers() {
+  await getUsers(filtersUser.value.user);
 }
 
 // Funciones CRUD
@@ -136,7 +131,7 @@ async function actualizarCars() {
 
 // async function getUser(user: string, dni: string, role: string)
 
-async function getUser(user: string) {
+async function getUsers(user: string) {
   try {
     listUser.value = await userService.getUser(
       user === '' ? undefined : user,
@@ -149,7 +144,7 @@ async function getUser(user: string) {
 }
 
 //Funcion para insertar un carro
-async function postCar(
+/*async function postCar(
   car_number: string,
   car_brand: string,
   number_of_seats: number,
@@ -184,10 +179,10 @@ async function postCar(
   } catch (error) {
     alert(error);
   }
-}
+}*/
 
 //Funcion para eliminar un carro
-async function deleteCar() {
+/*async function deleteCar() {
   try {
     await userService.deleteCar(id_user_delete);
     // se notifica de la acción
@@ -205,12 +200,12 @@ async function deleteCar() {
   } catch (error) {
     alert(error)
   }
-}
+}*/
 
 // Funcion para editar un carro
 async function updateCar(userDTO: UserDTO /* representa la información del carro a modificar */) {
   try {
-    await userService.updateCar(userDTO)
+    //await userService.updateCar(userDTO)
 
     // se notifica de la acción
     Notify.create({
@@ -228,7 +223,7 @@ async function updateCar(userDTO: UserDTO /* representa la información del carr
     setShowFormCar();
 
     // se actualiza la información
-    await actualizarCars();
+    // await actualizarCars();
   } catch (error) {
     alert(error)
   }
