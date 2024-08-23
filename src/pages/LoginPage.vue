@@ -1,25 +1,43 @@
 <template>
+  <div class="flex flex-center container">
 
-  <span class="text-h3">Login</span>
-  <q-separator spaced />
+    <div>
+      <q-avatar size="100px" font-size="52px" color="primary" text-color="white" icon="person" />
+    </div>
 
-  <div class="row justify-center">
-    <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-xs col-sm-12 col-md-6 q-pt-xl">
-      <q-input filled v-model="datosLogin.nameUser" label="User Name *" lazy-rules :rules="[
-        (val) => (val && val.length > 0) || 'This field is required',
-        (val) =>
-          /^[a-zA-Z0-9]*$/.test(val) || 'No special characters allowed',
-      ]" />
+    <q-card class="spa">
+      <q-card-section>
+        <span class="text-h3 log">Login</span>
+      </q-card-section>
 
-      <q-input filled type="password" v-model="datosLogin.password" label="Password *" lazy-rules :rules="[
-        (val) => (val && val.length > 0) || 'This field is required',
-      ]" />
+      <q-card-section>
+        <q-form @submit="onSubmit" @reset="onReset">
+          <q-input class="full-width inp" clearable filled v-model="datosLogin.nameUser" label="User Name *" lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'This field is required',
+              (val) =>
+                /^[a-zA-Z0-9]*$/.test(val) || 'No special characters allowed',
+            ]">
+            <template v-slot:before>
+              <q-icon name="person" color="primary" />
+            </template>
+          </q-input>
 
-      <div>
-        <q-btn label="Login" type="submit" color="primary" />
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-      </div>
-    </q-form>
+          <q-input class="full-width inp" clearable filled type="password" v-model="datosLogin.password"
+            label="Password *" lazy-rules :rules="[
+              (val) => (val && val.length > 0) || 'This field is required',
+            ]">
+            <template v-slot:before>
+              <q-icon name="lock" color="primary" />
+            </template>
+          </q-input>
+
+          <div>
+            <q-btn label="Login" type="submit" color="primary" class="btn" />
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
   </div>
 
 </template>
@@ -39,8 +57,8 @@ interface DatosLogin {
   password: string
 }
 const datosLogin: Ref<DatosLogin> = ref({
-  nameUser: "",
-  password: ""
+  nameUser: '',
+  password: ''
 })
 
 async function onSubmit() {
@@ -48,7 +66,7 @@ async function onSubmit() {
     // se intenta el logeo
     await authService.login(datosLogin.value.nameUser, datosLogin.value.password)
     // si no hay problemas en el logeo se redirige a la pagina principal
-    router.push({ name: "principal" })
+    router.push({ name: 'principal' })
   } catch (error) {
     if (error instanceof BadRequestError)
       alert(error.message)
@@ -58,8 +76,38 @@ async function onSubmit() {
 }
 
 function onReset() {
-  datosLogin.value.nameUser = ""
-  datosLogin.value.password = ""
+  datosLogin.value.nameUser = ''
+  datosLogin.value.password = ''
 }
 
 </script>
+
+<style scoped>
+.container {
+  background-image: url("src/images/fondo-login.jpg");
+  padding: 120px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.log {
+  display: flex;
+  justify-content: center;
+
+}
+
+.inp {
+  margin: 20px;
+}
+
+.spa {
+  padding: 20px;
+  width: 600px;
+}
+
+.btn {
+  width: 100%;
+  margin: 10px;
+}
+</style>
