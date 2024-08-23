@@ -1,79 +1,36 @@
 <template>
   <div class="q-pa-md">
     <FormSolicitude v-show="showForm" @set-show-form-car="setShowFormSol" />
-    <q-table
-      :table-header-class="'bg-primary'"
-      :title-class="'text-h4'"
-      title="Solicitudes"
-      :rows="listCars"
-      :columns="columns"
-      row-key="id"
-    >
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Solicitudes" :rows="listCars"
+      :columns="columns" row-key="id">
       <template v-slot:top-right>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersSol"
-          placeholder="Buscar por X"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersSol"
+          placeholder="Buscar por X">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersSol"
-          placeholder="Buscar por Y"
-          :type="'number'"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersSol"
+          placeholder="Buscar por Y" :type="'number'">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersSol"
-          placeholder="Buscar por Z"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersSol"
+          placeholder="Buscar por Z">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
 
-        <q-btn
-          class="q-ml-sm"
-          icon="filter_list"
-          @click="showFilter = !showFilter"
-          flat
-        />
+        <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
         <q-btn icon="add_circle" @click="setShowFormSol()"></q-btn>
       </template>
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
           <q-btn icon="edit" size="sm" flat dense />
-          <q-btn
-            icon="delete"
-            size="sm"
-            class="q-ml-sm"
-            flat
-            dense
-            @click=""
-          ></q-btn>
+          <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense @click=""></q-btn>
         </q-td>
       </template>
     </q-table>
@@ -139,7 +96,7 @@ const columns = [
 ];
 
 //Se define una interfaz para los Filtros
-interface FiltersSol {}
+interface FiltersSol { }
 
 // Se definen las variables reactivas del componente
 const listCars: Ref<Array<CarDTO>> = ref(new Array<CarDTO>());

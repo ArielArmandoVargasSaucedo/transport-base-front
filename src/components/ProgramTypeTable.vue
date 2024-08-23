@@ -1,35 +1,16 @@
 <template>
   <div class="q-pa-md">
-    <q-table
-      :table-header-class="'bg-primary'"
-      :title-class="'text-h4'"
-      title="Tipos de Programaciones"
-      :rows="listProgramsType"
-      :columns="columns"
-      row-key="id"
-    >
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Tipos de Programaciones"
+      :rows="listProgramsType" :columns="columns" row-key="id">
       <template v-slot:top-right>
-        <q-input
-          class="q-mr-md"
-          v-if="showFilter"
-          filled
-          borderless
-          dense
-          debounce="300"
-          v-model="filtersProgramType.nombre"
-          placeholder="Buscar por Nombre"
-        >
+        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
+          v-model="filtersProgramType.nombre" placeholder="Buscar por Nombre">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
 
-        <q-btn
-          class="q-ml-sm"
-          icon="filter_list"
-          @click="showFilter = !showFilter"
-          flat
-        />
+        <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
         <q-btn icon="add_circle" @click="activarModalTypeProgram()"></q-btn>
       </template>
 
@@ -40,10 +21,7 @@
         </q-td>
       </template>
     </q-table>
-    <ModalTypeProgram
-      ref="modalTypeProgram"
-      @post-type-program="postTypeProgram"
-    />
+    <ModalTypeProgram ref="modalTypeProgram" @post-type-program="postTypeProgram" />
   </div>
 </template>
 
@@ -152,7 +130,7 @@ async function postTypeProgram(nombre: string) {
         color: 'red', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
         timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'check_circle', // Añade un icono a la notificación
+        icon: 'cancel', // Añade un icono a la notificación
       });
   }
 }
@@ -178,7 +156,7 @@ async function deleteTypeProgram() {
         color: 'red', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
         timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'check_circle', // Añade un icono a la notificación
+        icon: 'cancel', // Añade un icono a la notificación
       });
   }
 }

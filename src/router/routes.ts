@@ -9,6 +9,7 @@ import { RouteRecordRaw } from 'vue-router';
 import SolicitudePage from 'src/pages/SolicitudePage.vue';
 import { RolesEnum } from 'src/utils/RolesEnum';
 import { AuthService } from 'src/logica/auth/AuthService';
+import GroupTourPage from 'src/pages/GroupTourPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -56,6 +57,17 @@ const routes: RouteRecordRaw[] = [
         component: SolicitudePage,
         meta: {
           icon: 'newspaper',
+          needLogin: true, // indica que se requiere estar autenticado
+          roles: [RolesEnum.Directivo, RolesEnum.Chofer] // lista de roles con autorización para entrar a la ruta
+        },
+        children: [],
+      },
+      {
+        path: '/GroupTourPage',
+        name: 'Grupo Turístico',
+        component: GroupTourPage,
+        meta: {
+          icon: 'groups',
           needLogin: true, // indica que se requiere estar autenticado
           roles: [RolesEnum.Directivo, RolesEnum.Chofer] // lista de roles con autorización para entrar a la ruta
         },

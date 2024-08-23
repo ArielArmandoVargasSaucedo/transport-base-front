@@ -20,7 +20,11 @@
                 <q-date v-model="model" mask="YYYY-MM-DD HH:mm" color="primary" />
               </div>
               <div>
-                <div class="text-h7">Hora</div>
+                <div class="text-h7">Hora de Inicio</div>
+                <q-time v-model="model" mask="YYYY-MM-DD HH:mm" color="primary" />
+              </div>
+              <div>
+                <div class="text-h7">Hora de Fin</div>
                 <q-time v-model="model" mask="YYYY-MM-DD HH:mm" color="primary" />
               </div>
             </div>
@@ -38,14 +42,8 @@
                 </template>
               </q-select>
               <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Kilometraje *" lazy-rules :rules="[
-                (val) =>
-                  (val && val.length > 0) || 'Por favor complete este campo',
+                (val) => val > 0 || 'El Kilometraje debe ser mayor que 0',
               ]" />
-              <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Tiempo de demora *" lazy-rules
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) || 'Por favor complete este campo',
-                ]" />
             </div>
           </div>
 
@@ -70,14 +68,14 @@
 
             <div v-show="showGrupoTuristico" class="container-grupo-turistico-crear-nuevo">
               <q-input filled v-model="datosCar.number" label="Código del Grupo Nuevo *" lazy-rules :rules="[
-                (val) =>
-                  (val && val.length > 0) || 'Por favor complete este campo',
+                (val) => /^\d{4}$/.test(val) || 'Debe ser un código de 4 números',
               ]" />
               <q-input filled v-model="datosCar.number" label="País de procedencia *" lazy-rules :rules="[
-                (val) =>
-                  (val && val.length > 0) || 'Por favor complete este campo',
+                (val) => /^[A-Z][a-zA-Z]+$/.test(val) || 'Debe empezar con mayúscula y solo contener letras',
               ]" />
-              <q-input filled v-model="datosCar.number" label="Cantidad de Turistas *" lazy-rules type="number" />
+              <q-input filled v-model="datosCar.number" label="Cantidad de Turistas *" lazy-rules :rules="[
+                (val) => val > 0 || 'Debe ser al menos 1 turista',
+              ]" type="number" />
             </div>
 
             <q-input filled v-model="datosCar.number" label="Descripción de la Programación *" lazy-rules :rules="[
@@ -109,12 +107,17 @@
           <q-separator color="primary" inset size="16px" />
 
           <div class="ruta-container">
-            <q-input filled v-model="datosCar.number" label="Kilómetros disponibles al comenzar *" lazy-rules type="number" />
-            <q-input filled v-model="datosCar.number" label="Kilómetros disponibles al finalizar *" lazy-rules type="number" />
-            <q-input filled v-model="datosCar.number" label="Duración *" lazy-rules type="number" />
+            <q-input filled v-model="datosCar.number" label="Kilómetros disponibles al comenzar *" lazy-rules :rules="[
+              (val) => val > 0 || 'Debe ser al menos 1',
+            ]" type="number" />
+            <q-input filled v-model="datosCar.number" label="Kilómetros disponibles al finalizar *" lazy-rules :rules="[
+              (val) => val >= 0 || 'Debe ser un número positivo',
+            ]" type="number" />
+            <q-input filled v-model="datosCar.number" label="Duración *" lazy-rules :rules="[
+              (val) => val > 0 || 'La duración debe ser mayor que 0',
+            ]" type="number" />
             <q-input filled v-model="datosCar.number" label="Lugar de recogida *" lazy-rules :rules="[
-              (val) =>
-                (val && val.length > 0) || 'Por favor complete este campo',
+              (val) => /^[A-Z][a-zA-Z\s]+$/.test(val) || 'Debe empezar con mayúscula y solo contener letras',
             ]" />
           </div>
 
@@ -220,7 +223,6 @@ function setShowForm() {
 
 .container-icon {
   display: flex;
-
   justify-content: flex-end;
 }
 
