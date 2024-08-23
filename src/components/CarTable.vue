@@ -48,6 +48,7 @@ import FormCarTable from './forms/FormCarTable.vue';
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 // Inyectar el Servicio de los Drivers
 
@@ -186,7 +187,10 @@ async function postCar(
     // se actualiza la información
     await actualizarCars();
   } catch (error) {
-    alert(error);
+    if (error instanceof BadRequestError)
+    alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -234,7 +238,10 @@ async function updateCar(carDTO: CarDTO /* representa la información del carro 
     // se actualiza la información
     await actualizarCars();
   } catch (error) {
-    alert(error)
+    if (error instanceof BadRequestError)
+    alert(error.message)
+
+    console.log(error)
   }
 }
 

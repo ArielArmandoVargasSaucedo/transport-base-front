@@ -84,12 +84,21 @@ import { DriverDTO } from 'src/logica/drivers/DriverDTO';
 import { DriverSituationDTO } from 'src/logica/driverSituation/DriverSituationDTO';
 import { TypeDriverSituationDTO } from 'src/logica/typeDriverSituation/TypeDriverSituationDTO';
 import { TypeDriverSituationsService } from 'src/logica/typeDriverSituation/TypeDriverSituationsService';
-import { onMounted, ref, Ref } from 'vue';
+import { onMounted, onUpdated, ref, Ref } from 'vue';
+
+// Se definen las props del componente
+interface Props {
+  driverReactivo: {
+    driverDTO?: DriverDTO
+  }
+}
+const props: Props = defineProps<Props>()
 
 // Se definen los emit del componente
 const emit = defineEmits<{
   (e: 'setShowFormDriver'): void;
   (e: 'postDriver', driverDTO: DriverDTO): Promise<void>;
+  (e: 'updateDriver', driverDTO: DriverDTO): Promise<void>;
 }>();
 
 // Se inyecta el Servicio de los tipos de situaciones de drivers para obtener las situaciones
@@ -132,18 +141,54 @@ async function getCars() {
   }
 }
 
+onUpdated(onReset)
+
 onMounted(async () => {
   await actualizarListTypeDriverSituation()
   await actualizarListCar()
 })
 
 async function onSubmit() {
-  await emit('postDriver', driverDTO.value)
+  // se reinician los campos del formulario
+  // si fue abierto en modo insercción
+  if (!props.driverReactivo.driverDTO) {
+    await emit('postDriver', driverDTO.value)
+  } else {
+    // antes de pasar el driverDto al metodo de update
+    // se le asigna el id al driverDTO de el formulario para indicar a que driver se desea modificar
+    driverDTO.value.id = props.driverReactivo.driverDTO.id
+    await emit('updateDriver', driverDTO.value)
+  }
+
+
 }
 
 async function onReset() {
+  // se reinician los campos del formulario
+  // si fue abierto en modo insercción
+  if (!props.driverReactivo.driverDTO) {
+    driverDTO.value.dni_driver = ''
+    driverDTO.value.driver_name = ''
+    driverDTO.value.home_address = ''
+    driverDTO.value.is_copilot = false
+    driverDTO.value.car = undefined
+    driverDTO.value.driver_situation.return_date_ds = new Date()
+    driverDTO.value.driver_situation.type_driver_situation = undefined
 
+
+  }
+  else { // si el formulario fue abierto en modo modificación
+    driverDTO.value.dni_driver = props.driverReactivo.driverDTO.dni_driver
+    driverDTO.value.driver_name = props.driverReactivo.driverDTO.driver_name
+    driverDTO.value.home_address = props.driverReactivo.driverDTO.home_address
+    driverDTO.value.is_copilot = props.driverReactivo.driverDTO.is_copilot
+    driverDTO.value.car = props.driverReactivo.driverDTO.car
+    driverDTO.value.driver_situation.return_date_ds = props.driverReactivo.driverDTO.driver_situation.return_date_ds as Date
+    driverDTO.value.driver_situation.type_driver_situation = props.driverReactivo.driverDTO.driver_situation.type_driver_situation
+
+  }
 }
+
 
 function setShowForm() {
   emit('setShowFormDriver');

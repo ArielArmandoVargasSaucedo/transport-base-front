@@ -1,4 +1,6 @@
+import { BadRequestInterface } from 'src/utils/BadRequestInterface';
 import { CarDTO } from './CarDTO';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 export class CarsService {
   static carsService: CarsService;
@@ -52,7 +54,7 @@ export class CarsService {
   ): Promise<void> {
     const url = 'http://localhost:5000/car';
 
-    try {
+
       const res = await fetch(url, {
         method: 'POST',
         headers: {
@@ -70,12 +72,12 @@ export class CarsService {
         }),
       });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-    } catch (error) {
-      if (error instanceof Error) console.log(error.message);
-      // se relanza la exeption
-    }
+      if (res.status === 400) {
+        // obtener la respuesta
+        const badRequest: BadRequestInterface = await res.json()
+        throw new BadRequestError(badRequest.message)
+      }
+
   }
 
   async deleteCar(id_car: number): Promise<void> {
@@ -102,8 +104,7 @@ export class CarsService {
   //Metodo para insertar un Carro
   async updateCar(carDTO: CarDTO): Promise<void> {
     const url = 'http://localhost:5000/car/' + carDTO.id_car;
-
-    try {
+    
       const res = await fetch(url, {
         method: 'PATCH',
         headers: {
@@ -115,18 +116,18 @@ export class CarsService {
           car_brand: carDTO.car_brand,
           number_of_seats: carDTO.number_of_seats,
           car_situation: {
-            return_date_cs: carDTO.car_situation?.return_date_cs,
-            id_aut_type_cs: carDTO.car_situation?.type_car_situation?.id_aut_type_cs,
+            return_date_cs: carDTO.car_situation.return_date_cs,
+            id_aut_type_cs: carDTO.car_situation.type_car_situation?.id_aut_type_cs,
           }
         }),
       });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-    } catch (error) {
-      if (error instanceof Error) console.log(error.message);
-      // se relanza la exeption
-    }
+      if (res.status === 400) {
+        // obtener la respuesta
+        const badRequest: BadRequestInterface = await res.json()
+        throw new BadRequestError(badRequest.message)
+      }
+
   }
 
 }

@@ -6,14 +6,14 @@ export class CarDTO {
   car_number: string;
   car_brand: string;
   number_of_seats: number;
-  car_situation: CarSituationDTO | undefined;
+  car_situation: CarSituationDTO ;
 
   constructor(
     id_car: number,
     car_number: string,
     car_brand: string,
     number_of_seats: number,
-    car_situation: CarSituationDTO | undefined
+    car_situation: CarSituationDTO 
   ) {
     this.id_car = id_car;
     this.car_number = car_number;
