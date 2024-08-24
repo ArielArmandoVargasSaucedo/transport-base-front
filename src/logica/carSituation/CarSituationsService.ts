@@ -13,19 +13,18 @@ export class CarSituationsService {
     }
 
     async getCarSituations(
-        return_date_cs?: Date,
-        current_date_cs?: Date,
-        type_car_situation: TypeCarSituationDTO,
+        date_cs?: Date,
+        id_aut_type_cs?: number,
+        id_car?: number,
     ): Promise<Array<CarSituationDTO>> {
-        let listCars: Array<CarSituationDTO> = new Array<CarSituationDTO>();
+        let listCarSituations: Array<CarSituationDTO> = new Array<CarSituationDTO>();
 
         try {
             //Se define los parámetros query de la petición
             const params = new URLSearchParams();
-            if (return_date_cs) params.append('return_date_cs', return_date_cs.toString());
-            if (current_date_cs) params.append('current_date_cs', current_date_cs.toString());
-            if (type_car_situation) params.append('type_car_situation', type_car_situation.id_aut_type_cs.toString());
-            if (type_car_situation) params.append('type_car_situation', type_car_situation.type_cs_name);
+            if (date_cs) params.append('date_cs', date_cs.toString());
+            if (id_aut_type_cs) params.append('type_car_situation', id_aut_type_cs.toString());
+            if (id_car) params.append('id_car', id_car.toString());
 
             const url = 'http://localhost:5000/car-situation?' + params;
             const res = await fetch(url, {
@@ -38,10 +37,11 @@ export class CarSituationsService {
 
             // extraer el json de la respuesta
             const json = await res.json();
-            listCars = json;
+            listCarSituations = json;
         } catch (error) { }
 
         return listCarSituations;
 
 
     }
+}
