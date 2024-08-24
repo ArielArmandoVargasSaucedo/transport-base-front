@@ -3,40 +3,24 @@
         <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Car Situation"
             :rows="listCarSituations" :columns="columns" row-key="id">
             <template v-slot:top-right>
-                <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-                    v-model="filtersCars.brand" placeholder="Buscar por Chapa">
-                    <template v-slot:append>
-                        <q-icon name="search" />
-                    </template>
-                </q-input>
-                <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-                    v-model="filtersCars.numOfSeats" placeholder="Buscar por Número de Asientos" :type="'number'">
-                    <template v-slot:append>
-                        <q-icon name="search" />
-                    </template>
-                </q-input>
-                <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-                    v-model="filtersCars.number" placeholder="Buscar por Número">
-                    <template v-slot:append>
-                        <q-icon name="search" />
-                    </template>
-                </q-input>
 
+
+                <q-select filled v-model="filtersCarSituations.type_car_situation" use-input hide-selected fill-input
+                    input-debounce="0" :options="listTypeCarSituations" label="Tipo de Situación del Carro"
+                    option-label="type_cs_name" style="width: 100%; padding-bottom: 32px">
+                    <template v-slot:no-option>
+                        <q-item>
+                            <q-item-section class="text-grey">
+                                No results
+                            </q-item-section>
+                        </q-item>
+                    </template>
+                </q-select>
                 <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
-                <q-btn icon="add_circle" @click="activarFomularioInsertar()"></q-btn>
-            </template>
-
-            <template v-slot:body-cell-Action="props">
-                <q-td :props="props">
-                    <q-btn icon="visibility" size="sm" flat dense class="q-ml-sm" @click="" />
-                    <q-btn icon="edit" size="sm" flat dense class="q-ml-sm"
-                        @click="activarFormularioEditar(props.row)" />
-                    <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
-                        @click="activateModalConfirmacion(props.row.id_car)"></q-btn>
-                </q-td>
+                <q-btn icon="cancel" @click=""></q-btn>
             </template>
         </q-table>
-        <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteCar" />
+        <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="" />
     </div>
 </template>
 
@@ -50,42 +34,43 @@ import { watch } from 'vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
 import { CarSituationDTO } from 'src/logica/carSituation/CarSituationDTO';
 import { CarSituationsService } from 'src/logica/carSituation/CarSituationsService';
+import { TypeCarSituationDTO } from 'src/logica/typeCarSituation/TypeCarSituationDTO';
+import { TypeCarSituationsService } from 'src/logica/typeCarSituation/TypeCarSituationsService';
 
 
-// Inyectar el Servicio de los Drivers
+// Inyectar el Servicio de CarSituations
 
-const carsService: CarsService = CarsService.getInstancie();
-let id_car_delete = -1;
+const carSituationsService: CarSituationsService = CarSituationsService.getInstancie();
+
+//Se definen las props del componente
+interface Props {
+    idCar: number
+}
+
+const props: Props = defineProps<Props>()
 
 const columns = [
     {
-        name: 'number',
+        name: 'current_date',
         required: true,
-        label: 'Number',
+        label: 'Fecha Actual',
         align: 'left',
-        field: (row: CarDTO) => row.car_number,
+        field: (row: CarSituationDTO) => row.current_date_cs,
         format: (val: any) => `${val}`,
         sortable: true,
     },
     {
-        name: 'brand',
-        label: 'Brand',
+        name: 'return_date',
+        label: 'Fecha de Regreso',
         align: 'left',
-        field: (row: CarDTO) => row.car_brand,
+        field: (row: CarSituationDTO) => row.return_date_cs,
         sortable: true,
     },
     {
-        name: 'number_of_Seats',
-        label: 'Seats',
+        name: 'type_car_situation',
+        label: 'Tipo de Situación',
         align: 'left',
-        field: (row: CarDTO) => row.number_of_seats,
-        sortable: true,
-    },
-    {
-        name: 'car_situation',
-        label: 'Situación del Carro',
-        align: 'left',
-        field: (row: CarDTO) => row.car_situation?.type_car_situation?.type_cs_name,
+        field: (row: CarSituationDTO) => row.type_car_situation?.type_cs_name,
         sortable: true,
     },
     {
@@ -97,30 +82,33 @@ const columns = [
     },
 ];
 
+const typeCarSitService: TypeCarSituationsService =
+    TypeCarSituationsService.getInstancie();
+
 //Se define una interfaz para los Filtros
-interface FiltersCars {
-    brand: string;
-    number: string;
-    numOfSeats: number;
+interface FiltersCarSituations {
+    date_cs: Date | undefined;
+    type_car_situation: TypeCarSituationDTO | undefined;
 }
 
+// Se definen los emit del componente
+const emit = defineEmits<{
+    (e: 'setShowCarSitTable'): void;
+}>();
+
 // Se definen las variables reactivas del componente
-const listCars: Ref<Array<CarDTO>> = ref(new Array<CarDTO>());
-const carReactivo: Ref<{
-    carDTO?: CarDTO
-}> = ref({
-    carDTO: undefined
-})
+const listCarSituations: Ref<Array<CarSituationDTO>> = ref(new Array<CarSituationDTO>());
+const listTypeCarSituations: Ref<Array<TypeCarSituationDTO>> = ref(new Array<TypeCarSituationDTO>());
+
 const showFilter = ref(false);
-const filtersCars: Ref<FiltersCars> = ref({
-    brand: '',
-    number: '',
-    numOfSeats: 0,
+const filtersCarSituations: Ref<FiltersCarSituations> = ref({
+    date_cs: undefined,
+    type_car_situation: undefined,
 });
 
 // Se define un watch para los filtros
-watch(filtersCars.value, async (newFilters: FiltersCars) => {
-    await getCars(newFilters.brand, newFilters.number, newFilters.numOfSeats);
+watch(filtersCarSituations.value, async (newFilters: FiltersCarSituations) => {
+    await getCarSituations(newFilters.date_cs, newFilters.type_car_situation);
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
@@ -128,151 +116,50 @@ const showForm = ref(false); // representa si el formulario se muestra o no
 // se crea una variable para el modal
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
     ref(null);
-// se crea una variable para el formulario de car table
-const formCarTable: Ref<InstanceType<typeof FormCarTable> | null> =
-    ref(null);
-onMounted(actualizarCars);
 
-async function actualizarCars() {
-    await getCars(
-        filtersCars.value.brand,
-        filtersCars.value.number,
-        filtersCars.value.numOfSeats
+onMounted(() => {
+    actualizarListTypeCarSituations()
+    actualizarCarSituations()
+});
+
+async function actualizarCarSituations() {
+    await getCarSituations(
+        filtersCarSituations.value.date_cs,
+        filtersCarSituations.value.type_car_situation,
+        props.idCar,
     );
 }
 
 // Funciones CRUD
-//Funcion de obtener la lista de Carros
-async function getCars(brand: string, number: string, numOfSeats: number) {
+//Funcion de obtener la lista de Situaciones del Carro
+async function getCarSituations(date_cs?: Date, type_car_situation?: TypeCarSituationDTO, id_car?: number) {
     try {
-        listCars.value = await carsService.getCars(
-            brand === '' ? undefined : brand,
-            number === '' ? undefined : number,
-            numOfSeats === 0 ? undefined : numOfSeats
-        );
+        listCarSituations.value = await carSituationsService.getCarSituations(date_cs, type_car_situation ? type_car_situation.id_aut_type_cs : undefined, id_car ? id_car : undefined);
     } catch (error) {
         if (error instanceof Error) alert(error.message);
     }
 }
 
-//Funcion para insertar un carro
-async function postCar(
-    car_number: string,
-    car_brand: string,
-    number_of_seats: number,
-    returnDate: Date,
-    id_aut_type_cs: number
-) {
+
+
+// Funciones
+
+async function actualizarListTypeCarSituations() {
+    await getTypeCarSituations();
+}
+
+async function getTypeCarSituations() {
     try {
-        await carsService.postCar(
-            car_number,
-            car_brand,
-            number_of_seats,
-            id_aut_type_cs,
-            returnDate
-        );
-
-        // se notifica de la acción
-        Notify.create({
-            message: 'Carro insertado con éxito',
-            type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-            color: 'green', // Cambia el color de la notificación
-            position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-            timeout: 3000, // Cambia la duración de la notificación en milisegundos
-            icon: 'check_circle', // Añade un icono a la notificación
-        });
-        // se reinician los campos
-        formCarTable.value?.onReset()
-        // se cierra el formulario
-        setShowFormCar();
-
-        // se actualiza la información
-        await actualizarCars();
+        listTypeCarSituations.value = await typeCarSitService.getTypeCarSituations();
     } catch (error) {
-        if (error instanceof BadRequestError)
-            alert(error.message)
-
-        console.log(error)
+        alert(error);
     }
 }
 
-//Funcion para eliminar un carro
-async function deleteCar() {
-    try {
-        await carsService.deleteCar(id_car_delete);
-        // se notifica de la acción
-        Notify.create({
-            message: 'Se eliminó con éxito el carro',
-            type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-            color: 'green', // Cambia el color de la notificación
-            position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-            timeout: 3000, // Cambia la duración de la notificación en milisegundos
-            icon: 'check_circle', // Añade un icono a la notificación
-        });
 
-        // se actualiza la información
-        await actualizarCars();
-    } catch (error) {
-        alert(error)
-    }
-}
-
-// Funcion para editar un carro
-async function updateCar(carDTO: CarDTO /* representa la información del carro a modificar */) {
-    try {
-        await carsService.updateCar(carDTO)
-
-        // se notifica de la acción
-        Notify.create({
-            message: 'Se modificó con éxito el carro',
-            type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-            color: 'green', // Cambia el color de la notificación
-            position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-            timeout: 3000, // Cambia la duración de la notificación en milisegundos
-            icon: 'check_circle', // Añade un icono a la notificación
-        });
-
-        // se reinician los campos
-        formCarTable.value?.onReset()
-        // se cierra el formulario
-        setShowFormCar();
-
-        // se actualiza la información
-        await actualizarCars();
-    } catch (error) {
-        if (error instanceof BadRequestError)
-            alert(error.message)
-
-        console.log(error)
-    }
-}
 
 // Eventos
-function activarFomularioInsertar() {
-    // se deselecciona cualquier carro dto seleccionado
-    carReactivo.value.carDTO = undefined
-    // se muestra el forumulario
-    setShowFormCar()
-}
-function setShowFormCar() {
-    // si esta activado el form
-    if (showForm.value) showForm.value = false; // se desactiva
-    // esta desactivado
-    else showForm.value = true; // se activa
-}
 
-function activarFormularioEditar(carDTOSeleccionado: CarDTO) {
-    carReactivo.value.carDTO = carDTOSeleccionado
-    // se muestra el forumulario
-    showForm.value = false
-    showForm.value = true
-}
-
-function activateModalConfirmacion(id_car_selected: number) {
-
-    id_car_delete = id_car_selected;
-    modalConfirmacion.value?.activateModalConfirmacion();
-}
 </script>
 
 <style></style>

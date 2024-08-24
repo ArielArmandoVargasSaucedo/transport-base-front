@@ -10,6 +10,7 @@ import SolicitudePage from 'src/pages/SolicitudePage.vue';
 import { RolesEnum } from 'src/utils/RolesEnum';
 import { AuthService } from 'src/logica/auth/AuthService';
 import GroupTourPage from 'src/pages/GroupTourPage.vue';
+import CarSituationPage from 'src/pages/CarSituationPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -49,7 +50,16 @@ const routes: RouteRecordRaw[] = [
           needLogin: true, // indica que se requiere estar autenticado
           roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
         },
-        children: [],
+        children: [{
+          path: 'carSitPage/:idCar',
+          name: 'Situación del Carro',
+          component: CarSituationPage,
+          meta: {
+            icon: '',
+            needLogin: true, // indica que se requiere estar autenticado
+            roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
+          }
+        },],
       },
       {
         path: '/SolicitudePage',

@@ -30,7 +30,7 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="visibility" size="sm" flat dense class="q-ml-sm" @click="" />
+          <q-btn icon="visibility" size="sm" flat dense class="q-ml-sm" @click="navegarTablaCarSit(props.row)" />
           <q-btn icon="edit" size="sm" flat dense class="q-ml-sm" @click="activarFormularioEditar(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
             @click="activateModalConfirmacion(props.row.id_car)"></q-btn>
@@ -50,11 +50,14 @@ import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
+import CarSituationTable from './CarSituationTable.vue';
+import { useRouter } from 'vue-router';
 
-// Inyectar el Servicio de los Drivers
+// Inyectar el Servicio de los Cars
 
 const carsService: CarsService = CarsService.getInstancie();
 let id_car_delete = -1;
+const router = useRouter() // se obtiene el enrutador
 
 const columns = [
   {
@@ -123,12 +126,15 @@ watch(filtersCars.value, async (newFilters: FiltersCars) => {
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
-
+const showTablaCarSit = ref(false) // define si se va a monstrar la tabla de car situations para un carro en específico
 // se crea una variable para el modal
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
 // se crea una variable para el formulario de car table
 const formCarTable: Ref<InstanceType<typeof FormCarTable> | null> =
+  ref(null);
+//se crea una variable para visualizar las situaciones del carro
+const carSituationsTable: Ref<InstanceType<typeof CarSituationTable> | null> =
   ref(null);
 onMounted(actualizarCars);
 
@@ -253,12 +259,30 @@ function activarFomularioInsertar() {
   // se muestra el forumulario
   setShowFormCar()
 }
+
+function navegarTablaCarSit(carDTOSeleccionado: CarDTO) {
+  router.push({
+    name: 'Situación del Carro',
+    params: {
+      idCar: carDTOSeleccionado.id_car,
+    },
+  });
+}
+
+function setShowCarSitTable() {
+  // si esta activado el form
+  if (showTablaCarSit.value) showTablaCarSit.value = false; // se desactiva
+  // esta desactivado
+  else showTablaCarSit.value = true; // se activa
+}
+
 function setShowFormCar() {
   // si esta activado el form
   if (showForm.value) showForm.value = false; // se desactiva
   // esta desactivado
   else showForm.value = true; // se activa
 }
+
 
 function activarFormularioEditar(carDTOSeleccionado: CarDTO) {
   carReactivo.value.carDTO = carDTOSeleccionado
