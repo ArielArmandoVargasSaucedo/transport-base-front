@@ -30,7 +30,7 @@
           <div class="seccion-car-situation">
             <div>
               <div class="text-h7">Fecha de Finalizado</div>
-              <q-date v-model="driverDTO.driver_situation.return_date_ds" />
+              <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
 
             <div class="select-container">
@@ -84,7 +84,7 @@ import { DriverDTO } from 'src/logica/drivers/DriverDTO';
 import { DriverSituationDTO } from 'src/logica/driverSituation/DriverSituationDTO';
 import { TypeDriverSituationDTO } from 'src/logica/typeDriverSituation/TypeDriverSituationDTO';
 import { TypeDriverSituationsService } from 'src/logica/typeDriverSituation/TypeDriverSituationsService';
-import { onMounted, onUpdated, ref, Ref } from 'vue';
+import { onMounted, onUpdated, ref, Ref, watch } from 'vue';
 
 // Se definen las props del componente
 interface Props {
@@ -109,6 +109,15 @@ const carsService: CarsService = CarsService.getInstancie();
 const driverDTO: Ref<DriverDTO> = ref(new DriverDTO('', '', '', false,
   new DriverSituationDTO(new TypeDriverSituationDTO(''),
     new Date()), undefined))
+
+const fecha: Ref<string> = ref(new Date().toLocaleDateString('en-CA')); // Formato de Canadá)
+
+// se define un watch para la fecha
+watch(fecha, (newFecha) => {
+  // se actualiza la fecha que será utilizada en la insercción/actualización del driver
+  driverDTO.value.driver_situation.return_date_ds = new Date(newFecha)
+})
+
 // lista de situaciones de los choferes
 const listTypeDriverSit: Ref<Array<TypeDriverSituationDTO>> = ref(
   new Array<TypeDriverSituationDTO>()
@@ -172,7 +181,7 @@ async function onReset() {
     driverDTO.value.home_address = ''
     driverDTO.value.is_copilot = false
     driverDTO.value.car = undefined
-    driverDTO.value.driver_situation.return_date_ds = new Date()
+    fecha.value = new Date().toLocaleDateString('en-CA')
     driverDTO.value.driver_situation.type_driver_situation = undefined
 
 
@@ -183,7 +192,7 @@ async function onReset() {
     driverDTO.value.home_address = props.driverReactivo.driverDTO.home_address
     driverDTO.value.is_copilot = props.driverReactivo.driverDTO.is_copilot
     driverDTO.value.car = props.driverReactivo.driverDTO.car
-    driverDTO.value.driver_situation.return_date_ds = props.driverReactivo.driverDTO.driver_situation.return_date_ds as Date
+    fecha.value = props.driverReactivo.driverDTO.driver_situation.return_date_ds as unknown as string // Súper Mala Práctica. Revisar
     driverDTO.value.driver_situation.type_driver_situation = props.driverReactivo.driverDTO.driver_situation.type_driver_situation
 
   }
