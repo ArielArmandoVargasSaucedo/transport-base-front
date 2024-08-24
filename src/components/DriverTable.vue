@@ -48,7 +48,8 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="edit" size="sm" flat dense @click="activarFormularioEditar(props.row)" />
+          <q-btn icon="visibility" size="sm" flat dense class="q-ml-sm" @click="" />
+          <q-btn icon="edit" size="sm" flat dense class="q-ml-sm" @click="activarFormularioEditar(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
             @click="activateModalConfirmacion(props.row.id)"></q-btn>
         </q-td>

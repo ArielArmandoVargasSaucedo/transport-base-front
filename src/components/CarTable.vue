@@ -30,7 +30,8 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="edit" size="sm" flat dense @click="activarFormularioEditar(props.row)" />
+          <q-btn icon="visibility" size="sm" flat dense class="q-ml-sm" @click="" />
+          <q-btn icon="edit" size="sm" flat dense class="q-ml-sm" @click="activarFormularioEditar(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
             @click="activateModalConfirmacion(props.row.id_car)"></q-btn>
         </q-td>
@@ -188,7 +189,7 @@ async function postCar(
     await actualizarCars();
   } catch (error) {
     if (error instanceof BadRequestError)
-    alert(error.message)
+      alert(error.message)
 
     console.log(error)
   }
@@ -239,7 +240,7 @@ async function updateCar(carDTO: CarDTO /* representa la información del carro 
     await actualizarCars();
   } catch (error) {
     if (error instanceof BadRequestError)
-    alert(error.message)
+      alert(error.message)
 
     console.log(error)
   }
@@ -249,7 +250,7 @@ async function updateCar(carDTO: CarDTO /* representa la información del carro 
 function activarFomularioInsertar() {
   // se deselecciona cualquier carro dto seleccionado
   carReactivo.value.carDTO = undefined
-// se muestra el forumulario
+  // se muestra el forumulario
   setShowFormCar()
 }
 function setShowFormCar() {

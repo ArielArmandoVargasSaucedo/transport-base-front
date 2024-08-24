@@ -10,18 +10,26 @@
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+          <!-- Validación del DNI para que contenga exactamente 11 números -->
           <q-input filled v-model="driverDTO.dni_driver" label="DNI *" lazy-rules :rules="[
             (val) =>
-              (val && val.length > 0) || 'Por favor complete este campo',
+              (val && val.length === 11 && /^[0-9]+$/.test(val)) || 'El DNI debe tener 11 números',
           ]" />
+
+          <!-- Validación del Nombre y Apellidos para que contenga solo letras y cada palabra empiece con mayúscula -->
           <q-input filled v-model="driverDTO.driver_name" label="Nombre y Apellidos *" lazy-rules :rules="[
-            (val) =>
-              (val && val.length > 0) || 'Por favor complete este campo',
+            (val) => {
+              const namePattern = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*$/;
+              const words = val.trim().split(/\s+/);
+              return (val && words.every(word => namePattern.test(word))) || 'Cada nombre y apellido debe empezar con mayúscula y contener solo letras';
+            },
           ]" />
+
           <q-input filled v-model="driverDTO.home_address" label="Dirección Particular *" lazy-rules :rules="[
             (val) =>
               (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
+
           <q-checkbox v-model="driverDTO.is_copilot" label="Es Copiloto?" />
 
           <div class="text-h5">Situación del Chófer</div>
@@ -59,8 +67,6 @@
               </q-select>
 
             </div>
-
-
           </div>
 
           <q-card-section class="panel-inferior">
