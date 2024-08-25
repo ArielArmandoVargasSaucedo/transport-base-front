@@ -41,6 +41,30 @@ export class DriversService {
     return listDrivers;
   }
 
+  // Método para obtener la información de un driver en específico
+  async getDriver(
+    idDriver: number
+  ): Promise<DriverDTO | undefined> {
+    let driverDTO: DriverDTO | undefined = undefined
+
+    try {
+      const url = 'http://localhost:5000/driver/' + idDriver;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+      driverDTO = json;
+    } catch (error) { }
+
+    return driverDTO;
+  }
+
   async deleteDriver(id_driver: number): Promise<void> {
 
     const url = 'http://localhost:5000/driver/' + id_driver;
@@ -78,9 +102,9 @@ export class DriversService {
         driver_name: driverDTO.driver_name,
         home_address: driverDTO.home_address,
         is_copilot: driverDTO.is_copilot,
-        driver_situation: {
-          return_date_ds: driverDTO.driver_situation.return_date_ds,
-          id_aut_type_ds: driverDTO.driver_situation.type_driver_situation?.id_aut_type_ds
+        currentDriverSituation: {
+          return_date_ds: driverDTO.currentDriverSituation.return_date_ds,
+          id_aut_type_ds: driverDTO.currentDriverSituation.type_driver_situation?.id_aut_type_ds
         },
         id_car: driverDTO.car?.id_car
       })
@@ -109,9 +133,9 @@ export class DriversService {
           driver_name: driverDTO.driver_name,
           home_address: driverDTO.home_address,
           is_copilot: driverDTO.is_copilot,
-          driver_situation: {
-            return_date_ds: driverDTO.driver_situation.return_date_ds,
-            id_aut_type_ds: driverDTO.driver_situation.type_driver_situation?.id_aut_type_ds
+          currentDriverSituation: {
+            return_date_ds: driverDTO.currentDriverSituation.return_date_ds,
+            id_aut_type_ds: driverDTO.currentDriverSituation.type_driver_situation?.id_aut_type_ds
           },
           id_car: driverDTO.car?.id_car
         }),

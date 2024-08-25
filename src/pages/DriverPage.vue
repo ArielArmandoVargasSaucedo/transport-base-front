@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <q-page padding>
         <DriverTable></DriverTable>
-    </div>
+    </q-page>
 </template>
 
-<script setup >
+<script setup>
 import DriverTable from 'src/components/DriverTable.vue';
 </script>

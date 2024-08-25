@@ -8,7 +8,7 @@ export class DriverDTO {
   driver_name: string;
   home_address: string;
   is_copilot: boolean;
-  driver_situation: DriverSituationDTO;
+  currentDriverSituation: DriverSituationDTO;
   car: CarDTO | undefined;
 
   constructor(
@@ -16,7 +16,7 @@ export class DriverDTO {
     driver_name: string,
     home_address: string,
     is_copilot: boolean,
-    driver_situation: DriverSituationDTO,
+    currentDriverSituation: DriverSituationDTO,
     car: CarDTO | undefined,
     id?: number,
   ) {
@@ -25,7 +25,7 @@ export class DriverDTO {
     this.driver_name = driver_name;
     this.home_address = home_address;
     this.is_copilot = is_copilot;
-    this.driver_situation = driver_situation;
+    this.currentDriverSituation = currentDriverSituation;
     this.car = car;
   }
 }

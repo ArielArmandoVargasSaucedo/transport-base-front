@@ -5,17 +5,12 @@
             <template v-slot:top-right>
 
 
-                <q-select filled v-model="filtersCarSituations.type_car_situation" use-input hide-selected fill-input
-                    input-debounce="0" :options="listTypeCarSituations" label="Tipo de Situación del Carro"
-                    option-label="type_cs_name" style="width: 100%; padding-bottom: 32px">
-                    <template v-slot:no-option>
-                        <q-item>
-                            <q-item-section class="text-grey">
-                                No results
-                            </q-item-section>
-                        </q-item>
+                <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
+                    v-model="filtersCarSituations.type_car_situation" placeholder="Tipo de Situación">
+                    <template v-slot:append>
+                        <q-icon name="search" />
                     </template>
-                </q-select>
+                </q-input>
                 <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
                 <q-btn icon="cancel" @click=""></q-btn>
             </template>
@@ -38,9 +33,9 @@ import { TypeCarSituationDTO } from 'src/logica/typeCarSituation/TypeCarSituatio
 import { TypeCarSituationsService } from 'src/logica/typeCarSituation/TypeCarSituationsService';
 
 
-// Inyectar el Servicio de CarSituations
+// Inyectar el Servicio de Cars
 
-const carSituationsService: CarSituationsService = CarSituationsService.getInstancie();
+const carsService: CarsService = CarsService.getInstancie();
 
 //Se definen las props del componente
 interface Props {
@@ -88,7 +83,7 @@ const typeCarSitService: TypeCarSituationsService =
 //Se define una interfaz para los Filtros
 interface FiltersCarSituations {
     date_cs: Date | undefined;
-    type_car_situation: TypeCarSituationDTO | undefined;
+    type_car_situation: string
 }
 
 // Se definen los emit del componente
@@ -103,15 +98,15 @@ const listTypeCarSituations: Ref<Array<TypeCarSituationDTO>> = ref(new Array<Typ
 const showFilter = ref(false);
 const filtersCarSituations: Ref<FiltersCarSituations> = ref({
     date_cs: undefined,
-    type_car_situation: undefined,
+    type_car_situation: "",
 });
 
 // Se define un watch para los filtros
 watch(filtersCarSituations.value, async (newFilters: FiltersCarSituations) => {
-    await getCarSituations(newFilters.date_cs, newFilters.type_car_situation);
+    await getCarSituations(props.idCar, newFilters.date_cs, newFilters.type_car_situation);
 });
 
-const showForm = ref(false); // representa si el formulario se muestra o no
+
 
 // se crea una variable para el modal
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
@@ -124,23 +119,21 @@ onMounted(() => {
 
 async function actualizarCarSituations() {
     await getCarSituations(
+        props.idCar,
         filtersCarSituations.value.date_cs,
         filtersCarSituations.value.type_car_situation,
-        props.idCar,
     );
 }
 
 // Funciones CRUD
 //Funcion de obtener la lista de Situaciones del Carro
-async function getCarSituations(date_cs?: Date, type_car_situation?: TypeCarSituationDTO, id_car?: number) {
+async function getCarSituations(id_car: number, date_cs?: Date, type_car_situation?: string) {
     try {
-        listCarSituations.value = await carSituationsService.getCarSituations(date_cs, type_car_situation ? type_car_situation.id_aut_type_cs : undefined, id_car ? id_car : undefined);
+        listCarSituations.value = await carsService.getHistorialCarSituations(id_car, type_car_situation)
     } catch (error) {
         if (error instanceof Error) alert(error.message);
     }
 }
-
-
 
 // Funciones
 
@@ -155,8 +148,6 @@ async function getTypeCarSituations() {
         alert(error);
     }
 }
-
-
 
 // Eventos
 

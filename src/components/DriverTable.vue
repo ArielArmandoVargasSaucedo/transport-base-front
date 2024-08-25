@@ -123,7 +123,7 @@ const columns = [
     name: 'situacChofer',
     label: 'Situación del Chofer',
     align: 'left',
-    field: (row: DriverDTO) => row.driver_situation.type_driver_situation?.type_ds_name,
+    field: (row: DriverDTO) => row.currentDriverSituation.type_driver_situation?.type_ds_name,
     sortable: true,
   },
   {
