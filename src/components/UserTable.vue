@@ -150,7 +150,7 @@ async function actualizarRoles() {
 
 async function getUsers(user: string, dni: string, role: RoleDTO | undefined) {
   try {
-    listUser.value = await userService.getUser(
+    listUser.value = await userService.getUsers(
       user === '' ? undefined : user,
       undefined,
       dni === '' ? undefined : dni,
