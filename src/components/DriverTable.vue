@@ -321,7 +321,7 @@ function navegarTablaDriverSit(driverDTO: DriverDTO) {
   router.push({
     name: 'Situación del Chofer',
     params: {
-      idDriver: driverDTO.dni_driver,
+      idDriver: driverDTO.id,
     },
   });
 }

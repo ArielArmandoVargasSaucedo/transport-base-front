@@ -14,6 +14,7 @@ import CarSituationPage from 'src/pages/CarSituationPage.vue';
 import IdentificacionCuentaPage from 'src/pages/IdentificacionCuentaPage.vue';
 import CodigoVerificacionIdentidadPage from 'src/pages/CodigoVerificacionIdentidadPage.vue';
 import CambioContrasenaPage from 'src/pages/CambioContrasenaPage.vue';
+import DriverSituationPage from 'src/pages/DriverSituationPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -45,7 +46,7 @@ const routes: RouteRecordRaw[] = [
         children: [{
           path: 'driverSitPage/:idDriver',
           name: 'Situación del Chofer',
-          component: CarSituationPage,
+          component: DriverSituationPage,
           meta: {
             icon: '',
             needLogin: true, // indica que se requiere estar autenticado
