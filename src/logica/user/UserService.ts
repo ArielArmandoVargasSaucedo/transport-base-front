@@ -1,5 +1,7 @@
+import { BadRequestInterface } from 'src/utils/BadRequestInterface';
 import { AuthService } from '../auth/AuthService';
 import { UserDTO } from './UserDTO';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 export class UserService {
   static userService: UserService;
@@ -12,7 +14,7 @@ export class UserService {
     return this.userService;
   }
 
-  async getUser(
+  async getUsers(
     user?: string,
     password?: string,
     dni?: string,
@@ -57,8 +59,35 @@ export class UserService {
     return listUser;
   }
 
+  // Método para obtener la información de un usuario en específico
+  async getUser(user_id: number): Promise<UserDTO | undefined> {
+    let user: UserDTO | undefined = undefined
+
+    // se obtiene el token
+    const token = AuthService.getInstancie().getJwt()
+
+    // si el usuario esta logeado
+    if (token) {
+      const url = 'http://localhost:5000/user/getUser/' + user_id;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+      user = json;
+
+    }
+
+    return user;
+  }
+
   //Metodo para insertar un Carro
-  async postUser(
+  /*async postUser(
     user_name: string,
     password_user: string,
     dni_user: string,
@@ -92,7 +121,7 @@ export class UserService {
       if (error instanceof Error) console.log(error.message);
       // se relanza la exeption
     }
-  }
+  }*/
 
   async deleteUser(id_user: number): Promise<void> {
 
@@ -116,33 +145,27 @@ export class UserService {
   }
 
   //Metodo para insertar un Carro
-  async updateUser(userDTO: UserDTO): Promise<void> {
-    const url = 'http://localhost:5000/user/' + userDTO.id_user;
+  async updateUser(user_id: number, user_name: string): Promise<void> {
+    const url = 'http://localhost:5000/user/' + user_id;
 
-    try {
-      const res = await fetch(url, {
-        method: 'PATCH',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_name: userDTO.user_name,
-          password_user: userDTO.password_user,
-          dni_user: userDTO.dni_user,
-          role: {
-            id_aut_role: userDTO.role?.id_aut_role,
-            role_type: userDTO.role?.role_type,
-          }
-        }),
-      });
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_name: user_name
+      }),
+    });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-    } catch (error) {
-      if (error instanceof Error) console.log(error.message);
-      // se relanza la exeption
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
     }
+
   }
 
 }
