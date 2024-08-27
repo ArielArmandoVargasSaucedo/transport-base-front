@@ -54,6 +54,7 @@ onMounted(getChoferesInfo)
 async function getChoferesInfo() {
     try {
         driverDTO.value = await driverService.getDriver(idDriver)
+        
     } catch (error) {
         alert(error)
     }
