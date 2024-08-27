@@ -106,7 +106,7 @@ interface FiltersCars {
   numOfSeats: number;
 }
 
-// Se definen las variables reactivas del componente
+// Se definen las variables reactivas del Componente
 const listCars: Ref<Array<CarDTO>> = ref(new Array<CarDTO>());
 const carReactivo: Ref<{
   carDTO?: CarDTO
