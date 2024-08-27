@@ -1,6 +1,7 @@
 import { BadRequestInterface } from 'src/utils/BadRequestInterface';
 import { DriverDTO } from './DriverDTO';
 import { BadRequestError } from 'src/utils/BadRequestError';
+import { DriverSituationDTO } from '../driverSituation/DriverSituationDTO';
 
 export class DriversService {
   static driversService: DriversService;
@@ -40,6 +41,36 @@ export class DriversService {
 
     return listDrivers;
   }
+
+  // Método para obtener el historial de situaciones de un chofer en específico
+  async getHistorialDriverSituations(
+    idDriver: number,
+    nombreTipoSituacion?: string
+  ): Promise<Array<DriverSituationDTO>> {
+    let listDriverSituationsDTO: Array<DriverSituationDTO> = new Array<DriverSituationDTO>();
+
+    try {
+      //Se define los parámetros query de la petición
+      const params = new URLSearchParams();
+      if (nombreTipoSituacion) params.append('nombreTipoSituacion', nombreTipoSituacion);
+
+      const url = 'http://localhost:5000/driver/getHistorialDriverSituations/' + idDriver + '?' + params;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+      listDriverSituationsDTO = json;
+    } catch (error) { }
+
+    return listDriverSituationsDTO;
+  }
+
 
   // Método para obtener la información de un driver en específico
   async getDriver(

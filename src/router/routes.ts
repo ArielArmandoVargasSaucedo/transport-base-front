@@ -39,7 +39,16 @@ const routes: RouteRecordRaw[] = [
           needLogin: true, // indica que se requiere estar autenticado
           roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
         },
-        children: [],
+        children: [{
+          path: 'driverSitPage/:idDriver',
+          name: 'Situación del Chofer',
+          component: CarSituationPage,
+          meta: {
+            icon: '',
+            needLogin: true, // indica que se requiere estar autenticado
+            roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
+          }
+        },],
       },
       {
         path: '/vehiclesPage',

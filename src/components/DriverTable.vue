@@ -48,7 +48,7 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="visibility" size="sm" flat dense class="q-ml-sm" @click="" />
+          <q-btn icon="visibility" size="sm" flat dense class="q-ml-sm" @click="navegarTablaDriverSit(props.row)" />
           <q-btn icon="edit" size="sm" flat dense class="q-ml-sm" @click="activarFormularioEditar(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
             @click="activateModalConfirmacion(props.row.id)"></q-btn>
@@ -71,6 +71,7 @@ import FormDriverTable from './forms/FormDriverTable.vue';
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
+import { useRouter } from 'vue-router';
 // Inyectar el Servicio de los Drivers
 
 const driversService: DriversService = DriversService.getInstancie();
@@ -80,6 +81,7 @@ const typeDriverSituation: TypeDriverSituationsService =
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
 let id_driver_delete = -1;
+const router = useRouter()// se obtiene el enrutador
 
 const columns = [
   {
@@ -313,6 +315,15 @@ function activateModalConfirmacion(id_driver_selected: number) {
 
   id_driver_delete = id_driver_selected;
   modalConfirmacion.value?.activateModalConfirmacion();
+}
+
+function navegarTablaDriverSit(driverDTO: DriverDTO) {
+  router.push({
+    name: 'Situación del Chofer',
+    params: {
+      idDriver: driverDTO.dni_driver,
+    },
+  });
 }
 
 function actionCancelSelectTypeDriverSituation() {
