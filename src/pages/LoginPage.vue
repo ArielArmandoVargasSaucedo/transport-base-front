@@ -34,6 +34,7 @@
 
           <div>
             <q-btn label="Login" type="submit" color="primary" class="btn" />
+            <router-link :to="{ name: 'Verificacion de Identidad' }">¿Has olvidado la contraseña?</router-link>
           </div>
         </q-form>
       </q-card-section>

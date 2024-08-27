@@ -1,11 +1,9 @@
 <template>
-    <div>
-      <div>
+    <q-page padding>
         <TypeDriverSitTable />
         <TypeCarSitTable />
         <ProgramTypeTable />
-      </div> 
-    </div>
+      </q-page>
 </template>
 
 <script setup lang="ts" >

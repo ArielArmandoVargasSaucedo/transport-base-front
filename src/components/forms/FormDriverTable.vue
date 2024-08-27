@@ -21,7 +21,7 @@
             (val) => {
               const namePattern = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*$/;
               const words = val.trim().split(/\s+/);
-              return (val && words.every(word => namePattern.test(word))) || 'Cada nombre y apellido debe empezar con mayúscula y contener solo letras';
+              return (val && words.every((word: any) => namePattern.test(word))) || 'Cada nombre y apellido debe empezar con mayúscula y contener solo letras';
             },
           ]" />
 
@@ -42,7 +42,7 @@
             </div>
 
             <div class="select-container">
-              <q-select filled v-model="driverDTO.driver_situation.type_driver_situation" use-input hide-selected
+              <q-select filled v-model="driverDTO.currentDriverSituation.type_driver_situation" use-input hide-selected
                 fill-input input-debounce="0" :options="listTypeDriverSit" label="Tipo de Situación del Chófer"
                 option-label="type_ds_name" style="width: 100%; padding-bottom: 32px">
                 <template v-slot:no-option>
@@ -121,7 +121,7 @@ const fecha: Ref<string> = ref(new Date().toLocaleDateString('en-CA')); // Forma
 // se define un watch para la fecha
 watch(fecha, (newFecha) => {
   // se actualiza la fecha que será utilizada en la insercción/actualización del driver
-  driverDTO.value.driver_situation.return_date_ds = new Date(newFecha)
+  driverDTO.value.currentDriverSituation.return_date_ds = new Date(newFecha)
 })
 
 // lista de situaciones de los choferes
@@ -188,7 +188,7 @@ async function onReset() {
     driverDTO.value.is_copilot = false
     driverDTO.value.car = undefined
     fecha.value = new Date().toLocaleDateString('en-CA')
-    driverDTO.value.driver_situation.type_driver_situation = undefined
+    driverDTO.value.currentDriverSituation.type_driver_situation = undefined
 
 
   }
@@ -198,8 +198,8 @@ async function onReset() {
     driverDTO.value.home_address = props.driverReactivo.driverDTO.home_address
     driverDTO.value.is_copilot = props.driverReactivo.driverDTO.is_copilot
     driverDTO.value.car = props.driverReactivo.driverDTO.car
-    fecha.value = props.driverReactivo.driverDTO.driver_situation.return_date_ds as unknown as string // Súper Mala Práctica. Revisar
-    driverDTO.value.driver_situation.type_driver_situation = props.driverReactivo.driverDTO.driver_situation.type_driver_situation
+    fecha.value = props.driverReactivo.driverDTO.currentDriverSituation.return_date_ds as unknown as string // Súper Mala Práctica. Revisar
+    driverDTO.value.currentDriverSituation.type_driver_situation = props.driverReactivo.driverDTO.currentDriverSituation.type_driver_situation
 
   }
 }

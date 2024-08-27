@@ -87,7 +87,7 @@ const columns = [
     name: 'car_situation',
     label: 'Situación del Carro',
     align: 'left',
-    field: (row: CarDTO) => row.car_situation?.type_car_situation?.type_cs_name,
+    field: (row: CarDTO) => row.currentCarSituation.type_car_situation?.type_cs_name,
     sortable: true,
   },
   {

@@ -11,6 +11,10 @@ import { RolesEnum } from 'src/utils/RolesEnum';
 import { AuthService } from 'src/logica/auth/AuthService';
 import GroupTourPage from 'src/pages/GroupTourPage.vue';
 import CarSituationPage from 'src/pages/CarSituationPage.vue';
+import IdentificacionCuentaPage from 'src/pages/IdentificacionCuentaPage.vue';
+import CodigoVerificacionIdentidadPage from 'src/pages/CodigoVerificacionIdentidadPage.vue';
+import CambioContrasenaPage from 'src/pages/CambioContrasenaPage.vue';
+import DriverSituationPage from 'src/pages/DriverSituationPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -39,7 +43,16 @@ const routes: RouteRecordRaw[] = [
           needLogin: true, // indica que se requiere estar autenticado
           roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
         },
-        children: [],
+        children: [{
+          path: 'driverSitPage/:idDriver',
+          name: 'Situación del Chofer',
+          component: DriverSituationPage,
+          meta: {
+            icon: '',
+            needLogin: true, // indica que se requiere estar autenticado
+            roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
+          }
+        },],
       },
       {
         path: '/vehiclesPage',
@@ -113,6 +126,33 @@ const routes: RouteRecordRaw[] = [
     component: LoginPage,
     meta: {
       icon: 'login',
+      needLogin: false // indica que no se requiere estar autenticado
+    },
+    children: [],
+  },
+  {
+    path: '/IdentificacionUsuario',
+    name: 'Verificacion de Identidad',
+    component: IdentificacionCuentaPage,
+    meta: {
+      needLogin: false // indica que no se requiere estar autenticado
+    },
+    children: [],
+  },
+  {
+    path: '/CodigoVerificacion/:idUsuario',
+    name: 'Codigo de Verificacion',
+    component: CodigoVerificacionIdentidadPage,
+    meta: {
+      needLogin: false // indica que no se requiere estar autenticado
+    },
+    children: [],
+  },
+  {
+    path: '/CambioContrasena/:idUsuario',
+    name: 'Cambio de Contraseña',
+    component: CambioContrasenaPage,
+    meta: {
       needLogin: false // indica que no se requiere estar autenticado
     },
     children: [],

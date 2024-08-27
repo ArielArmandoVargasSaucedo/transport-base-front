@@ -190,8 +190,8 @@ async function onReset() {
     datosCar.value.number = props.carReactivo.carDTO.car_number
     datosCar.value.brand = props.carReactivo.carDTO.car_brand
     datosCar.value.numOfSeats = props.carReactivo.carDTO.number_of_seats
-    fecha.value = props.carReactivo.carDTO.car_situation.return_date_cs as unknown as string // Súper Mala Práctica. Revisar
-    datosCar.value.carSituation.typeCarSit = props.carReactivo.carDTO.car_situation.type_car_situation
+    fecha.value = props.carReactivo.carDTO.currentCarSituation.return_date_cs as unknown as string // Súper Mala Práctica. Revisar
+    datosCar.value.carSituation.typeCarSit = props.carReactivo.carDTO.currentCarSituation.type_car_situation
   }
 }
 

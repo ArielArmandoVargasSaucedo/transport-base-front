@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <CarTable v-show="!isRutaActualIsAlgunaRutaHija()"/>
+  <q-page padding>
+    <CarTable v-show="!isRutaActualIsAlgunaRutaHija()" />
     <router-view />
-  </div>
+  </q-page>
 </template>
 
 <script setup>
@@ -12,11 +12,11 @@ import { watch } from 'vue';
 import { useRoute } from 'vue-router';
 const route = ref(useRoute())
 
-watch(useRoute(), (newRoute)=>{
+watch(useRoute(), (newRoute) => {
   route.value = newRoute
 })
 
-function isRutaActualIsAlgunaRutaHija () {
+function isRutaActualIsAlgunaRutaHija() {
   return route.value.name === "Situación del Carro"
 }
 
