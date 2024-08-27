@@ -36,7 +36,7 @@ export class TypeDriverSituationsService {
     return listTypeDriverSituations;
   }
 
-  async postTypeDriverSituation(nombre: string): Promise<void> {
+  async postTypeDriverSituation(nombre: string, is_fecha:boolean ): Promise<void> {
 
     const url = 'http://localhost:5000/type-driver-situation';
 
@@ -48,7 +48,8 @@ export class TypeDriverSituationsService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type_ds_name: nombre
+          type_ds_name: nombre,
+          is_return: is_fecha,
         })
       });
 
@@ -87,9 +88,9 @@ export class TypeDriverSituationsService {
 
   }
 
-  async updateTypeDriverSituation(nombre: string): Promise<void> {
+  async updateTypeDriverSituation(id:number, nombre: string): Promise<void> {
 
-    const url = 'http://localhost:5000/type-driver-situation';
+    const url = 'http://localhost:5000/type-driver-situation/' + id;
 
     try {
       const res = await fetch(url, {

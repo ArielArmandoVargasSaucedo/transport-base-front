@@ -52,6 +52,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'fecha',
+    label: 'Tiene fecha de retorno?',
+    align: 'left',
+    field: (row: TypeDriverSituationDTO) => row.is_return ? 'Si' : 'No',
+    sortable: true,
+  },
+  {
     name: 'Action',
     label: '',
     align: 'right',
@@ -103,9 +110,9 @@ async function getTypeDriverSituations() {
   }
 }
 
-async function postTypeDriverSituations(nombre: string) {
+async function postTypeDriverSituations(nombre: string, is_fecha:boolean) {
   try {
-    await typeDriverSistuationService.postTypeDriverSituation(nombre);
+    await typeDriverSistuationService.postTypeDriverSituation(nombre, is_fecha);
     // se notifica de la acción
     Notify.create({
       message: 'Tipo de Situación del Chofer insertada con éxito',
@@ -159,9 +166,9 @@ async function deleteTypeDriverSituations() {
   }
 
 
-  async function updateTypeDriverSituations(nombre: string) {
+  async function updateTypeDriverSituations(id:number, nombre: string) {
   try {
-    await typeDriverSistuationService.postTypeDriverSituation(nombre);
+    await typeDriverSistuationService.updateTypeDriverSituation(id,nombre)
     // se notifica de la acción
     Notify.create({
       message: 'Tipo de Situación del Chofer insertada con éxito',

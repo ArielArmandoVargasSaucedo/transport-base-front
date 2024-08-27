@@ -18,7 +18,7 @@
                   (val && val.length > 0) || 'Por favor complete este campo',
               ]"
             />
-
+            <q-checkbox v-model="datosTypeDriverSit.is_fecha" label="Desea que la situación tenga fecha de retorno?" />
             <q-card-section>
               <q-btn label="Submit" type="submit" color="primary" />
               <q-btn
@@ -37,35 +37,49 @@
 </template>
 
 <script lang="ts" setup>
+import { TypeDriverSituationDTO } from 'src/logica/typeDriverSituation/TypeDriverSituationDTO';
 import { Ref, ref } from 'vue';
 
 // Se definen las props del componente
 
+interface Props{
+  typeReactivo: {
+    typeSeleccionado? :TypeDriverSituationDTO,
+  }
+}
+const props: Props = defineProps<Props>()
+
+//onUpdated(onReset)
+
 // Se definen los emit del componente
 const emit = defineEmits<{
-  (e: 'postTypeDriverSituations', nombre: string): Promise<void>;
+  (e: 'postTypeDriverSituations', nombre: string, is_fecha:boolean): Promise<void>;
 }>();
 
 // Se define la interfaz para representar los datos del Campo
 
 interface DatosTypeDriverSit {
   nombre: string;
+  is_fecha:boolean;
 }
 
 // Se definen las variables reactivas del componente
 const showModal = ref(false);
 const datosTypeDriverSit: Ref<DatosTypeDriverSit> = ref<DatosTypeDriverSit>({
   nombre: '',
+  is_fecha: false,
 });
 
 // Funciones
 
 async function onSubmit() {
-  await emit('postTypeDriverSituations', datosTypeDriverSit.value.nombre);
+  await emit('postTypeDriverSituations', datosTypeDriverSit.value.nombre, datosTypeDriverSit.value.is_fecha);
 }
 
 async function onReset() {
+
   datosTypeDriverSit.value.nombre = '';
+  datosTypeDriverSit.value.is_fecha= false;
 }
 
 function setShowModal(estado: boolean) {
