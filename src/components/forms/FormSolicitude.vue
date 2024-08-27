@@ -1,16 +1,16 @@
 <template>
   <div class="q-pa-md">
     <q-card class="card-campo">
-      <q-card-section class="bg-primary text-white row justify-center">
-        <div class="col-11 text-h5">Formulario Añadir Solicitud</div>
-        <div class="col-1 container-icon">
-          <q-btn icon="cancel" @click="setShowForm()"></q-btn>
+      <q-card-section class="bg-primary text-white header-section">
+        <div class="header-title">Formulario Añadir Solicitud</div>
+        <div class="header-icon">
+          <q-btn icon="cancel" @click="setShowForm()" flat dense />
         </div>
       </q-card-section>
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <div class="text-h5">Programación</div>
+          <div class="text-h5 section-title">Programación</div>
           <q-separator color="primary" inset size="16px" />
 
           <div class="container-programacion">
@@ -31,8 +31,7 @@
 
             <div class="select-container-programacion">
               <q-select filled v-model="datosSolicitud.prog_typeDTO" use-input hide-selected fill-input
-                input-debounce="0" :options="listPrograms" label="Programación" option-label="prog_type_name"
-                style="width: 100%; padding-bottom: 32px">
+                input-debounce="0" :options="listPrograms" label="Programación" option-label="prog_type_name">
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -47,14 +46,14 @@
             </div>
           </div>
 
-          <div class="text-h5">Grupo Turístico</div>
+          <div class="text-h5 section-title">Grupo Turístico</div>
           <q-checkbox v-model="showGrupoTuristico" label="Crear uno Nuevo?" />
           <q-separator color="primary" inset size="16px" />
+
           <div class="container-grupo-turistico">
             <div v-show="!showGrupoTuristico" class="container-grupo-turistico-seleccionar">
-              <q-select filled v-model="datosSolicitud.groupDTO" use-input hide-selected fill-input
-                input-debounce="0" :options="listGroups" label="Código del Grupo" option-label="group_code"
-                style="width: 100%;">
+              <q-select filled v-model="datosSolicitud.groupDTO" use-input hide-selected fill-input input-debounce="0"
+                :options="listGroups" label="Código del Grupo" option-label="group_code">
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -63,36 +62,35 @@
                   </q-item>
                 </template>
               </q-select>
-
             </div>
 
             <div v-show="showGrupoTuristico" class="container-grupo-turistico-crear-nuevo">
-              <q-input  filled v-model="datosSolicitud.group.group_code" label="Código del Grupo Nuevo *" lazy-rules :rules="[
-                (val) => /^\d{4}$/.test(val) || 'Debe ser un código de 4 números',
-              ]" />
-              <q-input filled v-model="datosSolicitud.group.group_country" label="País de procedencia *" lazy-rules :rules="[
-                (val) => /^[A-Z][a-zA-Z]+$/.test(val) || 'Debe empezar con mayúscula y solo contener letras',
-              ]" />
-              <q-input filled v-model="datosSolicitud.group.number_of_tourist" label="Cantidad de Turistas *" lazy-rules :rules="[
-                (val) => val > 0 || 'Debe ser al menos 1 turista',
-              ]" type="number" />
+              <q-input filled v-model="datosSolicitud.group.group_code" label="Código del Grupo Nuevo *" lazy-rules
+                :rules="[
+                  (val) => /^\d{4}$/.test(val) || 'Debe ser un código de 4 números',
+                ]" />
+              <q-input filled v-model="datosSolicitud.group.group_country" label="País de procedencia *" lazy-rules
+                :rules="[
+                  (val) => /^[A-Z][a-zA-Z]+$/.test(val) || 'Debe empezar con mayúscula y solo contener letras',
+                ]" />
+              <q-input filled v-model="datosSolicitud.group.number_of_tourist" label="Cantidad de Turistas *" lazy-rules
+                :rules="[
+                  (val) => val > 0 || 'Debe ser al menos 1 turista',
+                ]" type="number" />
             </div>
 
-            <q-input filled v-model="datosSolicitud.programming_to_be_done" label="Descripción de la Programación *" lazy-rules :rules="[
-              (val) =>
-                (val && val.length > 0) || 'Por favor complete este campo',
-            ]" />
+            <q-input filled v-model="datosSolicitud.programming_to_be_done" label="Descripción de la Programación *"
+              lazy-rules :rules="[
+                (val) => (val && val.length > 0) || 'Por favor complete este campo',
+              ]" />
           </div>
 
-
-          <div class="text-h5">Carro Asignado</div>
+          <div class="text-h5 section-title">Carro Asignado</div>
           <q-separator color="primary" inset size="16px" />
 
-
           <div class="carro-asignado-container">
-            <q-select filled v-model="datosSolicitud.carDTO" use-input hide-selected fill-input
-              input-debounce="0" :options="listCars" label="Número del Carro" option-label="car_number"
-              style="width: 100%; padding-bottom: 32px">
+            <q-select filled v-model="datosSolicitud.carDTO" use-input hide-selected fill-input input-debounce="0"
+              :options="listCars" label="Número del Carro" option-label="car_number">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -103,22 +101,20 @@
             </q-select>
           </div>
 
-          <div class="text-h5">Ruta</div>
+          <div class="text-h5 section-title">Ruta</div>
           <q-separator color="primary" inset size="16px" />
 
           <div class="ruta-container">
-            <q-input filled v-model="datosSolicitud.route.km_available_star" label="Kilómetros disponibles al comenzar *" lazy-rules :rules="[
-              (val) => val > 0 || 'Debe ser al menos 1',
-            ]" type="number" />
-            <q-input filled v-model="datosSolicitud.route.km_available_end" label="Kilómetros disponibles al finalizar *" lazy-rules :rules="[
-              (val) => val >= 0 || 'Debe ser un número positivo',
-            ]" type="number" />
-            <q-input filled v-model="datosSolicitud.route.end_time" label="Duración *" lazy-rules :rules="[
-              (val) => val > 0 || 'La duración debe ser mayor que 0',
-            ]" type="number" />
-            <q-input filled v-model="datosSolicitud.route.pick_up_location" label="Lugar de recogida *" lazy-rules :rules="[
-              (val) => /^[A-Z][a-zA-Z\s]+$/.test(val) || 'Debe empezar con mayúscula y solo contener letras',
-            ]" />
+            <q-input filled v-model="datosSolicitud.route.km_available_star"
+              label="Kilómetros disponibles al comenzar *" lazy-rules
+              :rules="[(val) => val > 0 || 'Debe ser al menos 1']" type="number" />
+            <q-input filled v-model="datosSolicitud.route.km_available_end"
+              label="Kilómetros disponibles al finalizar *" lazy-rules
+              :rules="[(val) => val >= 0 || 'Debe ser un número positivo']" type="number" />
+            <q-input filled v-model="datosSolicitud.route.end_time" label="Duración *" lazy-rules
+              :rules="[(val) => val > 0 || 'La duración debe ser mayor que 0']" type="number" />
+            <q-input filled v-model="datosSolicitud.route.pick_up_location" label="Lugar de recogida *" lazy-rules
+              :rules="[(val) => /^[A-Z][a-zA-Z\s]+$/.test(val) || 'Debe empezar con mayúscula y solo contener letras']" />
           </div>
 
           <q-card-section class="panel-inferior">
@@ -134,6 +130,7 @@
     </q-card>
   </div>
 </template>
+
 
 <script lang="ts" setup>
 import { CarDTO } from 'src/logica/car/CarDTO';
@@ -164,24 +161,24 @@ const emit = defineEmits<{
 
 // Se define la interfaz para representar los datos del Campo
 interface DatosSolicitud {
-    programming_start_time: string;
-    programming_to_be_done: string;
-    duration_time: string;
-    mileage: number;
-    carDTO: CarDTO | undefined;
-    prog_typeDTO: ProgramTypeDTO | undefined;
-    groupDTO: GroupTourDTO | undefined; // representa el seleccionado
-    group: GroupTour; // representa el q se va a crear
-    date: Date;
-    route: Route;
+  programming_start_time: string;
+  programming_to_be_done: string;
+  duration_time: string;
+  mileage: number;
+  carDTO: CarDTO | undefined;
+  prog_typeDTO: ProgramTypeDTO | undefined;
+  groupDTO: GroupTourDTO | undefined; // representa el seleccionado
+  group: GroupTour; // representa el q se va a crear
+  date: Date;
+  route: Route;
 }
-interface GroupTour{
-    group_code: number;
-    group_country: string;
-    number_of_tourist: number;
+interface GroupTour {
+  group_code: number;
+  group_country: string;
+  number_of_tourist: number;
 
 }
-interface Route{
+interface Route {
   km_available_star: number;
   km_available_end: number;
   pick_up_location: string;
@@ -192,30 +189,30 @@ interface Route{
 
 // Se definen las variables reactivas del componente
 const datosSolicitud: Ref<DatosSolicitud> = ref<DatosSolicitud>({
-        programming_start_time: '',
-        programming_to_be_done: '',
-        duration_time: '',
-        mileage: 0,
-        carDTO: undefined,
-        prog_typeDTO: undefined,
-        groupDTO: undefined,
-        group:{
+  programming_start_time: '',
+  programming_to_be_done: '',
+  duration_time: '',
+  mileage: 0,
+  carDTO: undefined,
+  prog_typeDTO: undefined,
+  groupDTO: undefined,
+  group: {
 
-        group_code: 0,
-        group_country: '',
-        number_of_tourist: 0,
+    group_code: 0,
+    group_country: '',
+    number_of_tourist: 0,
 
-         },
-        date: new Date(),
+  },
+  date: new Date(),
 
-        route:{
+  route: {
 
-        km_available_star: 0,
-        km_available_end: 0,
-        pick_up_location: '',
-        end_time: '',
+    km_available_star: 0,
+    km_available_end: 0,
+    pick_up_location: '',
+    end_time: '',
 
- },
+  },
 
 });
 
@@ -295,64 +292,76 @@ function setShowForm() {
 
 <style scoped>
 .card-campo {
+  max-width: 900px;
+  margin: 0 auto;
   width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
-.container-icon {
+.header-section {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 16px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.header-icon {
   display: flex;
   justify-content: flex-end;
 }
 
-.seccion-car-situation {
-  gap: 15px;
+.container-programacion,
+.container-grupo-turistico,
+.ruta-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
 }
 
-.select-container {
-  width: 100%;
-}
-
-.container-programacion {
-  width: 100%;
+.programacion-fechas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .panel-inferior {
   display: flex;
   justify-content: space-between;
-  /* Distribuye los botones en extremos opuestos */
-  padding: 10px;
-  /* Espacio interno opcional */
+  margin-top: 24px;
 }
 
-.programacion-fechas {
-  display: flex;
-  gap: 16px;
-  /* Distribuye los botones en extremos opuestos */
-  padding: 10px;
-  /* Espacio interno opcional */
+.section-title {
+  margin-bottom: 16px;
 }
 
-.container-programacion {
-  display: flex;
-  gap: 16px;
-  /* Distribuye los botones en extremos opuestos */
-  padding: 10px;
-  /* Espacio interno opcional */
-}
-
-.select-container-programacion {
-  padding-top: 30px;
+.q-select,
+.q-input,
+.q-time,
+.q-date {
   width: 100%;
 }
 
-.container-grupo-turistico {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+@media (min-width: 768px) {
 
-.ruta-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  .programacion-fechas,
+  .container-programacion,
+  .container-grupo-turistico,
+  .ruta-container {
+    flex-direction: row;
+    gap: 32px;
+  }
+
+  .q-select,
+  .q-input,
+  .q-time,
+  .q-date {
+    width: calc(33.33% - 16px);
+  }
 }
 </style>

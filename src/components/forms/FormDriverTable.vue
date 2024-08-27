@@ -1,82 +1,75 @@
 <template>
   <div class="q-pa-md">
     <q-card class="card-campo">
-      <q-card-section class="bg-primary text-white row justify-center">
-        <div class="col-11 text-h5">Formulario Añadir Chófer</div>
-        <div class="col-1 container-icon">
-          <q-btn icon="cancel" @click="setShowForm()"></q-btn>
-        </div>
+      <q-card-section class="bg-primary text-white row justify-between items-center">
+        <div class="text-h5">Formulario Añadir Chófer</div>
+        <q-btn icon="cancel" @click="setShowForm()" flat color="white" />
       </q-card-section>
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <!-- Validación del DNI para que contenga exactamente 11 números -->
           <q-input filled v-model="driverDTO.dni_driver" label="DNI *" lazy-rules :rules="[
             (val) =>
               (val && val.length === 11 && /^[0-9]+$/.test(val)) || 'El DNI debe tener 11 números',
           ]" />
 
-          <!-- Validación del Nombre y Apellidos para que contenga solo letras y cada palabra empiece con mayúscula -->
           <q-input filled v-model="driverDTO.driver_name" label="Nombre y Apellidos *" lazy-rules :rules="[
             (val) => {
               const namePattern = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*$/;
               const words = val.trim().split(/\s+/);
-              return (val && words.every((word: any) => namePattern.test(word))) || 'Cada nombre y apellido debe empezar con mayúscula y contener solo letras';
+              return (
+                val && words.every((word: any) => namePattern.test(word))
+              ) || 'Cada nombre y apellido debe empezar con mayúscula y contener solo letras';
             },
           ]" />
 
           <q-input filled v-model="driverDTO.home_address" label="Dirección Particular *" lazy-rules :rules="[
-            (val) =>
-              (val && val.length > 0) || 'Por favor complete este campo',
+            (val) => (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
 
           <q-checkbox v-model="driverDTO.is_copilot" label="Es Copiloto?" />
 
-          <div class="text-h5">Situación del Chófer</div>
+          <div class="text-h5 q-mt-lg">Situación del Chófer</div>
           <q-separator color="primary" inset size="16px" />
 
-          <div class="seccion-car-situation">
+          <div class="q-gutter-md q-mt-lg q-mb-lg">
             <div>
               <div class="text-h7">Fecha de Finalizado</div>
               <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
 
-            <div class="select-container">
-              <q-select filled v-model="driverDTO.currentDriverSituation.type_driver_situation" use-input hide-selected
-                fill-input input-debounce="0" :options="listTypeDriverSit" label="Tipo de Situación del Chófer"
-                option-label="type_ds_name" style="width: 100%; padding-bottom: 32px">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      No results
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
+            <q-select filled v-model="driverDTO.currentDriverSituation.type_driver_situation" use-input hide-selected
+              fill-input input-debounce="0" :options="listTypeDriverSit" label="Tipo de Situación del Chófer"
+              option-label="type_ds_name" class="q-mt-lg">
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
 
-              <q-select filled v-model="driverDTO.car" use-input hide-selected fill-input input-debounce="0"
-                :options="listCars" label="Carro Asignado" option-label="car_number"
-                style="width: 100%; padding-bottom: 32px">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      No results
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-
-            </div>
+            <q-select filled v-model="driverDTO.car" use-input hide-selected fill-input input-debounce="0"
+              :options="listCars" label="Carro Asignado" option-label="car_number" class="q-mt-lg">
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </div>
 
-          <q-card-section class="panel-inferior">
+          <div class="q-card-actions justify-between q-mt-lg">
             <div>
               <q-btn label="Submit" type="submit" color="primary" />
               <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
             </div>
 
-            <q-btn color="primary" class="q-ml-sm" icon="contact_support" />
-          </q-card-section>
+            <q-btn color="primary" flat icon="contact_support" />
+          </div>
         </q-form>
       </q-card-section>
     </q-card>
@@ -92,43 +85,33 @@ import { TypeDriverSituationDTO } from 'src/logica/typeDriverSituation/TypeDrive
 import { TypeDriverSituationsService } from 'src/logica/typeDriverSituation/TypeDriverSituationsService';
 import { onMounted, onUpdated, ref, Ref, watch } from 'vue';
 
-// Se definen las props del componente
 interface Props {
   driverReactivo: {
-    driverDTO?: DriverDTO
-  }
+    driverDTO?: DriverDTO;
+  };
 }
-const props: Props = defineProps<Props>()
+const props: Props = defineProps<Props>();
 
-// Se definen los emit del componente
 const emit = defineEmits<{
   (e: 'setShowFormDriver'): void;
   (e: 'postDriver', driverDTO: DriverDTO): Promise<void>;
   (e: 'updateDriver', driverDTO: DriverDTO): Promise<void>;
 }>();
 
-// Se inyecta el Servicio de los tipos de situaciones de drivers para obtener las situaciones
-const typeDriverSituation: TypeDriverSituationsService =
-  TypeDriverSituationsService.getInstancie();
+const typeDriverSituation: TypeDriverSituationsService = TypeDriverSituationsService.getInstancie();
 const carsService: CarsService = CarsService.getInstancie();
-// se crea una variable que define los datos a llenar para un driver
-const driverDTO: Ref<DriverDTO> = ref(new DriverDTO('', '', '', false,
-  new DriverSituationDTO(new TypeDriverSituationDTO(''),
-    new Date()), undefined))
 
-const fecha: Ref<string> = ref(new Date().toLocaleDateString('en-CA')); // Formato de Canadá)
-
-// se define un watch para la fecha
-watch(fecha, (newFecha) => {
-  // se actualiza la fecha que será utilizada en la insercción/actualización del driver
-  driverDTO.value.currentDriverSituation.return_date_ds = new Date(newFecha)
-})
-
-// lista de situaciones de los choferes
-const listTypeDriverSit: Ref<Array<TypeDriverSituationDTO>> = ref(
-  new Array<TypeDriverSituationDTO>()
+const driverDTO: Ref<DriverDTO> = ref(
+  new DriverDTO('', '', '', false, new DriverSituationDTO(new TypeDriverSituationDTO(''), new Date()), undefined)
 );
 
+const fecha: Ref<string> = ref(new Date().toLocaleDateString('en-CA'));
+
+watch(fecha, (newFecha) => {
+  driverDTO.value.currentDriverSituation.return_date_ds = new Date(newFecha);
+});
+
+const listTypeDriverSit: Ref<Array<TypeDriverSituationDTO>> = ref(new Array<TypeDriverSituationDTO>());
 const listCars: Ref<Array<CarDTO>> = ref(new Array<CarDTO>());
 
 async function actualizarListTypeDriverSituation() {
@@ -137,8 +120,7 @@ async function actualizarListTypeDriverSituation() {
 
 async function getTypeDriversSituation() {
   try {
-    listTypeDriverSit.value =
-      await typeDriverSituation.getTypeDriverSituations();
+    listTypeDriverSit.value = await typeDriverSituation.getTypeDriverSituations();
   } catch (error) {
     alert(error);
   }
@@ -156,70 +138,64 @@ async function getCars() {
   }
 }
 
-onUpdated(onReset)
+onUpdated(onReset);
 
 onMounted(async () => {
-  await actualizarListTypeDriverSituation()
-  await actualizarListCar()
-})
+  await actualizarListTypeDriverSituation();
+  await actualizarListCar();
+});
 
 async function onSubmit() {
-  // se reinician los campos del formulario
-  // si fue abierto en modo insercción
   if (!props.driverReactivo.driverDTO) {
-    await emit('postDriver', driverDTO.value)
+    await emit('postDriver', driverDTO.value);
   } else {
-    // antes de pasar el driverDto al metodo de update
-    // se le asigna el id al driverDTO de el formulario para indicar a que driver se desea modificar
-    driverDTO.value.id = props.driverReactivo.driverDTO.id
-    await emit('updateDriver', driverDTO.value)
+    driverDTO.value.id = props.driverReactivo.driverDTO.id;
+    await emit('updateDriver', driverDTO.value);
   }
-
-
 }
 
 async function onReset() {
-  // se reinician los campos del formulario
-  // si fue abierto en modo insercción
   if (!props.driverReactivo.driverDTO) {
-    driverDTO.value.dni_driver = ''
-    driverDTO.value.driver_name = ''
-    driverDTO.value.home_address = ''
-    driverDTO.value.is_copilot = false
-    driverDTO.value.car = undefined
-    fecha.value = new Date().toLocaleDateString('en-CA')
-    driverDTO.value.currentDriverSituation.type_driver_situation = undefined
-
-
-  }
-  else { // si el formulario fue abierto en modo modificación
-    driverDTO.value.dni_driver = props.driverReactivo.driverDTO.dni_driver
-    driverDTO.value.driver_name = props.driverReactivo.driverDTO.driver_name
-    driverDTO.value.home_address = props.driverReactivo.driverDTO.home_address
-    driverDTO.value.is_copilot = props.driverReactivo.driverDTO.is_copilot
-    driverDTO.value.car = props.driverReactivo.driverDTO.car
-    fecha.value = props.driverReactivo.driverDTO.currentDriverSituation.return_date_ds as unknown as string // Súper Mala Práctica. Revisar
-    driverDTO.value.currentDriverSituation.type_driver_situation = props.driverReactivo.driverDTO.currentDriverSituation.type_driver_situation
-
+    driverDTO.value.dni_driver = '';
+    driverDTO.value.driver_name = '';
+    driverDTO.value.home_address = '';
+    driverDTO.value.is_copilot = false;
+    driverDTO.value.car = undefined;
+    fecha.value = new Date().toLocaleDateString('en-CA');
+    driverDTO.value.currentDriverSituation.type_driver_situation = undefined;
+  } else {
+    driverDTO.value.dni_driver = props.driverReactivo.driverDTO.dni_driver;
+    driverDTO.value.driver_name = props.driverReactivo.driverDTO.driver_name;
+    driverDTO.value.home_address = props.driverReactivo.driverDTO.home_address;
+    driverDTO.value.is_copilot = props.driverReactivo.driverDTO.is_copilot;
+    driverDTO.value.car = props.driverReactivo.driverDTO.car;
+    fecha.value = props.driverReactivo.driverDTO.currentDriverSituation.return_date_ds as unknown as string;
+    driverDTO.value.currentDriverSituation.type_driver_situation =
+      props.driverReactivo.driverDTO.currentDriverSituation.type_driver_situation;
   }
 }
-
 
 function setShowForm() {
   emit('setShowFormDriver');
 }
-
 </script>
 
 <style scoped>
 .card-campo {
   width: 100%;
+  margin: auto;
+  border-radius: 8px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
 .container-icon {
   display: flex;
-
   justify-content: flex-end;
+}
+
+.q-card-actions {
+  padding: 16px;
 }
 
 .seccion-car-situation {
@@ -235,8 +211,6 @@ function setShowForm() {
 .panel-inferior {
   display: flex;
   justify-content: space-between;
-  /* Distribuye los botones en extremos opuestos */
   padding: 10px;
-  /* Espacio interno opcional */
 }
 </style>

@@ -2,11 +2,11 @@
   <div class="q-pa-md">
     <FormDriverTable :driver-reactivo="driverReactivo" v-show="showForm" @set-show-form-driver="setShowFormDriver"
       @post-driver="postDriver" @update-driver="updateDriver" />
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Choferes" :rows="listDrivers"
-      :columns="columns" row-key="id">
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" :title="$t('chofer.chofer')"
+      :rows="listDrivers" :columns="columns" row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersDrivers.dni"
-          placeholder="Buscar por DNI">
+          :placeholder="$t('chofer.buscarDNI')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
