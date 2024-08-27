@@ -258,7 +258,7 @@ async function updateDriver(driverDTO: DriverDTO) {
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
       timeout: 3000, // Cambia la duración de la notificación en milisegundos
-      icon: 'check_circle', // Añade un icono a la notificación
+      icon: 'check_circle', // Añade un icono a la notificaciónn
     });
 
     // se reinician los campos
@@ -274,7 +274,6 @@ async function updateDriver(driverDTO: DriverDTO) {
 
     console.log(error)
   }
-
 
 }
 
@@ -321,7 +320,7 @@ function navegarTablaDriverSit(driverDTO: DriverDTO) {
   router.push({
     name: 'Situación del Chofer',
     params: {
-      idDriver: driverDTO.dni_driver,
+      idDriver: driverDTO.id,
     },
   });
 }
