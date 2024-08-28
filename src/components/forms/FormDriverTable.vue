@@ -2,8 +2,10 @@
   <div class="q-pa-md">
     <q-card class="card-campo">
       <q-card-section class="bg-primary text-white row justify-between items-center">
-        <div class="text-h5">Formulario Añadir Chófer</div>
-        <q-btn icon="cancel" @click="setShowForm()" flat color="white" />
+        <div class="col-11 text-h5">Formulario Añadir Chófer</div>
+        <div class="col-1 container-icon">
+          <q-btn icon="cancel" @click="setShowForm()" />
+        </div>
       </q-card-section>
 
       <q-card-section>
@@ -32,43 +34,46 @@
           <div class="text-h5 q-mt-lg">Situación del Chófer</div>
           <q-separator color="primary" inset size="16px" />
 
-          <div class="q-gutter-md q-mt-lg q-mb-lg">
+          <div class="seccion-car-situation q-gutter-md q-mt-lg q-mb-lg">
             <div>
               <div class="text-h7">Fecha de Finalizado</div>
               <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
 
-            <q-select filled v-model="driverDTO.currentDriverSituation.type_driver_situation" use-input hide-selected
-              fill-input input-debounce="0" :options="listTypeDriverSit" label="Tipo de Situación del Chófer"
-              option-label="type_ds_name" class="q-mt-lg">
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="select-container">
+              <q-select filled v-model="driverDTO.currentDriverSituation.type_driver_situation" use-input hide-selected
+                fill-input input-debounce="0" :options="listTypeDriverSit" label="Tipo de Situación del Chófer"
+                option-label="type_ds_name" class="q-mt-lg" style="width: 100%; padding-bottom: 32px">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
 
-            <q-select filled v-model="driverDTO.car" use-input hide-selected fill-input input-debounce="0"
-              :options="listCars" label="Carro Asignado" option-label="car_number" class="q-mt-lg">
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+              <q-select filled v-model="driverDTO.car" use-input hide-selected fill-input input-debounce="0"
+                :options="listCars" label="Carro Asignado" option-label="car_number" class="q-mt-lg"
+                style="width: 100%; padding-bottom: 32px">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
           </div>
 
-          <div class="q-card-actions justify-between q-mt-lg">
+          <div class="panel-inferior justify-between q-mt-lg">
             <div>
               <q-btn label="Submit" type="submit" color="primary" />
               <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
             </div>
 
-            <q-btn color="primary" flat icon="contact_support" />
+            <q-btn color="primary" class="q-ml-sm" icon="contact_support" />
           </div>
         </q-form>
       </q-card-section>
@@ -192,10 +197,6 @@ function setShowForm() {
 .container-icon {
   display: flex;
   justify-content: flex-end;
-}
-
-.q-card-actions {
-  padding: 16px;
 }
 
 .seccion-car-situation {
