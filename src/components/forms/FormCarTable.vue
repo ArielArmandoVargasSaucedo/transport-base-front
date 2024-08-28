@@ -1,92 +1,102 @@
 <template>
   <div class="q-pa-md">
     <q-card class="card-campo">
-      <q-card-section class="bg-primary text-white row justify-center">
-        <div class="col-11 text-h5">Formulario Añadir Carro</div>
-        <div class="col-1 container-icon">
-          <q-btn icon="cancel" @click="setShowForm()"></q-btn>
-        </div>
+      <!-- Encabezado del Formulario -->
+      <q-card-section class="header">
+        <div class="header-title text-h5">Formulario Añadir Carro</div>
+        <q-btn icon="cancel" @click="setShowForm()" flat />
       </q-card-section>
 
+      <!-- Cuerpo del Formulario -->
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+          <!-- Campo de Chapa -->
           <q-input filled v-model="datosCar.number" label="Chapa del Carro *" lazy-rules :rules="[
-            val => /^[A-Z][0-9]{6}$/.test(val) || 'La chapa debe empezar con una letra mayúscula seguida de seis números',
+            val =>
+              /^[A-Z][0-9]{6}$/.test(val) ||
+              'La chapa debe empezar con una letra mayúscula seguida de seis números'
           ]" />
+          <!-- Campo de Marca -->
           <q-input filled v-model="datosCar.brand" label="Marca del Carro *" lazy-rules :rules="[
-            val => /^[A-Za-z\s]+$/.test(val) || 'La marca solo debe contener letras',
+            val =>
+              /^[A-Za-z\s]+$/.test(val) ||
+              'La marca solo debe contener letras'
           ]" />
-          <q-input filled v-model="datosCar.numOfSeats" :type="'number'" label="Cantidad de Asientos del Carro *"
+          <!-- Campo de Cantidad de Asientos -->
+          <q-input filled v-model="datosCar.numOfSeats" type="number" label="Cantidad de Asientos del Carro *"
             lazy-rules :rules="[
-              val => val >= 3 || 'La cantidad mínima de asientos es 3',
+              val => val >= 3 || 'La cantidad mínima de asientos es 3'
             ]" />
 
-          <div class="text-h5">Situación del Carro</div>
-          <q-separator color="primary" inset size="16px" />
+          <!-- Sección de Situación del Carro -->
+          <div class="text-h6 q-mt-md">Situación del Carro</div>
+          <q-separator color="primary" inset size="8px" />
 
           <div class="seccion-car-situation">
+            <!-- Fecha de Finalizado -->
             <div>
               <div class="text-h7">Fecha de Finalizado</div>
               <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
-
-            <div class="select-container">
-              <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
-                input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
-                option-label="type_cs_name" style="width: 100%; padding-bottom: 32px">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      No results
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </div>
+            <!-- Tipo de Situación -->
+            <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+              input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
+              option-label="type_cs_name">
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </div>
-
-          <q-card-section class="panel-inferior">
-            <div>
-              <q-btn label="Submit" type="submit" color="primary" />
-              <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-            </div>
-
-            <q-btn color="primary" class="q-ml-sm" icon="contact_support" />
-          </q-card-section>
         </q-form>
+      </q-card-section>
+
+      <!-- Panel Inferior con Botones -->
+      <q-card-section class="panel-inferior">
+        <div>
+          <q-btn label="Submit" type="submit" color="primary" />
+          <q-btn label="Reset" type="reset" color="primary" flat />
+        </div>
+        <q-btn color="primary" icon="contact_support" />
       </q-card-section>
     </q-card>
   </div>
 </template>
 
-
 <script lang="ts" setup>
+// Se mantiene el mismo script que en la versión anterior
 import { CarDTO } from 'src/logica/car/CarDTO';
 import { CarSituationDTO } from 'src/logica/carSituation/CarSituationDTO';
 import { DriverDTO } from 'src/logica/drivers/DriverDTO';
 import { TypeCarSituationDTO } from 'src/logica/typeCarSituation/TypeCarSituationDTO';
 import { TypeCarSituationsService } from 'src/logica/typeCarSituation/TypeCarSituationsService';
-import { computed, ComputedRef, onMounted, onUpdated, Prop, Ref, ref, watch } from 'vue';
-
-//Se inyecta el servicio de Tipo de Situaciones para Carro
+import {
+  computed,
+  ComputedRef,
+  onMounted,
+  onUpdated,
+  Prop,
+  Ref,
+  ref,
+  watch
+} from 'vue';
 
 const typeCarSitService: TypeCarSituationsService =
   TypeCarSituationsService.getInstancie();
 
-// Se define lo q va a recibir el hijo del padre
-
-// Se definen las props del componente
 interface Props {
   carReactivo: {
-    carDTO?: CarDTO
-  }
+    carDTO?: CarDTO;
+  };
 }
 
-const props: Props = defineProps<Props>()
+const props: Props = defineProps<Props>();
 
-onUpdated(onReset)
+onUpdated(onReset);
 
-// Se definen los emit del componente
 const emit = defineEmits<{
   (e: 'setShowFormCar'): void;
   (
@@ -97,10 +107,12 @@ const emit = defineEmits<{
     returnDate: Date,
     id_aut_type_cs: number
   ): Promise<void>;
-  (e: 'updateCar', carDTO: CarDTO /* representa la información del carro a modificar */): Promise<void>;
+  (
+    e: 'updateCar',
+    carDTO: CarDTO /* representa la información del carro a modificar */
+  ): Promise<void>;
 }>();
 
-// Se define la interfaz para representar los datos del Campo
 interface CarSituation {
   returnDate: Date | string;
   typeCarSit: TypeCarSituationDTO | undefined;
@@ -112,33 +124,27 @@ interface DatosCar {
   carSituation: CarSituation;
 }
 
-// Se definen las variables reactivas del componente
 const datosCar: Ref<DatosCar> = ref<DatosCar>({
   number: '',
   brand: '',
   numOfSeats: 1,
   carSituation: {
     returnDate: new Date(),
-    typeCarSit: undefined,
-  },
+    typeCarSit: undefined
+  }
 });
 
-const fecha: Ref<string> = ref(new Date().toLocaleDateString('en-CA')); // Formato de Canadá)
+const fecha: Ref<string> = ref(new Date().toLocaleDateString('en-CA'));
 
-// se define un watch para la fecha
-watch(fecha, (newFecha) => {
-  // se actualiza la fecha que será utilizada en la insercción/actualización del driver
-  datosCar.value.carSituation.returnDate = new Date(newFecha)
-})
+watch(fecha, newFecha => {
+  datosCar.value.carSituation.returnDate = new Date(newFecha);
+});
 
 const listTypeCarSituation: Ref<Array<TypeCarSituationDTO>> = ref(
   new Array<TypeCarSituationDTO>()
 );
 
-// Funciones del ciclo de vida del componente
 onMounted(actualizarListTypeCarSituation);
-
-// Funciones
 
 async function actualizarListTypeCarSituation() {
   await getTypeCarSituation();
@@ -154,9 +160,7 @@ async function getTypeCarSituation() {
 
 async function onSubmit() {
   if (datosCar.value.carSituation.typeCarSit) {
-    // si el formulario fue abierto en modo insercción
     if (!props.carReactivo.carDTO) {
-      // se llama al metodo de insertar
       await emit(
         'postCar',
         datosCar.value.number,
@@ -165,33 +169,39 @@ async function onSubmit() {
         datosCar.value.carSituation.returnDate as Date,
         datosCar.value.carSituation.typeCarSit.id_aut_type_cs
       );
+    } else {
+      await emit(
+        'updateCar',
+        new CarDTO(
+          props.carReactivo.carDTO.id_car,
+          datosCar.value.number,
+          datosCar.value.brand,
+          datosCar.value.numOfSeats,
+          new CarSituationDTO(
+            datosCar.value.carSituation.typeCarSit,
+            datosCar.value.carSituation.returnDate as Date
+          )
+        )
+      );
     }
-    else { // si el formulario fue abierto en modo modificación
-      // se llama al método de modificar
-      await emit('updateCar', new CarDTO(props.carReactivo.carDTO.id_car, datosCar.value.number, datosCar.value.brand, datosCar.value.numOfSeats,
-        new CarSituationDTO(datosCar.value.carSituation.typeCarSit, datosCar.value.carSituation.returnDate as Date)))
-    }
-
-
   } else alert('Se debe de seleccionar un tipo de situación');
 }
 
 async function onReset() {
-  // se reinician los campos del formulario
-  // si fue abierto en modo insercción
   if (!props.carReactivo.carDTO) {
-    datosCar.value.number = ''
-    datosCar.value.brand = ''
-    datosCar.value.numOfSeats = 1
-    fecha.value = new Date().toLocaleDateString('en-CA'); // Formato de Canadá
-    datosCar.value.carSituation.typeCarSit = undefined
-  }
-  else { // si el formulario fue abierto en modo modificación
-    datosCar.value.number = props.carReactivo.carDTO.car_number
-    datosCar.value.brand = props.carReactivo.carDTO.car_brand
-    datosCar.value.numOfSeats = props.carReactivo.carDTO.number_of_seats
-    fecha.value = props.carReactivo.carDTO.currentCarSituation.return_date_cs as unknown as string // Súper Mala Práctica. Revisar
-    datosCar.value.carSituation.typeCarSit = props.carReactivo.carDTO.currentCarSituation.type_car_situation
+    datosCar.value.number = '';
+    datosCar.value.brand = '';
+    datosCar.value.numOfSeats = 1;
+    fecha.value = new Date().toLocaleDateString('en-CA');
+    datosCar.value.carSituation.typeCarSit = undefined;
+  } else {
+    datosCar.value.number = props.carReactivo.carDTO.car_number;
+    datosCar.value.brand = props.carReactivo.carDTO.car_brand;
+    datosCar.value.numOfSeats = props.carReactivo.carDTO.number_of_seats;
+    fecha.value = props.carReactivo.carDTO.currentCarSituation
+      .return_date_cs as unknown as string;
+    datosCar.value.carSituation.typeCarSit =
+      props.carReactivo.carDTO.currentCarSituation.type_car_situation;
   }
 }
 
@@ -199,36 +209,45 @@ function setShowForm() {
   emit('setShowFormCar');
 }
 
-// se definen las funciones que va a exponer el componente
-defineExpose({ onReset })
+defineExpose({ onReset });
 </script>
 
 <style scoped>
 .card-campo {
   width: 100%;
+  margin: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.container-icon {
+.header {
+  background-color: #3f51b5;
+  color: white;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
 
-  justify-content: flex-end;
+.header-title {
+  font-weight: bold;
 }
 
 .seccion-car-situation {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 15px;
 }
 
-.select-container {
-  width: 100%;
+@media (min-width: 768px) {
+  .seccion-car-situation {
+    flex-direction: row;
+  }
 }
 
 .panel-inferior {
   display: flex;
   justify-content: space-between;
-  /* Distribuye los botones en extremos opuestos */
   padding: 10px;
-  /* Espacio interno opcional */
+  border-top: 1px solid #e0e0e0;
 }
 </style>
