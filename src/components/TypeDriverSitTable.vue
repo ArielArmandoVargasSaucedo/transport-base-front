@@ -16,13 +16,14 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="edit" size="sm" flat dense />
+          <q-btn icon="edit" size="sm" flat dense @click="activarModalTypeDriverSit(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
             @click="activarModalConfirmacion(props.row.id_aut_type_ds)"></q-btn>
         </q-td>
       </template>
     </q-table>
-    <ModalTypeDriverSit ref="modalTypeDriverSit" @post-type-driver-situations="postTypeDriverSituations" />
+    <ModalTypeDriverSit :type-reactivo="typeDriverReactivo" ref="modalTypeDriverSit"
+      @post-type-driver-situations="postTypeDriverSituations" @update-type-driver-situations="updateTypeDriverSituations" />
 
     <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'"
       @action-confirm="deleteTypeDriverSituations" />
@@ -31,12 +32,12 @@
 
 <script lang="ts" setup>
 import { Ref, onMounted, ref, watch } from 'vue';
-import ModalTypeCarSit from './Modales/ModalTypeCarSit.vue';
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { TypeDriverSituationsService } from 'src/logica/typeDriverSituation/TypeDriverSituationsService';
 import { TypeDriverSituationDTO } from 'src/logica/typeDriverSituation/TypeDriverSituationDTO';
 import ModalTypeDriverSit from './Modales/ModalTypeDriverSit.vue';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 // Inyectar el Servicio de los Type Car Situations
 
@@ -82,6 +83,12 @@ const filtersTypeDriverSit: Ref<FiltersTypeDriverSit> = ref({
   nombre: '',
 });
 
+const typeDriverReactivo: Ref<{
+  typeSeleccionado?: TypeDriverSituationDTO,
+}> = ref({
+  typeSeleccionado: undefined
+})
+
 // Se define uun watch para los filtros
 watch(filtersTypeDriverSit.value, async (newFilters: FiltersTypeDriverSit) => {
   await getTypeDriverSituations()
@@ -110,7 +117,7 @@ async function getTypeDriverSituations() {
   }
 }
 
-async function postTypeDriverSituations(nombre: string, is_fecha:boolean) {
+async function postTypeDriverSituations(nombre: string, is_fecha: boolean) {
   try {
     await typeDriverSistuationService.postTypeDriverSituation(nombre, is_fecha);
     // se notifica de la acción
@@ -128,7 +135,7 @@ async function postTypeDriverSituations(nombre: string, is_fecha:boolean) {
     modalTypeDriverSit.value?.setShowModal(false);
   } catch (error) {
     // se van a mostar los errores al usuario
-    if (error instanceof Error)
+    if (error instanceof BadRequestError)
       Notify.create({
         message: error.message,
         type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
@@ -154,7 +161,7 @@ async function deleteTypeDriverSituations() {
     // se actualiza la información
     await actualizarTypeDriverSituations();
   } catch (error) {
-    if (error instanceof Error)
+    if (error instanceof BadRequestError)
       Notify.create({
         message: error.message,
         type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
@@ -165,44 +172,46 @@ async function deleteTypeDriverSituations() {
       });
   }
 
+}
 
-  async function updateTypeDriverSituations(id:number, nombre: string) {
-  try {
-    await typeDriverSistuationService.updateTypeDriverSituation(id,nombre)
-    // se notifica de la acción
-    Notify.create({
-      message: 'Tipo de Situación del Chofer insertada con éxito',
-      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-      color: 'green', // Cambia el color de la notificación
-      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-      timeout: 3000, // Cambia la duración de la notificación en milisegundos
-      icon: 'check_circle', // Añade un icono a la notificación
-    });
-    // se actualiza la información
-    await actualizarTypeDriverSituations();
-    // se cierra el modal
-    modalTypeDriverSit.value?.setShowModal(false);
-  } catch (error) {
-    // se van a mostar los errores al usuario
-    if (error instanceof Error)
+async function updateTypeDriverSituations(id: number, nombre: string) {
+    try {
+      await typeDriverSistuationService.updateTypeDriverSituation(id, nombre)
+      // se notifica de la acción
       Notify.create({
-        message: error.message,
-        type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-        color: 'red', // Cambia el color de la notificación
+        message: 'Tipo de Situación del Chofer insertada con éxito',
+        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'green', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
         timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'cancel', // Añade un icono a la notificación
+        icon: 'check_circle', // Añade un icono a la notificación
       });
+      // se actualiza la información
+      await actualizarTypeDriverSituations();
+      // se cierra el modal
+      modalTypeDriverSit.value?.setShowModal(false);
+    } catch (error) {
+      // se van a mostar los errores al usuario
+      if (error instanceof BadRequestError)
+        Notify.create({
+          message: error.message,
+          type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+          color: 'red', // Cambia el color de la notificación
+          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+          timeout: 3000, // Cambia la duración de la notificación en milisegundos
+          icon: 'cancel', // Añade un icono a la notificación
+        });
+    }
   }
-}
-
-}
 
 // eventos del componente
-function activarModalTypeDriverSit() {
+function activarModalTypeDriverSit(typeDriverSituationDTO?: TypeDriverSituationDTO) {
   // activar el modal
+  typeDriverReactivo.value.typeSeleccionado = typeDriverSituationDTO
   modalTypeDriverSit.value?.setShowModal(true);
 }
+
+
 
 function activarModalConfirmacion(idSitDriver: number) {
   idTipoSitDriverSeleccionado = idSitDriver;

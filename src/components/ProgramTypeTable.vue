@@ -16,12 +16,16 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="edit" size="sm" flat dense />
-          <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense />
+          <q-btn icon="edit" size="sm" flat dense @click="activarModalTypeProgram(props.row)"/>
+          <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
+            @click="activarModalConfirmacion(props.row.id_aut_prog_type)"></q-btn>
         </q-td>
       </template>
     </q-table>
-    <ModalTypeProgram ref="modalTypeProgram" @post-type-program="postTypeProgram" />
+    <ModalTypeProgram :type-reactivo="typeProgramReactivo" ref="modalTypeProgram" @post-type-program="postTypeProgram"
+      @update-type-program="updateTypeProgram" />
+    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'"
+      @action-confirm="deleteTypeProgram" />
   </div>
 </template>
 
@@ -76,6 +80,12 @@ const filtersTypeProgram: Ref<FiltersProgramType> = ref({
   nombre: '',
 });
 
+const typeProgramReactivo: Ref<{
+  typeSeleccionado?: ProgramTypeDTO,
+}> = ref({
+  typeSeleccionado: undefined
+})
+
 // Se define uun watch para los filtros
 watch(filtersTypeProgram.value, async (newFilters: FiltersProgramType) => {
   await getProgramTypes();
@@ -107,7 +117,7 @@ async function getProgramTypes() {
 
 async function postTypeProgram(nombre: string) {
   try {
-    //  await programTypesService.postTypeProgram(nombre);
+    await programTypesService.postTypeProgram(nombre);
     // se notifica de la acción
     Notify.create({
       message: 'Tipo de Situación del Carro insertada con éxito',
@@ -120,7 +130,7 @@ async function postTypeProgram(nombre: string) {
     // se actualiza la información
     await actualizarProgramTypes();
     // se cierra el modal
-    ModalTypeProgram.value?.setShowModal(false);
+    modalTypeProgram.value?.setShowModal(false);
   } catch (error) {
     // se van a mostar los errores al usuario
     if (error instanceof Error)
@@ -136,7 +146,7 @@ async function postTypeProgram(nombre: string) {
 }
 async function deleteTypeProgram() {
   try {
-    // await programTypesService.deleteTypeProgram(idTypeProgramSeleccionado);
+    await programTypesService.deleteTypeProgram(idTypeProgramSeleccionado);
     // se notifica de la acción
     Notify.create({
       message: 'Se ha elimnado con éxito el Tipo de Situación del Carro',
@@ -161,13 +171,44 @@ async function deleteTypeProgram() {
   }
 }
 
-// eventos del componente
-function activarModalTypeProgram() {
-  // activar el modal
-  //  modalTypeProgram.value?.setShowModal(true);
+async function updateTypeProgram(id: number, nombre: string) {
+  try {
+    await programTypesService.updateTypeProgram(id, nombre)
+    // se notifica de la acción
+    Notify.create({
+      message: 'Tipo de Situación del Chofer insertada con éxito',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+    // se actualiza la información
+    await actualizarProgramTypes();
+    // se cierra el modal
+    modalTypeProgram.value?.setShowModal(false);
+  } catch (error) {
+    // se van a mostar los errores al usuario
+    if (error instanceof Error)
+      Notify.create({
+        message: error.message,
+        type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'red', // Cambia el color de la notificación
+        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+        timeout: 3000, // Cambia la duración de la notificación en milisegundos
+        icon: 'cancel', // Añade un icono a la notificación
+      });
+  }
 }
 
-function activarModlConfirmacion(idPro: number) {
+// eventos del componente
+function activarModalTypeProgram(typeProgramSituationDTO?: ProgramTypeDTO) {
+  // activar el modal
+  typeProgramReactivo.value.typeSeleccionado = typeProgramSituationDTO
+  modalTypeProgram.value?.setShowModal(true);
+}
+
+function activarModalConfirmacion(idPro: number) {
   idTypeProgramSeleccionado = idPro;
   modalConfirmacion.value?.activateModalConfirmacion();
 }
