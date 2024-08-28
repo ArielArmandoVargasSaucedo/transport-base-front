@@ -38,32 +38,33 @@
               <div class="text-h7">Fecha de Finalizado</div>
               <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
-            <div class="select-container" >
-            <!-- Tipo de Situación -->
-            <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
-              input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
-              option-label="type_cs_name">
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="select-container">
+              <!-- Tipo de Situación -->
+              <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+                input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
+                option-label="type_cs_name">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
           </div>
+          <!-- Panel Inferior con Botones -->
+
+          <div>
+            <q-btn label="Submit" type="submit" color="primary" />
+            <q-btn label="Reset" type="reset" color="primary" flat />
           </div>
+          <q-btn color="primary" icon="contact_support" />
+
         </q-form>
       </q-card-section>
 
-      <!-- Panel Inferior con Botones -->
-      <q-card-section class="panel-inferior">
-        <div>
-          <q-btn label="Submit" type="submit" color="primary" />
-          <q-btn label="Reset" type="reset" color="primary" flat />
-        </div>
-        <q-btn color="primary" icon="contact_support" />
-      </q-card-section>
+
     </q-card>
   </div>
 </template>
@@ -161,6 +162,7 @@ async function getTypeCarSituation() {
 }
 
 async function onSubmit() {
+  console.log("Entreeeqwe")
   if (datosCar.value.carSituation.typeCarSit) {
     if (!props.carReactivo.carDTO) {
       await emit(

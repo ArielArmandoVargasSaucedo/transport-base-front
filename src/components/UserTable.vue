@@ -10,12 +10,6 @@
             <q-icon name="search" />
           </template>
         </q-input>
-        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.dni"
-          placeholder="Buscar por DNI" type="number">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
         <q-select v-if="showFilter" filled v-model="filtersUser.role" use-input hide-selected fill-input
           input-debounce="0" :options="listRoles" label="Rol asignado" option-label="role_type">
           <template v-slot:no-option>
@@ -70,18 +64,17 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'dni',
-    label: 'DNI',
+    name: 'email',
+    label: 'Email',
     align: 'left',
-    field: (row: UserDTO) => row.dni_user,
-    format: (val: any) => `${val}`,
+    field: (row: UserDTO) => row.email,
     sortable: true,
   },
   {
     name: 'role',
-    label: 'Role del Usuario',
+    label: 'Rol del Usuario',
     align: 'left',
-    field: (row: UserDTO) => row.role?.role_type,
+    field: (row: UserDTO) => row.role.role_type,
     sortable: true,
   },
   {
@@ -96,7 +89,6 @@ const columns = [
 //Se define una interfaz para los Filtros
 interface FiltersUser {
   user: string;
-  dni: string;
   role: RoleDTO | undefined;
 }
 
@@ -111,13 +103,12 @@ const userReactivo: Ref<{
 const showFilter = ref(false);
 const filtersUser: Ref<FiltersUser> = ref({
   user: '',
-  dni: '',
   role: undefined
 });
 
 // Se define un watch para los filtros
 watch(filtersUser.value, async (newFilters: FiltersUser) => {
-  await getUsers(newFilters.user, newFilters.dni, newFilters.role);
+  await getUsers(newFilters.user, newFilters.role);
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
@@ -136,7 +127,6 @@ onMounted(() => {
 async function actualizarUsers() {
   await getUsers(
     filtersUser.value.user,
-    filtersUser.value.dni,
     filtersUser.value.role
   );
 }
@@ -148,12 +138,11 @@ async function actualizarRoles() {
 // Funciones CRUD
 //Funcion de obtener la lista de Carros
 
-async function getUsers(user: string, dni: string, role: RoleDTO | undefined) {
+async function getUsers(user: string, role: RoleDTO | undefined) {
   try {
     listUser.value = await userService.getUsers(
       user === '' ? undefined : user,
       undefined,
-      dni === '' ? undefined : dni,
       role ? role.id_aut_role : undefined
     );
   } catch (error) {

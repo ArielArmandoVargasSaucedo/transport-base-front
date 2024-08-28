@@ -8,7 +8,7 @@
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <q-input filled v-model="datosUser.user" label="Nombre del Usuario *" lazy-rules :rules="[
+          <q-input filled v-model="datosUser.user_name" label="Nombre del Usuario *" lazy-rules :rules="[
             (val) => (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
 
@@ -16,11 +16,8 @@
             (val) => (val && val.length > 0) || 'Por favor complete este campo',
           ]" type="password" />
 
-          <q-input filled v-model="datosUser.dni" label="DNI del Usuario *" :rules="[
-            (val) => (val && val.length > 0) || 'Por favor complete este campo',
-          ]" />
 
-          <q-select filled v-model="datosUser.role.role_type" use-input hide-selected fill-input input-debounce="0"
+          <q-select filled v-model="datosUser.role?.role_type" use-input hide-selected fill-input input-debounce="0"
             :options="listRole" label="Tipo de Rol del Usuario" option-label="role_type" />
 
           <q-card-section class="panel-inferior">
@@ -62,16 +59,14 @@ interface Role {
 }
 
 interface DatosUser {
-  user: string;
-  dni: string;
+  user_name: string;
   password: string;
-  role: Role;
+  role: Role | undefined;
   id_driver: number;
 }
 
 const datosUser: Ref<DatosUser> = ref<DatosUser>({
-  user: '',
-  dni: '',
+  user_name: '',
   password: '',
   role: { id_aut_role: 1, role_type: '' },
   id_driver: 1,
