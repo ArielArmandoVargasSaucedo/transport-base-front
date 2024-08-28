@@ -78,8 +78,38 @@ export class DriversService {
   ): Promise<DriverDTO | undefined> {
     let driverDTO: DriverDTO | undefined = undefined
 
-    try {
+
       const url = 'http://localhost:5000/driver/' + idDriver;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (res.status === 400) {
+        // obtener la respuesta
+        const badRequest: BadRequestInterface = await res.json()
+        throw new BadRequestError(badRequest.message)
+      }
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+      driverDTO = json;
+
+
+    return driverDTO;
+  }
+
+  // Método para obtener la información de los drivers que no poseen cuenta
+  async getAllDriversWithOutAccount(
+
+  ): Promise<Array<DriverDTO>> {
+    let drivers: Array<DriverDTO> = new Array<DriverDTO>()
+
+    try {
+      const url = 'http://localhost:5000/driver/getAllDriversWithOutAccount'
       const res = await fetch(url, {
         method: 'GET',
         headers: {
@@ -90,10 +120,10 @@ export class DriversService {
 
       // extraer el json de la respuesta
       const json = await res.json();
-      driverDTO = json;
+      drivers = json;
     } catch (error) { }
 
-    return driverDTO;
+    return drivers;
   }
 
   async deleteDriver(id_driver: number): Promise<void> {

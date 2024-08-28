@@ -133,9 +133,6 @@ const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
 // se crea una variable para el formulario de car table
 const formCarTable: Ref<InstanceType<typeof FormCarTable> | null> =
   ref(null);
-//se crea una variable para visualizar las situaciones del carro
-const carSituationsTable: Ref<InstanceType<typeof CarSituationTable> | null> =
-  ref(null);
 onMounted(actualizarCars);
 
 async function actualizarCars() {
@@ -269,12 +266,6 @@ function navegarTablaCarSit(carDTOSeleccionado: CarDTO) {
   });
 }
 
-function setShowCarSitTable() {
-  // si esta activado el form
-  if (showTablaCarSit.value) showTablaCarSit.value = false; // se desactiva
-  // esta desactivado
-  else showTablaCarSit.value = true; // se activa
-}
 
 function setShowFormCar() {
   // si esta activado el form

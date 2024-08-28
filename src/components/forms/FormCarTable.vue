@@ -162,7 +162,6 @@ async function getTypeCarSituation() {
 }
 
 async function onSubmit() {
-  console.log("Entreeeqwe")
   if (datosCar.value.carSituation.typeCarSit) {
     if (!props.carReactivo.carDTO) {
       await emit(

@@ -12,13 +12,19 @@
             (val) => (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
 
-          <q-input filled v-model="datosUser.password" label="Contraseña *" :rules="[
+          <q-input filled v-model="datosUser.password" :label="isOpenToInsertion() ? 'Contraseña *' : 'Contraseña'" :rules="getPasswordRules()" type="password" />
+
+          <q-input filled v-model="datosUser.email" label="Email *" :rules="[
             (val) => (val && val.length > 0) || 'Por favor complete este campo',
-          ]" type="password" />
+          ]" type="email" />
 
+          <q-select filled v-model="datosUser.role" use-input hide-selected fill-input input-debounce="0"
+            :options="listRole" label="Tipo de Rol del Usuario" option-label="role_type"
+            :disable="!isOpenToInsertion()" />
 
-          <q-select filled v-model="datosUser.role?.role_type" use-input hide-selected fill-input input-debounce="0"
-            :options="listRole" label="Tipo de Rol del Usuario" option-label="role_type" />
+          <q-select v-if="(datosUser.role && datosUser.role.id_aut_role === RolesEnum.Chofer)" filled
+            v-model="datosUser.driver" use-input hide-selected fill-input input-debounce="0" :options="listDriver"
+            label="Chofer" option-label="driver_name"  :disable="!isOpenToInsertion()" />
 
           <q-card-section class="panel-inferior">
             <q-btn label="Submit" type="submit" color="primary" />
@@ -35,9 +41,12 @@ import { UserDTO } from 'src/logica/user/UserDTO';
 import { RoleDTO } from 'src/logica/role/RoleDTO';
 import { RoleService } from 'src/logica/role/RoleService';
 import { onMounted, onUpdated, Ref, ref } from 'vue';
+import { DriverDTO } from 'src/logica/drivers/DriverDTO';
+import { DriversService } from 'src/logica/drivers/DriversService';
+import { RolesEnum } from 'src/utils/RolesEnum';
 
 const roleService: RoleService = RoleService.getInstancie();
-
+const driverService: DriversService = DriversService.getInstancie();
 interface Props {
   userReactivo: {
     userDTO?: UserDTO;
@@ -49,8 +58,8 @@ onUpdated(onReset);
 
 const emit = defineEmits<{
   (e: 'setShowFormUser'): void;
-  (e: 'postUser', user_name: string, dni_user: string, password_user: string, id_aut_role: number): Promise<void>;
-  (e: 'updateUser', userDTO: UserDTO): Promise<void>;
+  (e: 'postUser', user_name: string, password_user: string, email: string, id_aut_role: number, id_driver?: number,): Promise<void>;
+  (e: 'updateUser', user_id: number, user_name: string, password_user: string, email: string): Promise<void>;
 }>();
 
 interface Role {
@@ -61,59 +70,115 @@ interface Role {
 interface DatosUser {
   user_name: string;
   password: string;
+  email: string
   role: Role | undefined;
-  id_driver: number;
+  driver: DriverDTO | undefined;
 }
 
 const datosUser: Ref<DatosUser> = ref<DatosUser>({
   user_name: '',
   password: '',
-  role: { id_aut_role: 1, role_type: '' },
-  id_driver: 1,
+  email: '',
+  role: undefined,
+  driver: undefined,
 });
 
 const listRole: Ref<Array<RoleDTO>> = ref(new Array<RoleDTO>());
+const listDriver: Ref<Array<DriverDTO>> = ref(new Array<DriverDTO>());
 
 onMounted(async () => {
-  listRole.value = await roleService.getRole();
+  await actualizarListRole();
+  await actualizarListDrivers();
 });
 
+// Funciones
+async function actualizarListDrivers() {
+  await getDrivers();
+
+}
+
+async function getDrivers() {
+  try {
+    listDriver.value =
+      await driverService.getAllDriversWithOutAccount()
+  } catch (error) {
+    alert(error);
+  }
+}
+
+
+async function actualizarListRole() {
+  await getRole();
+}
+
+async function getRole() {
+  try {
+    listRole.value =
+      await roleService.getRoles();
+  } catch (error) {
+    alert(error);
+  }
+}
+
 async function onSubmit() {
-  if (datosUser.value.role.role_type) {
-    if (!props.userReactivo.userDTO) {
-      await emit('postUser', datosUser.value.user, datosUser.value.dni, datosUser.value.password, datosUser.value.role.id_aut_role);
-    } else {
-      await emit('updateUser', new UserDTO(props.userReactivo.userDTO.id_user, datosUser.value.user, datosUser.value.password, datosUser.value.dni, new RoleDTO(datosUser.value.role.id_aut_role, datosUser.value.role.role_type), datosUser.value.id_driver));
-    }
+  if (datosUser.value.role) { // si fue seleccionado un rol
+    if (!props.userReactivo.userDTO) // si fue abierto como insercción
+      await emit('postUser', datosUser.value.user_name, datosUser.value.password, datosUser.value.email, datosUser.value.role.id_aut_role, datosUser.value.driver?.id)
+    else // si fue abierto como modificación
+      await emit('updateUser', props.userReactivo.userDTO.id_aut_user, datosUser.value.user_name, datosUser.value.password, datosUser.value.email)
   } else {
-    alert('Se debe de seleccionar un tipo de rol');
+    alert("No se seleccionó rol")
   }
 }
 
 async function onReset() {
-  if (!props.userReactivo.userDTO) {
-    datosUser.value.user = '';
+
+  if (!props.userReactivo.userDTO) { // si fue abierto como insercción
+    datosUser.value.user_name = '';
     datosUser.value.password = '';
-    datosUser.value.dni = '';
-    datosUser.value.role.id_aut_role = 1;
-  } else {
-    datosUser.value.user = props.userReactivo.userDTO.user_name;
-    datosUser.value.password = props.userReactivo.userDTO.password_user;
-    datosUser.value.dni = props.userReactivo.userDTO.dni_user;
-    datosUser.value.role.id_aut_role = props.userReactivo.userDTO.role?.id_aut_role ?? 0;
+    datosUser.value.email = '';
+    datosUser.value.role = undefined
+    datosUser.value.driver = undefined
   }
+  else {
+    datosUser.value.user_name = props.userReactivo.userDTO.user_name;
+    datosUser.value.password = '';
+    datosUser.value.email = props.userReactivo.userDTO.email;
+    datosUser.value.role = props.userReactivo.userDTO.role;
+    datosUser.value.driver = props.userReactivo.userDTO.driver;
+  }
+
+  // además de ello se actualiza el seleccionador de choferes
+  // esto debido a que una insercción o eliminación puede provocar cambios en los choferes disponibles sin cuentas
+ await actualizarListDrivers()
 }
 
+function isOpenToInsertion() {
+  return !props.userReactivo.userDTO
+}
 function setShowForm() {
   emit('setShowFormUser');
 }
+
+function getPasswordRules() {
+    if (isOpenToInsertion()) {
+      return [
+        (val: any) => !!val || 'Por favor complete este campo',
+        (val: any) => (val && val.length >= 8) || 'La contraseña debe tener al menos 8 caracteres'
+      ];
+    } else {
+      return [
+        (val: any) => !val || val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres'
+      ];
+    }
+  }
 
 defineExpose({ onReset });
 </script>
 
 <style scoped>
 .form-container {
-  max-width: 600px;
+
   margin: auto;
 }
 
