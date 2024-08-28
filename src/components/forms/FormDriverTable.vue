@@ -4,7 +4,7 @@
       <q-card-section class="bg-primary text-white row justify-between items-center">
         <div class="col-11 text-h5">Formulario Añadir Chófer</div>
         <div class="col-1 container-icon">
-          <q-btn icon="cancel" @click="setShowForm()" />
+          <q-btn icon="cancel" @click="setShowForm()" flat />
         </div>
       </q-card-section>
 
@@ -43,7 +43,7 @@
             <div class="select-container">
               <q-select filled v-model="driverDTO.currentDriverSituation.type_driver_situation" use-input hide-selected
                 fill-input input-debounce="0" :options="listTypeDriverSit" label="Tipo de Situación del Chófer"
-                option-label="type_ds_name" class="q-mt-lg" style="width: 100%; padding-bottom: 32px">
+                option-label="type_ds_name" class="q-mt-lg" >
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -55,7 +55,7 @@
 
               <q-select filled v-model="driverDTO.car" use-input hide-selected fill-input input-debounce="0"
                 :options="listCars" label="Carro Asignado" option-label="car_number" class="q-mt-lg"
-                style="width: 100%; padding-bottom: 32px">
+                >
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -107,7 +107,7 @@ const typeDriverSituation: TypeDriverSituationsService = TypeDriverSituationsSer
 const carsService: CarsService = CarsService.getInstancie();
 
 const driverDTO: Ref<DriverDTO> = ref(
-  new DriverDTO('', '', '', false, new DriverSituationDTO(new TypeDriverSituationDTO(''), new Date()), undefined)
+  new DriverDTO('', '', '', false, new DriverSituationDTO(undefined, new Date()), undefined)
 );
 
 const fecha: Ref<string> = ref(new Date().toLocaleDateString('en-CA'));
@@ -201,8 +201,14 @@ function setShowForm() {
 
 .seccion-car-situation {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 15px;
+}
+
+@media (min-width: 768px) {
+  .seccion-car-situation {
+    flex-direction: row;
+  }
 }
 
 .select-container {

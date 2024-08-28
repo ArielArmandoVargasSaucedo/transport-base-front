@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-card class="card-campo">
       <!-- Encabezado del Formulario -->
-      <q-card-section class="header">
+      <q-card-section class="header bg-primary">
         <div class="header-title text-h5">Formulario Añadir Carro</div>
         <q-btn icon="cancel" @click="setShowForm()" flat />
       </q-card-section>
@@ -38,6 +38,7 @@
               <div class="text-h7">Fecha de Finalizado</div>
               <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
+            <div class="select-container" >
             <!-- Tipo de Situación -->
             <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
               input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
@@ -50,6 +51,7 @@
                 </q-item>
               </template>
             </q-select>
+          </div>
           </div>
         </q-form>
       </q-card-section>
@@ -220,7 +222,6 @@ defineExpose({ onReset });
 }
 
 .header {
-  background-color: #3f51b5;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -242,6 +243,10 @@ defineExpose({ onReset });
   .seccion-car-situation {
     flex-direction: row;
   }
+}
+
+.select-container {
+  width: 100%;
 }
 
 .panel-inferior {
