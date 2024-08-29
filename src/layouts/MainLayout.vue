@@ -9,6 +9,7 @@
           TransportBase
         </q-toolbar-title>
         <div class="div-lateral">
+          <internationalizationButton />
           <ModalProfile />
           <q-btn flat label="Cerrar Sesion" @click="activarModalConfirmacion()" />
         </div>
@@ -32,6 +33,7 @@ import { getChildrensRouteAuth } from 'src/router/routes';
 import { AuthService } from 'src/logica/auth/AuthService';
 import { useRouter } from 'vue-router';
 import ModalConfirmacion from 'src/components/Modales/ModalConfirmacion.vue';
+import internationalizationButton from 'src/components/internationalizationButton.vue';
 
 // se obtiene el enrrutador
 const router = useRouter()
