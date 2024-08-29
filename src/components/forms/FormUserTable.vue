@@ -12,7 +12,12 @@
             (val) => (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
 
-          <q-input filled v-model="datosUser.password" :label="isOpenToInsertion() ? 'Contraseña *' : 'Contraseña'" :rules="getPasswordRules()" type="password" />
+          <q-input filled v-model="datosUser.password" :label="isOpenToInsertion() ? 'Contraseña *' : 'Contraseña'"
+            :rules="getPasswordRules()" :type="showPassword ? 'text' : 'password'">
+            <template v-slot:append>
+              <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" @click="togglePasswordVisibility" />
+            </template>
+          </q-input>
 
           <q-input filled v-model="datosUser.email" label="Email *" :rules="[
             (val) => (val && val.length > 0) || 'Por favor complete este campo',
@@ -24,7 +29,7 @@
 
           <q-select v-if="(datosUser.role && datosUser.role.id_aut_role === RolesEnum.Chofer)" filled
             v-model="datosUser.driver" use-input hide-selected fill-input input-debounce="0" :options="listDriver"
-            label="Chofer" option-label="driver_name"  :disable="!isOpenToInsertion()" />
+            label="Chofer" option-label="driver_name" :disable="!isOpenToInsertion()" />
 
           <q-card-section class="panel-inferior">
             <q-btn label="Submit" type="submit" color="primary" />
@@ -86,6 +91,8 @@ const datosUser: Ref<DatosUser> = ref<DatosUser>({
 const listRole: Ref<Array<RoleDTO>> = ref(new Array<RoleDTO>());
 const listDriver: Ref<Array<DriverDTO>> = ref(new Array<DriverDTO>());
 
+const showPassword = ref(false);
+
 onMounted(async () => {
   await actualizarListRole();
   await actualizarListDrivers();
@@ -127,7 +134,7 @@ async function onSubmit() {
     else // si fue abierto como modificación
       await emit('updateUser', props.userReactivo.userDTO.id_aut_user, datosUser.value.user_name, datosUser.value.password, datosUser.value.email)
   } else {
-    alert("No se seleccionó rol")
+    alert('No se seleccionó rol')
   }
 }
 
@@ -150,7 +157,7 @@ async function onReset() {
 
   // además de ello se actualiza el seleccionador de choferes
   // esto debido a que una insercción o eliminación puede provocar cambios en los choferes disponibles sin cuentas
- await actualizarListDrivers()
+  await actualizarListDrivers()
 }
 
 function isOpenToInsertion() {
@@ -161,17 +168,21 @@ function setShowForm() {
 }
 
 function getPasswordRules() {
-    if (isOpenToInsertion()) {
-      return [
-        (val: any) => !!val || 'Por favor complete este campo',
-        (val: any) => (val && val.length >= 8) || 'La contraseña debe tener al menos 8 caracteres'
-      ];
-    } else {
-      return [
-        (val: any) => !val || val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres'
-      ];
-    }
+  if (isOpenToInsertion()) {
+    return [
+      (val: any) => !!val || 'Por favor complete este campo',
+      (val: any) => (val && val.length >= 8) || 'La contraseña debe tener al menos 8 caracteres'
+    ];
+  } else {
+    return [
+      (val: any) => !val || val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres'
+    ];
   }
+}
+
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value;
+}
 
 defineExpose({ onReset });
 </script>

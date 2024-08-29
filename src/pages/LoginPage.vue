@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-center container">
-
     <div>
       <q-avatar size="100px" font-size="52px" color="primary" text-color="white" icon="person" />
     </div>
@@ -23,10 +22,13 @@
             </template>
           </q-input>
 
-          <q-input class="full-width inp" clearable filled type="password" v-model="datosLogin.password"
-            label="Password *" lazy-rules :rules="[
+          <q-input class="full-width inp" clearable filled :type="showPassword ? 'text' : 'password'"
+            v-model="datosLogin.password" label="Password *" lazy-rules :rules="[
               (val) => (val && val.length > 0) || 'This field is required',
             ]">
+            <template v-slot:append>
+              <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" @click="togglePasswordVisibility" />
+            </template>
             <template v-slot:before>
               <q-icon name="lock" color="primary" />
             </template>
@@ -40,8 +42,8 @@
       </q-card-section>
     </q-card>
   </div>
-
 </template>
+
 <script setup lang="ts">
 import { Notify } from 'quasar';
 import { AuthService } from 'src/logica/auth/AuthService';
@@ -62,6 +64,13 @@ const datosLogin: Ref<DatosLogin> = ref({
   nameUser: '',
   password: ''
 })
+
+const showPassword = ref(false);
+
+//mostrar contraseña
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value;
+}
 
 async function onSubmit() {
   try {
@@ -88,7 +97,6 @@ function onReset() {
   datosLogin.value.nameUser = ''
   datosLogin.value.password = ''
 }
-
 </script>
 
 <style scoped>
@@ -103,7 +111,6 @@ function onReset() {
 .log {
   display: flex;
   justify-content: center;
-
 }
 
 .inp {
