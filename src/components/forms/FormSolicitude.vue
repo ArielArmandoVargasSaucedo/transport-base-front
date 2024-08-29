@@ -168,7 +168,7 @@ interface DatosSolicitud {
   carDTO: CarDTO | undefined;
   prog_typeDTO: ProgramTypeDTO | undefined;
   groupDTO: GroupTourDTO | undefined; // representa el seleccionado
-  group: GroupTour; // representa el q se va a crearr
+  group: GroupTour; // representa el q se va a crear
   date: Date;
   route: Route;
 }
