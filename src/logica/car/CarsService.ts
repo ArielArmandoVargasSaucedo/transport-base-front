@@ -21,26 +21,31 @@ export class CarsService {
   ): Promise<Array<CarDTO>> {
     let listCars: Array<CarDTO> = new Array<CarDTO>();
 
-    try {
-      //Se define los parámetros query de la petición
-      const params = new URLSearchParams();
-      if (number) params.append('car_number', number);
-      if (brand) params.append('car_brand', brand);
-      if (numOfSeats) params.append('number_of_seats', numOfSeats.toString());
+    //Se define los parámetros query de la petición
+    const params = new URLSearchParams();
+    if (number) params.append('car_number', number);
+    if (brand) params.append('car_brand', brand);
+    if (numOfSeats) params.append('number_of_seats', numOfSeats.toString());
 
-      const url = 'http://localhost:5000/car?' + params;
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    const url = 'http://localhost:5000/car?' + params;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-      listCars = json;
-    } catch (error) { }
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
+    }
+
+    // extraer el json de la respuesta
+    const json = await res.json();
+    listCars = json;
 
     return listCars;
   }
@@ -51,20 +56,25 @@ export class CarsService {
   ): Promise<CarDTO | undefined> {
     let carDTO: CarDTO | undefined = undefined
 
-    try {
-      const url = 'http://localhost:5000/car/' + idCar;
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    const url = 'http://localhost:5000/car/' + idCar;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-      carDTO = json;
-    } catch (error) { }
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
+    }
+
+    // extraer el json de la respuesta
+    const json = await res.json();
+    carDTO = json;
 
     return carDTO;
   }
@@ -76,24 +86,29 @@ export class CarsService {
   ): Promise<Array<CarSituationDTO>> {
     let listCarSituationsDTO: Array<CarSituationDTO> = new Array<CarSituationDTO>();
 
-    try {
-      //Se define los parámetros query de la petición
-      const params = new URLSearchParams();
-      if (nombreTipoSituacion) params.append('nombreTipoSituacion', nombreTipoSituacion);
+    //Se define los parámetros query de la petición
+    const params = new URLSearchParams();
+    if (nombreTipoSituacion) params.append('nombreTipoSituacion', nombreTipoSituacion);
 
-      const url = 'http://localhost:5000/car/getHistorialCarSituations/' + idCar + '?' + params;
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    const url = 'http://localhost:5000/car/getHistorialCarSituations/' + idCar + '?' + params;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-      listCarSituationsDTO = json;
-    } catch (error) { }
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
+    }
+
+    // extraer el json de la respuesta
+    const json = await res.json();
+    listCarSituationsDTO = json;
 
     return listCarSituationsDTO;
   }
@@ -138,20 +153,19 @@ export class CarsService {
 
     const url = 'http://localhost:5000/car/' + id_car;
 
-    try {
-      const res = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-    } catch (error) {
-      if (error instanceof Error) console.log(error.message);
-      // se relanza la exeption
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
     }
   }
 

@@ -27,33 +27,36 @@ export class UserService {
 
     // si el usuario esta logeado
     if (token) {
-      try {
-        // se obtiene el id del usuario logeado
-        const id_applicant = token.payload.userId
-        //Se define los parámetros query de la petición
-        const params = new URLSearchParams();
-        if (user) params.append('user_name', user);
-        if (password) params.append('password_user', password);
-        if (role) params.append('role', role.toString());
-        if (id_driver) params.append('id_driver', id_driver.toString());
-        if (id_applicant) params.append('id_applicant', id_applicant.toString())
+      // se obtiene el id del usuario logeado
+      const id_applicant = token.payload.userId
+      //Se define los parámetros query de la petición
+      const params = new URLSearchParams();
+      if (user) params.append('user_name', user);
+      if (password) params.append('password_user', password);
+      if (role) params.append('role', role.toString());
+      if (id_driver) params.append('id_driver', id_driver.toString());
+      if (id_applicant) params.append('id_applicant', id_applicant.toString())
 
-        const url = 'http://localhost:5000/user?' + params;
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        });
+      const url = 'http://localhost:5000/user?' + params;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
 
-        // extraer el json de la respuesta
-        const json = await res.json();
-        listUser = json;
-      } catch (error) { }
+      // si el código del error es igual a 400 significa que hubo una badrequest
+      if (res.status === 400) {
+        // obtener la respuesta
+        const badRequest: BadRequestInterface = await res.json()
+        throw new BadRequestError(badRequest.message)
+      }
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+      listUser = json;
     }
-
-
     return listUser;
   }
 
@@ -94,27 +97,26 @@ export class UserService {
   ): Promise<void> {
     const url = 'http://localhost:5000/user';
 
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_name: user_name,
-          password_user: password_user,
-          email: email,
-          id_aut_role: role,
-          id_driver: id_driver,
-        }),
-      });
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_name: user_name,
+        password_user: password_user,
+        email: email,
+        id_aut_role: role,
+        id_driver: id_driver,
+      }),
+    });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-    } catch (error) {
-      if (error instanceof Error) console.log(error.message);
-      // se relanza la exeption
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
     }
   }
 
@@ -122,25 +124,24 @@ export class UserService {
 
     const url = 'http://localhost:5000/user/' + id_user;
 
-    try {
-      const res = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
 
-      // extraer el json de la respuesta
-      const json = await res.json();
-    } catch (error) {
-      if (error instanceof Error) console.log(error.message);
-      // se relanza la exeption
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
     }
   }
 
   //Metodo para actualizar un User
-  async updateUser(user_id:number, user_name:string, password_user:string | undefined, email:string): Promise<void> {
+  async updateUser(user_id: number, user_name: string, password_user: string | undefined, email: string): Promise<void> {
     const url = 'http://localhost:5000/user/' + user_id;
 
     const res = await fetch(url, {
@@ -162,7 +163,5 @@ export class UserService {
       const badRequest: BadRequestInterface = await res.json()
       throw new BadRequestError(badRequest.message)
     }
-
   }
-
 }
