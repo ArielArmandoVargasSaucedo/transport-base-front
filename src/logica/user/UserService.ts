@@ -33,7 +33,7 @@ export class UserService {
       const params = new URLSearchParams();
       if (user) params.append('user_name', user);
       if (password) params.append('password_user', password);
-      if (role) params.append('role', role.toString());
+      if (role) params.append('id_aut_role', role.toString());
       if (id_driver) params.append('id_driver', id_driver.toString());
       if (id_applicant) params.append('id_applicant', id_applicant.toString())
 

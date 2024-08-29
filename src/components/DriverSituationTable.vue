@@ -15,7 +15,7 @@
                 <q-btn
                 color="primary"
                 icon-right="archive"
-                label="Export to csv"
+                label="Exportar a csv"
                 no-caps
                 @click="exportTable"
               />
@@ -204,7 +204,7 @@ function exportTable() {
     })
   }
 }
- 
+
 </script>
 
 <style></style>

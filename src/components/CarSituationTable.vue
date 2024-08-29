@@ -12,7 +12,13 @@
                     </template>
                 </q-input>
                 <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
-                <q-btn icon="cancel" @click=""></q-btn>
+                <q-btn
+                color="primary"
+                icon-right="archive"
+                label="Exportar a csv"
+                no-caps
+                @click="exportTable"
+              />
             </template>
         </q-table>
         <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="" />
@@ -23,7 +29,7 @@
 import { CarDTO } from 'src/logica/car/CarDTO';
 import { CarsService } from 'src/logica/car/CarsService';
 import { Ref, onMounted, ref } from 'vue';
-import { Notify } from 'quasar';
+import { exportFile, Notify, useQuasar } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { watch } from 'vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
@@ -150,7 +156,54 @@ async function getTypeCarSituations() {
 }
 
 // Eventos
+function wrapCsvValue(val: any, formatFn?: (val: any, row: any) => string, row?: any): string  {
+  let formatted = formatFn !== void 0
+    ? formatFn(val, row)
+    : val
 
+  formatted = formatted === void 0 || formatted === null
+    ? ''
+    : String(formatted)
+
+  formatted = formatted.split('"').join('""')
+  /**
+   * Excel accepts \n and \r in strings, but some other CSV parsers do not
+   * Uncomment the next two lines to escape new lines
+   */
+  // .split('\n').join('\\n')
+  // .split('\r').join('\\r')
+
+  return `"${formatted}"`
+}
+
+const $q = useQuasar()
+
+function exportTable() {
+  const content = [columns.map(col => wrapCsvValue(col.label))].concat(
+    listCarSituations.value.map(row => columns.map(col => wrapCsvValue(
+      typeof col.field === 'function'
+        ? col.field(row)
+        : (row as any)[col.field === void 0 ? col.name : col.field as string],
+      col.format,
+      row
+    )).join(','))
+  ).join('\r\n')
+
+
+  const status = exportFile(
+    'table-export.csv',
+    content,
+    'text/csv'
+  )
+
+  if (status !== true) {
+    $q.notify({
+      message: 'Browser denied file download...',
+      color: 'negative',
+      icon: 'warning'
+    })
+  }
+}
 </script>
 
 <style></style>
