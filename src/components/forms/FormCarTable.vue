@@ -3,7 +3,7 @@
     <q-card class="card-campo">
       <!-- Encabezado del Formulario -->
       <q-card-section class="header bg-primary">
-        <div class="header-title text-h5">Formulario Añadir Carro</div>
+        <div class="header-title text-h5">"$t('carro.formularioCarro')"</div>
         <q-btn icon="cancel" @click="setShowForm()" flat />
       </q-card-section>
 
@@ -11,47 +11,46 @@
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
           <!-- Campo de Chapa -->
-          <q-input filled v-model="datosCar.number" label="Chapa del Carro *" lazy-rules :rules="[
+          <q-input filled v-model="datosCar.number" label="$t('carro.chapa')" lazy-rules :rules="[
             val =>
               /^[A-Z][0-9]{6}$/.test(val) ||
               'La chapa debe empezar con una letra mayúscula seguida de seis números'
           ]" />
           <!-- Campo de Marca -->
-          <q-input filled v-model="datosCar.brand" label="Marca del Carro *" lazy-rules :rules="[
+          <q-input filled v-model="datosCar.brand" label="$t('carro.marca')" lazy-rules :rules="[
             val =>
               /^[A-Za-z\s]+$/.test(val) ||
               'La marca solo debe contener letras'
           ]" />
           <!-- Campo de Cantidad de Asientos -->
-          <q-input filled v-model="datosCar.numOfSeats" type="number" label="Cantidad de Asientos del Carro *"
-            lazy-rules :rules="[
-              val => val >= 3 || 'La cantidad mínima de asientos es 3'
-            ]" />
+          <q-input filled v-model="datosCar.numOfSeats" type="number" label="$t('carro.asientos')" lazy-rules :rules="[
+            val => val >= 3 || 'La cantidad mínima de asientos es 3'
+          ]" />
 
           <!-- Sección de Situación del Carro -->
-          <div class="text-h6 q-mt-md">Situación del Carro</div>
+          <div class="text-h6 q-mt-md">"$t('carro.situacionCarro')"</div>
           <q-separator color="primary" inset size="8px" />
 
           <div class="seccion-car-situation">
             <!-- Fecha de Finalizado -->
             <div>
-              <div class="text-h7">Fecha de Finalizado</div>
+              <div class="text-h7">"$t('carro.fechaFin')"</div>
               <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
-            <div class="select-container" >
-            <!-- Tipo de Situación -->
-            <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
-              input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
-              option-label="type_cs_name">
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
+            <div class="select-container">
+              <!-- Tipo de Situación -->
+              <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+                input-debounce="0" :options="listTypeCarSituation" label="$t('carro.tipoSituacionCarro')"
+                option-label="type_cs_name">
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
           </div>
         </q-form>
       </q-card-section>
@@ -59,8 +58,8 @@
       <!-- Panel Inferior con Botones -->
       <q-card-section class="panel-inferior">
         <div>
-          <q-btn label="Submit" type="submit" color="primary" />
-          <q-btn label="Reset" type="reset" color="primary" flat />
+          <q-btn label="$t('carro.entregar')" type="submit" color="primary" />
+          <q-btn label="$t('carro.reiniciar')" type="reset" color="primary" flat />
         </div>
         <q-btn color="primary" icon="contact_support" />
       </q-card-section>

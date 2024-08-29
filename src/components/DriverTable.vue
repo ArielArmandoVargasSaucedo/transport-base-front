@@ -12,32 +12,32 @@
           </template>
         </q-input>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersDrivers.name"
-          placeholder="Buscar por Nombre">
+          :placeholder="$t('chofer.buscarNombre')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
         <q-select v-if="showFilter" filled v-model="filtersDrivers.carAsig" use-input hide-selected fill-input
-          input-debounce="0" :options="listCars" label="Carro Asignado" option-label="car_number">
+          input-debounce="0" :options="listCars" :label="$t('chofer.carroAsigando')" option-label="car_number">
           <template v-slot:append>
             <q-icon class="cursor-pointer" name="cancel" @click="actionCancelSelectCar()" />
           </template>
           <template v-slot:no-option>
             <q-item>
-              <q-item-section class="text-grey"> No results </q-item-section>
+              <q-item-section class="text-grey"> "$t('texto.noResultado')" </q-item-section>
             </q-item>
           </template>
         </q-select>
 
         <q-select v-if="showFilter" filled v-model="filtersDrivers.drivSit" use-input hide-selected fill-input
-          input-debounce="0" :options="listTypeDriverSit" label="Tipo de Situación del Chofer"
+          input-debounce="0" :options="listTypeDriverSit" :label="$t('chofer.tipoSituacionChofer')"
           option-label="type_ds_name">
           <template v-slot:append>
             <q-icon class="cursor-pointer" name="cancel" @click="actionCancelSelectTypeDriverSituation()" />
           </template>
           <template v-slot:no-option>
             <q-item>
-              <q-item-section class="text-grey"> No results </q-item-section>
+              <q-item-section class="text-grey">"$t('texto.noResultado')"</q-item-section>
             </q-item>
           </template>
         </q-select>
@@ -72,6 +72,9 @@ import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
 // Inyectar el Servicio de los Drivers
 
 const driversService: DriversService = DriversService.getInstancie();
@@ -82,12 +85,14 @@ const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
 let id_driver_delete = -1;
 const router = useRouter()// se obtiene el enrutador
+//const { t } = useI18n(); // Importa la función de traduccion
 
+// Columnas de la tabla
 const columns = [
   {
     name: 'dni',
     required: true,
-    label: 'Dni',
+    label: '',
     align: 'left',
     field: (row: DriverDTO) => row.dni_driver,
     format: (val: any) => `${val}`,
@@ -95,35 +100,35 @@ const columns = [
   },
   {
     name: 'nombre',
-    label: 'Nombre',
+    label: '',
     align: 'left',
     field: (row: DriverDTO) => row.driver_name,
     sortable: true,
   },
   {
     name: 'direccion',
-    label: 'Dirección Particular',
+    label: '',
     align: 'left',
     field: (row: DriverDTO) => row.home_address,
     sortable: true,
   },
   {
     name: 'copiloto',
-    label: 'Copiloto',
+    label: '',
     align: 'left',
     field: (row: DriverDTO) => row.is_copilot,
     sortable: true,
   },
   {
     name: 'carroAsig',
-    label: 'Carro Asignado',
+    label: '',
     align: 'left',
     field: (row: DriverDTO) => row.car?.car_number,
     sortable: true,
   },
   {
     name: 'situacChofer',
-    label: 'Situación del Chofer',
+    label: '',
     align: 'left',
     field: (row: DriverDTO) => row.currentDriverSituation.type_driver_situation?.type_ds_name,
     sortable: true,
@@ -136,6 +141,7 @@ const columns = [
     sortable: true,
   },
 ];
+
 
 //Se define una interfaz para los Filtros
 interface FiltersDrivers {

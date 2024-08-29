@@ -2,23 +2,23 @@
   <div class="q-pa-md">
     <FormCarTable ref="formCarTable" v-show="showForm" :car-reactivo="carReactivo" @set-show-form-car="setShowFormCar"
       @post-car="postCar" @update-car="updateCar" />
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Cars" :rows="listCars"
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="$t('carro.carro')" :rows="listCars"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.brand"
-          placeholder="Buscar por Chapa">
+          placeholder="$t('carro.buscarMarca')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-          v-model="filtersCars.numOfSeats" placeholder="Buscar por Número de Asientos" :type="'number'">
+          v-model="filtersCars.numOfSeats" placeholder="$t('carro.buscarAsientos')" :type="'number'">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.number"
-          placeholder="Buscar por Número">
+          placeholder="$t('carro.buscarChapa')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -37,7 +37,7 @@
         </q-td>
       </template>
     </q-table>
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteCar" />
+    <ModalConfirmacion ref="modalConfirmacion" :text="$t('carro.confirmacionEliminar')" @action-confirm="deleteCar" />
   </div>
 </template>
 
@@ -63,7 +63,7 @@ const columns = [
   {
     name: 'number',
     required: true,
-    label: 'Number',
+    label: "$t('carro.chapa')",
     align: 'left',
     field: (row: CarDTO) => row.car_number,
     format: (val: any) => `${val}`,
@@ -71,21 +71,21 @@ const columns = [
   },
   {
     name: 'brand',
-    label: 'Brand',
+    label: "$t('carro.marca')",
     align: 'left',
     field: (row: CarDTO) => row.car_brand,
     sortable: true,
   },
   {
     name: 'number_of_Seats',
-    label: 'Seats',
+    label: "$t('carro.asientos')",
     align: 'left',
     field: (row: CarDTO) => row.number_of_seats,
     sortable: true,
   },
   {
     name: 'car_situation',
-    label: 'Situación del Carro',
+    label: "$t('carro.situacionCarro')",
     align: 'left',
     field: (row: CarDTO) => row.currentCarSituation.type_car_situation?.type_cs_name,
     sortable: true,
