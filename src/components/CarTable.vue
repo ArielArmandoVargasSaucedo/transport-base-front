@@ -2,7 +2,8 @@
   <div class="q-pa-md">
     <FormCarTable ref="formCarTable" v-show="showForm" :car-reactivo="carReactivo" @set-show-form-car="setShowFormCar"
       @post-car="postCar" @update-car="updateCar" />
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="$t('carro.carro')" :rows="listCars"
+
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" :title="$t('carro.carro')" :rows="listCars"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.brand"
@@ -52,6 +53,7 @@ import { watch } from 'vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
 import CarSituationTable from './CarSituationTable.vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 // Inyectar el Servicio de los Cars
 
@@ -59,11 +61,17 @@ const carsService: CarsService = CarsService.getInstancie();
 let id_car_delete = -1;
 const router = useRouter() // se obtiene el enrutador
 
-const columns = [
+const { t, locale } = useI18n();
+
+
+watch(locale /* locale representa el valor de la internacionalización */, () => {
+
+  // se asignan los nuevos valores de la función t
+  columns.value = [
   {
     name: 'number',
     required: true,
-    label: "$t('carro.chapa')",
+    label: t('carro.chapa'),
     align: 'left',
     field: (row: CarDTO) => row.car_number,
     format: (val: any) => `${val}`,
@@ -71,21 +79,21 @@ const columns = [
   },
   {
     name: 'brand',
-    label: "$t('carro.marca')",
+    label: t('carro.marca'),
     align: 'left',
     field: (row: CarDTO) => row.car_brand,
     sortable: true,
   },
   {
     name: 'number_of_Seats',
-    label: "$t('carro.asientos')",
+    label: t('carro.asientos'),
     align: 'left',
     field: (row: CarDTO) => row.number_of_seats,
     sortable: true,
   },
   {
     name: 'car_situation',
-    label: "$t('carro.situacionCarro')",
+    label: t('carro.situacionCarro'),
     align: 'left',
     field: (row: CarDTO) => row.currentCarSituation.type_car_situation?.type_cs_name,
     sortable: true,
@@ -97,7 +105,47 @@ const columns = [
     field: 'Action',
     sortable: true,
   },
-];
+]
+} )
+const columns = ref([
+  {
+    name: 'number',
+    required: true,
+    label: t('carro.chapa'),
+    align: 'left',
+    field: (row: CarDTO) => row.car_number,
+    format: (val: any) => `${val}`,
+    sortable: true,
+  },
+  {
+    name: 'brand',
+    label: t('carro.marca'),
+    align: 'left',
+    field: (row: CarDTO) => row.car_brand,
+    sortable: true,
+  },
+  {
+    name: 'number_of_Seats',
+    label: t('carro.asientos'),
+    align: 'left',
+    field: (row: CarDTO) => row.number_of_seats,
+    sortable: true,
+  },
+  {
+    name: 'car_situation',
+    label: t('carro.situacionCarro'),
+    align: 'left',
+    field: (row: CarDTO) => row.currentCarSituation.type_car_situation?.type_cs_name,
+    sortable: true,
+  },
+  {
+    name: 'Action',
+    label: '',
+    align: 'right',
+    field: 'Action',
+    sortable: true,
+  },
+]);
 
 //Se define una interfaz para los Filtros
 interface FiltersCars {

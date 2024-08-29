@@ -85,10 +85,12 @@ const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
 let id_driver_delete = -1;
 const router = useRouter()// se obtiene el enrutador
-//const { t } = useI18n(); // Importa la función de traduccion
+const { t, locale } = useI18n(); // Importa la función de traduccion
 
-// Columnas de la tabla
-const columns = [
+// se define un watch para observar los cambios de locale (lo que representa al idioma actual)
+watch(locale /* locale representa el valor de la internacionalización */, () => {
+  // se asignan los nuevos valores de la función t
+    columns.value = [
   {
     name: 'dni',
     required: true,
@@ -141,6 +143,62 @@ const columns = [
     sortable: true,
   },
 ];
+})
+
+// Columnas de la tabla
+const columns = ref([
+  {
+    name: 'dni',
+    required: true,
+    label: '',
+    align: 'left',
+    field: (row: DriverDTO) => row.dni_driver,
+    format: (val: any) => `${val}`,
+    sortable: true,
+  },
+  {
+    name: 'nombre',
+    label: '',
+    align: 'left',
+    field: (row: DriverDTO) => row.driver_name,
+    sortable: true,
+  },
+  {
+    name: 'direccion',
+    label: '',
+    align: 'left',
+    field: (row: DriverDTO) => row.home_address,
+    sortable: true,
+  },
+  {
+    name: 'copiloto',
+    label: '',
+    align: 'left',
+    field: (row: DriverDTO) => row.is_copilot,
+    sortable: true,
+  },
+  {
+    name: 'carroAsig',
+    label: '',
+    align: 'left',
+    field: (row: DriverDTO) => row.car?.car_number,
+    sortable: true,
+  },
+  {
+    name: 'situacChofer',
+    label: '',
+    align: 'left',
+    field: (row: DriverDTO) => row.currentDriverSituation.type_driver_situation?.type_ds_name,
+    sortable: true,
+  },
+  {
+    name: 'Action',
+    label: '',
+    align: 'right',
+    field: 'Action',
+    sortable: true,
+  },
+]);
 
 
 //Se define una interfaz para los Filtros
