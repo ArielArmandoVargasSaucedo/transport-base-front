@@ -44,13 +44,13 @@ const routes: RouteRecordRaw[] = [
           roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
         },
         children: [{
-          path: 'driverSitPage/:idDriver',
+          path: 'driverSitPage/:idDriver/:rutaAnterior',
           name: 'Situación del Chofer',
           component: DriverSituationPage,
           meta: {
             icon: '',
             needLogin: true, // indica que se requiere estar autenticado
-            roles: [RolesEnum.Directivo] // lista de roles con autorización para entrar a la ruta
+            roles: [RolesEnum.Directivo, RolesEnum.Administrador] // lista de roles con autorización para entrar a la ruta
           }
         },],
       },
@@ -159,7 +159,7 @@ const routes: RouteRecordRaw[] = [
   }
 ];
 
-// Función para obtener las rutas hijas de una ruta autorizadas para el usuario 
+// Función para obtener las rutas hijas de una ruta autorizadas para el usuario
 export function getChildrensRouteAuth(nameRoute: string): Array<RouteRecordRaw> {
   let routes: Array<RouteRecordRaw> = getChildrensRoute(nameRoute) // se obtiene la lista de hijos de la ruta
 

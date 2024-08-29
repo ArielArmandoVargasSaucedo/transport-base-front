@@ -12,7 +12,20 @@ export class SolicitudeService {
     return this.solicitudeService;
   }
 
-  async getSolicitudes(): Promise<Array<SolicitudeDTO>> {
+  async getSolicitudes(
+    id_solicitud: number,
+    programming_start_time: string,
+    programming_to_be_done: string,
+    duration_time: string,
+    mileage: number,
+    carDTO: CarDTO,
+    prog_typeDTO: ProgramTypeDTO,
+    groupDTO: GroupTourDTO,
+    dateDTO: Date,
+    routeDTO: RouteDTO,
+
+
+  ): Promise<Array<SolicitudeDTO>> {
     let listSolicitudes: Array<SolicitudeDTO> = new Array<SolicitudeDTO>();
     const url = 'http://localhost:5000/solicitude';
 

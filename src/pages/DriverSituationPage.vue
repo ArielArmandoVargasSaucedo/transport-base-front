@@ -34,19 +34,25 @@ import { useRoute } from 'vue-router';
 import { DriverDTO } from 'src/logica/drivers/DriverDTO';
 import { DriversService } from 'src/logica/drivers/DriversService';
 import { DriverSituationDTO } from 'src/logica/driverSituation/DriverSituationDTO';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 // se inyecta el servicio de Drivers
 const driverService: DriversService = DriversService.getInstancie()
 
+
+
 //se obtiene la ruta actual
 const route = useRoute()
 
+// se obtienen los parametros de ruta
 const idDriver: number = typeof route.params.idDriver === 'string' ? parseInt(route.params.idDriver) : -1
+const rutaAnterior: string = typeof route.params.rutaAnterior === 'string' ? route.params.rutaAnterior : ''
 const driverDTO: Ref<DriverDTO | undefined> = ref(undefined)
+
 
 // Ruta de DriverPage
 const rutaDriverPage = {
-    name: "Choferes"
+    name: rutaAnterior
 }
 
 onMounted(getChoferesInfo)
@@ -54,9 +60,10 @@ onMounted(getChoferesInfo)
 async function getChoferesInfo() {
     try {
         driverDTO.value = await driverService.getDriver(idDriver)
-        
+
     } catch (error) {
-        alert(error)
+        if(error instanceof BadRequestError)
+        alert(error.message)
     }
 }
 

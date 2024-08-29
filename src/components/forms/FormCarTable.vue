@@ -40,7 +40,11 @@
             <div class="select-container">
               <!-- Tipo de Situación -->
               <q-select filled v-model="datosCar.carSituation.typeCarSit" use-input hide-selected fill-input
+<<<<<<< HEAD
                 input-debounce="0" :options="listTypeCarSituation" label="$t('carro.tipoSituacionCarro')"
+=======
+                input-debounce="0" :options="listTypeCarSituation" label="Tipo de Situación del Carro"
+>>>>>>> 12e466613447770525648e9a60cae072543b621c
                 option-label="type_cs_name">
                 <template v-slot:no-option>
                   <q-item>
@@ -51,10 +55,22 @@
                 </template>
               </q-select>
             </div>
+<<<<<<< HEAD
+=======
           </div>
+          <!-- Panel Inferior con Botones -->
+
+          <div>
+            <q-btn label="Submit" type="submit" color="primary" />
+            <q-btn label="Reset" type="reset" color="primary" flat />
+>>>>>>> 12e466613447770525648e9a60cae072543b621c
+          </div>
+          <q-btn color="primary" icon="contact_support" />
+
         </q-form>
       </q-card-section>
 
+<<<<<<< HEAD
       <!-- Panel Inferior con Botones -->
       <q-card-section class="panel-inferior">
         <div>
@@ -63,6 +79,9 @@
         </div>
         <q-btn color="primary" icon="contact_support" />
       </q-card-section>
+=======
+
+>>>>>>> 12e466613447770525648e9a60cae072543b621c
     </q-card>
   </div>
 </template>

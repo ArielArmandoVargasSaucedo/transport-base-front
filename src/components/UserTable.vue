@@ -1,17 +1,12 @@
 <template>
   <div class="q-pa-md">
-
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Cars" :rows="listUser"
+    <FormUserTable ref="formUserTable" v-show="showForm" :user-reactivo="userReactivo" @set-show-form-user="setShowFormUser"
+    @post-user="postUser" @update-user="updateUser" />
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Usuarios" :rows="listUser"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.user"
           placeholder="Buscar por Usuario">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersUser.dni"
-          placeholder="Buscar por DNI" type="number">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -29,15 +24,22 @@
         <q-btn icon="add_circle" @click="activarFomularioInsertar()"></q-btn>
       </template>
 
+      <template v-slot:body-cell-Driver="props">
+        <q-td :props="props">
+          <q-btn v-if="(props.row.driver)" icon="visibility" size="sm" flat dense class="q-ml-sm" @click="navegarTablaDriverSit(props.row.driver)" />
+        </q-td>
+      </template>
+
+
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
           <q-btn icon="edit" size="sm" flat dense @click="activarFormularioEditar(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
-            @click="activateModalConfirmacion(props.row.id_car)"></q-btn>
+            @click="activateModalConfirmacion(props.row.id_aut_user)"></q-btn>
         </q-td>
       </template>
     </q-table>
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="" />
+    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteUser" />
   </div>
 </template>
 
@@ -51,6 +53,9 @@ import { watch } from 'vue';
 import { UserDTO } from 'src/logica/user/UserDTO';
 import { RoleService } from 'src/logica/role/RoleService';
 import { RoleDTO } from 'src/logica/role/RoleDTO';
+import FormUserTable from './forms/FormUserTable.vue';
+import { DriverDTO } from 'src/logica/drivers/DriverDTO';
+import { useRouter } from 'vue-router';
 
 
 // Inyectar el Servicio de los users
@@ -70,20 +75,27 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'dni',
-    label: 'DNI',
+    name: 'email',
+    label: 'Email',
     align: 'left',
-    field: (row: UserDTO) => row.dni_user,
-    format: (val: any) => `${val}`,
+    field: (row: UserDTO) => row.email,
     sortable: true,
   },
   {
     name: 'role',
-    label: 'Role del Usuario',
+    label: 'Rol del Usuario',
     align: 'left',
-    field: (row: UserDTO) => row.role?.role_type,
+    field: (row: UserDTO) => row.role.role_type,
     sortable: true,
   },
+  {
+    name: 'Driver',
+    label: 'Información Chofer',
+    align: 'left',
+    field: '',
+    sortable: true,
+  },
+
   {
     name: 'Action',
     label: '',
@@ -96,7 +108,6 @@ const columns = [
 //Se define una interfaz para los Filtros
 interface FiltersUser {
   user: string;
-  dni: string;
   role: RoleDTO | undefined;
 }
 
@@ -111,23 +122,22 @@ const userReactivo: Ref<{
 const showFilter = ref(false);
 const filtersUser: Ref<FiltersUser> = ref({
   user: '',
-  dni: '',
   role: undefined
 });
-
+const router = useRouter()// se obtiene el enrutador
 // Se define un watch para los filtros
 watch(filtersUser.value, async (newFilters: FiltersUser) => {
-  await getUsers(newFilters.user, newFilters.dni, newFilters.role);
+  await getUsers(newFilters.user, newFilters.role);
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
-
+const formUserTable: Ref<InstanceType<typeof FormUserTable> | null> =
+  ref(null);
 // se crea una variable para el modal
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
 // se crea una variable para el formulario de car table
-//const formUserTable: Ref<InstanceType<typeof FormUserTable> | null> =
-// ref(null);
+
 onMounted(() => {
   actualizarUsers()
   actualizarRoles()
@@ -136,7 +146,6 @@ onMounted(() => {
 async function actualizarUsers() {
   await getUsers(
     filtersUser.value.user,
-    filtersUser.value.dni,
     filtersUser.value.role
   );
 }
@@ -146,14 +155,13 @@ async function actualizarRoles() {
 }
 
 // Funciones CRUD
-//Funcion de obtener la lista de Carros
 
-async function getUsers(user: string, dni: string, role: RoleDTO | undefined) {
+
+async function getUsers(user: string, role: RoleDTO | undefined) {
   try {
     listUser.value = await userService.getUsers(
       user === '' ? undefined : user,
       undefined,
-      dni === '' ? undefined : dni,
       role ? role.id_aut_role : undefined
     );
   } catch (error) {
@@ -171,51 +179,44 @@ async function getRoles() {
 
 
 
-//Funcion para insertar un carro
-/*async function postCar(
-  car_number: string,
-  car_brand: string,
-  number_of_seats: number,
-  returnDate: Date,
-  id_aut_type_cs: number
+//Funcion para insertar un user
+async function postUser(
+    user_name: string,
+    password_user: string,
+    email: string,
+    id_aut_role: number,
+    id_driver?: number,
 ) {
   try {
-    await userService.postCar(
-      car_number,
-      car_brand,
-      number_of_seats,
-      id_aut_type_cs,
-      returnDate
-    );
+    await userService.postUser(user_name,password_user,email,id_aut_role,id_driver);
 
     // se notifica de la acción
     Notify.create({
-      message: 'Carro insertado con éxito',
+      message: 'Usuario insertado con éxito',
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
       timeout: 3000, // Cambia la duración de la notificación en milisegundos
       icon: 'check_circle', // Añade un icono a la notificación
     });
-    // se reinician los campos
-    formUserTable.value?.onReset()
+
     // se cierra el formulario
-    setShowFormCar();
+    setShowFormUser();
 
     // se actualiza la información
-    await actualizarCars();
+    await actualizarUsers();
   } catch (error) {
     alert(error);
   }
-}*/
+}
 
-//Funcion para eliminar un carro
-/*async function deleteCar() {
+//Funcion para eliminar un user
+async function deleteUser() {
   try {
-    await userService.deleteCar(id_user_delete);
+    await userService.deleteUser(id_user_delete);
     // se notifica de la acción
     Notify.create({
-      message: 'Se eliminó con éxito el carro',
+      message: 'Se eliminó con éxito el usuario',
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -224,20 +225,20 @@ async function getRoles() {
     });
 
     // se actualiza la información
-    await actualizarCars();
+    await actualizarUsers();
   } catch (error) {
     alert(error)
   }
-}*/
+}
 
-// Funcion para editar un carro
-async function updateCar(userDTO: UserDTO /* representa la información del carro a modificar */) {
+// Funcion para editar un user
+async function updateUser(user_id:number, user_name:string, password_user:string, email:string) {
   try {
-    //await userService.updateCar(userDTO)
+    await userService.updateUser(user_id,user_name,password_user === '' ? undefined : password_user, email)
 
     // se notifica de la acción
     Notify.create({
-      message: 'Se modificó con éxito el carro',
+      message: 'Se modificó con éxito el usuario',
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -245,16 +246,25 @@ async function updateCar(userDTO: UserDTO /* representa la información del carr
       icon: 'check_circle', // Añade un icono a la notificación
     });
 
-    // se reinician los campos
-    //formUserTable.value?.onReset()
     // se cierra el formulario
-    setShowFormCar();
+    setShowFormUser();
 
     // se actualiza la información
-    // await actualizarCars();
+    await actualizarUsers();
   } catch (error) {
     alert(error)
   }
+}
+
+function navegarTablaDriverSit(driverDTO: DriverDTO) {
+  console.log(driverDTO)
+  router.push({
+    name: 'Situación del Chofer',
+    params: {
+      idDriver: driverDTO.id,
+       rutaAnterior: 'AdminPage'
+    },
+  });
 }
 
 // Eventos
@@ -262,25 +272,25 @@ function activarFomularioInsertar() {
   // se deselecciona cualquier carro dto seleccionado
   userReactivo.value.userDTO = undefined
   // se muestra el forumulario
-  setShowFormCar()
+  setShowFormUser()
 }
-function setShowFormCar() {
+function setShowFormUser() {
   // si esta activado el form
   if (showForm.value) showForm.value = false; // se desactiva
   // esta desactivado
   else showForm.value = true; // se activa
 }
 
-function activarFormularioEditar(carDTOSeleccionado: UserDTO) {
-  userReactivo.value.userDTO = carDTOSeleccionado
+function activarFormularioEditar(userSeleccionado: UserDTO) {
+  userReactivo.value.userDTO = userSeleccionado
   // se muestra el forumulario
   showForm.value = false
   showForm.value = true
 }
 
-function activateModalConfirmacion(id_car_selected: number) {
+function activateModalConfirmacion(id_user_selected: number) {
 
-  id_user_delete = id_car_selected;
+  id_user_delete = id_user_selected;
   modalConfirmacion.value?.activateModalConfirmacion();
 }
 </script>

@@ -327,6 +327,7 @@ function navegarTablaDriverSit(driverDTO: DriverDTO) {
     name: 'Situación del Chofer',
     params: {
       idDriver: driverDTO.id,
+      rutaAnterior: 'Choferes'
     },
   });
 }
