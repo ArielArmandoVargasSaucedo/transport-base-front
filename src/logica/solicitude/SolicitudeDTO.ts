@@ -1,4 +1,5 @@
 import { CarDTO } from "../car/CarDTO";
+import { DriverDTO } from "../drivers/DriverDTO";
 import { GroupTourDTO } from "../groupTour/GroupTourDTO";
 import { ProgramTypeDTO } from "../programTypes/ProgramTypeDTO";
 import { RouteDTO } from "../route/Route.DTO";
@@ -10,6 +11,7 @@ export class SolicitudeDTO{
     duration_time: string;
     mileage: number;
     carDTO: CarDTO;
+    driverDTO: DriverDTO;
     prog_typeDTO: ProgramTypeDTO ;
     groupDTO: GroupTourDTO;
     dateDTO: Date;
@@ -22,6 +24,7 @@ export class SolicitudeDTO{
         duration_time: string,
         mileage: number,
         carDTO: CarDTO,
+        driverDTO: DriverDTO,
         prog_typeDTO: ProgramTypeDTO,
         groupDTO: GroupTourDTO,
         dateDTO: Date,
@@ -33,6 +36,7 @@ export class SolicitudeDTO{
         this.duration_time= duration_time;
         this.mileage= mileage;
         this.carDTO= carDTO;
+        this.driverDTO= driverDTO;
         this.prog_typeDTO= prog_typeDTO;
         this.groupDTO= groupDTO;
         this.dateDTO= dateDTO;
