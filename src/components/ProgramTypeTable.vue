@@ -16,7 +16,7 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="edit" size="sm" flat dense @click="activarModalTypeProgram(props.row)"/>
+          <q-btn icon="edit" size="sm" flat dense @click="activarModalTypeProgram(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense
             @click="activarModalConfirmacion(props.row.id_aut_prog_type)"></q-btn>
         </q-td>
@@ -37,6 +37,7 @@ import { ProgramTypesService } from 'src/logica/programTypes/ProgramTypesService
 import { Ref, onMounted, ref } from 'vue';
 import ModalTypeProgram from './Modales/ModalTypeProgram.vue';
 import { watch } from 'vue';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 // Inyectar el Servicio de los Drivers
 
@@ -111,7 +112,10 @@ async function getProgramTypes() {
   try {
     listProgramsType.value = await programTypesService.getProgramTypes();
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 

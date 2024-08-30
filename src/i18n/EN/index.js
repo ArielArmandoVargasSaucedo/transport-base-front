@@ -11,7 +11,7 @@ export default {
     situacionChofer: 'Driver Situation',
     tipoSituacionChofer: 'Type Driver Situation',
     formularioChofer: 'Form Add Driver',
-    esCopilto: 'Is Copilot?',
+    esCopiloto: 'Is Copilot?',
     fechaFin: 'Return Date',
     mensajeInsertado: 'Driver successfully inserted',
     mensajeEliminado: 'Driver was successfully removed',
@@ -71,4 +71,5 @@ export default {
     codigoVerificacion: 'Verification Code',
     cambioContrasena: 'Change Password',
   },
+  login: {},
 };

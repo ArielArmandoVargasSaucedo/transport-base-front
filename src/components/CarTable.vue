@@ -68,45 +68,45 @@ watch(locale /* locale representa el valor de la internacionalización */, () =>
 
   // se asignan los nuevos valores de la función t
   columns.value = [
-  {
-    name: 'number',
-    required: true,
-    label: t('carro.chapa'),
-    align: 'left',
-    field: (row: CarDTO) => row.car_number,
-    format: (val: any) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: 'brand',
-    label: t('carro.marca'),
-    align: 'left',
-    field: (row: CarDTO) => row.car_brand,
-    sortable: true,
-  },
-  {
-    name: 'number_of_Seats',
-    label: t('carro.asientos'),
-    align: 'left',
-    field: (row: CarDTO) => row.number_of_seats,
-    sortable: true,
-  },
-  {
-    name: 'car_situation',
-    label: t('carro.situacionCarro'),
-    align: 'left',
-    field: (row: CarDTO) => row.currentCarSituation.type_car_situation?.type_cs_name,
-    sortable: true,
-  },
-  {
-    name: 'Action',
-    label: '',
-    align: 'right',
-    field: 'Action',
-    sortable: true,
-  },
-]
-} )
+    {
+      name: 'number',
+      required: true,
+      label: t('carro.chapa'),
+      align: 'left',
+      field: (row: CarDTO) => row.car_number,
+      format: (val: any) => `${val}`,
+      sortable: true,
+    },
+    {
+      name: 'brand',
+      label: t('carro.marca'),
+      align: 'left',
+      field: (row: CarDTO) => row.car_brand,
+      sortable: true,
+    },
+    {
+      name: 'number_of_Seats',
+      label: t('carro.asientos'),
+      align: 'left',
+      field: (row: CarDTO) => row.number_of_seats,
+      sortable: true,
+    },
+    {
+      name: 'car_situation',
+      label: t('carro.situacionCarro'),
+      align: 'left',
+      field: (row: CarDTO) => row.currentCarSituation.type_car_situation?.type_cs_name,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      label: '',
+      align: 'right',
+      field: 'Action',
+      sortable: true,
+    },
+  ]
+})
 const columns = ref([
   {
     name: 'number',
@@ -201,7 +201,10 @@ async function getCars(brand: string, number: string, numOfSeats: number) {
       numOfSeats === 0 ? undefined : numOfSeats
     );
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -263,7 +266,10 @@ async function deleteCar() {
     // se actualiza la información
     await actualizarCars();
   } catch (error) {
-    alert(error)
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 

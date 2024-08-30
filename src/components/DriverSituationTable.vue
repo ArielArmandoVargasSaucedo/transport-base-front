@@ -30,6 +30,7 @@ import { DriverSituationDTO } from 'src/logica/driverSituation/DriverSituationDT
 import { TypeDriverSituationsService } from 'src/logica/typeDriverSituation/TypeDriverSituationsService';
 import { TypeDriverSituationDTO } from 'src/logica/typeDriverSituation/TypeDriverSituationDTO';
 import { useI18n } from 'vue-i18n';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 
 // Inyectar el Servicio de Drivers
@@ -169,7 +170,10 @@ async function getDriverSituations(id_driver: number, date_ds?: Date, type_drive
     try {
         listDriverSituations.value = await driversService.getHistorialDriverSituations(id_driver, type_driver_situation)
     } catch (error) {
-        if (error instanceof Error) alert(error.message);
+        if (error instanceof BadRequestError)
+            alert(error.message)
+
+        console.log(error)
     }
 }
 
@@ -183,7 +187,10 @@ async function getTypeDriverSituations() {
     try {
         listTypeDriverSituations.value = await typeDriverSitService.getTypeDriverSituations();
     } catch (error) {
-        alert(error);
+        if (error instanceof BadRequestError)
+            alert(error.message)
+
+        console.log(error)
     }
 }
 
