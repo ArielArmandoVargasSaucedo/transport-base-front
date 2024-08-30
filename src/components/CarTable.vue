@@ -7,19 +7,19 @@
       :columns="columns" row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.brand"
-          placeholder="$t('carro.buscarMarca')">
+          :placeholder="$t('carro.buscarMarca')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-          v-model="filtersCars.numOfSeats" placeholder="$t('carro.buscarAsientos')" :type="'number'">
+          v-model="filtersCars.numOfSeats" :placeholder="$t('carro.buscarAsientos')" :type="'number'">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300" v-model="filtersCars.number"
-          placeholder="$t('carro.buscarChapa')">
+          :placeholder="$t('carro.buscarChapa')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
