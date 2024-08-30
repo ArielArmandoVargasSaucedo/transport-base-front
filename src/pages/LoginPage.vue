@@ -6,7 +6,9 @@
 
     <q-card class="spa">
       <q-card-section>
-        <span class="text-h3 log">Login</span>
+        <span class="text-h3 log">Login
+          <internationalizationButton color="primary" class="internationalitation" />
+        </span>
       </q-card-section>
 
       <q-card-section>
@@ -50,6 +52,7 @@ import { AuthService } from 'src/logica/auth/AuthService';
 import { BadRequestError } from 'src/utils/BadRequestError';
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
+import internationalizationButton from 'src/components/internationalizationButton.vue';
 
 // se inyecta el servicio de Auth
 const authService: AuthService = AuthService.getInstancie()
@@ -110,7 +113,7 @@ function onReset() {
 
 .log {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .inp {
@@ -120,6 +123,10 @@ function onReset() {
 .spa {
   padding: 20px;
   width: 600px;
+}
+
+.internationalitation {
+  margin-left: 150px;
 }
 
 .btn {

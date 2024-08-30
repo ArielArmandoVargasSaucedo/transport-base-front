@@ -6,7 +6,43 @@
       <template v-slot:top-right>
 
         <q-select v-if="showFilter" filled v-model="filtersSolicitudes.car" use-input hide-selected fill-input
-          input-debounce="0" :options="listCars" :label="'Carro'" option-label="type_ds_name">
+          input-debounce="0" :options="listCars" :label="'Carro'" option-label="car_number">
+          <template v-slot:append>
+            <q-icon class="cursor-pointer" name="cancel" @click="actionCancelSelectCar()" />
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('texto.noResultado') }}</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+
+        <q-select v-if="showFilter" filled v-model="filtersSolicitudes.driver" use-input hide-selected fill-input
+          input-debounce="0" :options="listDrivers" :label="'Choferes'" option-label="dni_driver">
+          <template v-slot:append>
+            <q-icon class="cursor-pointer" name="cancel" @click="actionCancelSelectCar()" />
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('texto.noResultado') }}</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+
+        <q-select v-if="showFilter" filled v-model="filtersSolicitudes.group" use-input hide-selected fill-input
+          input-debounce="0" :options="listGroups" :label="'Grupo'" option-label="group_code">
+          <template v-slot:append>
+            <q-icon class="cursor-pointer" name="cancel" @click="actionCancelSelectCar()" />
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('texto.noResultado') }}</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+
+        <q-select v-if="showFilter" filled v-model="filtersSolicitudes.program_type" use-input hide-selected fill-input
+          input-debounce="0" :options="listPrograms" :label="'Programación'" option-label="prog_type_name">
           <template v-slot:append>
             <q-icon class="cursor-pointer" name="cancel" @click="actionCancelSelectCar()" />
           </template>
@@ -42,11 +78,21 @@ import { SolicitudeDTO } from 'src/logica/solicitude/SolicitudeDTO';
 import { DriverDTO } from 'src/logica/drivers/DriverDTO';
 import { ProgramTypeDTO } from 'src/logica/programTypes/ProgramTypeDTO';
 import { GroupTourDTO } from 'src/logica/groupTour/GroupTourDTO';
+import { DriversService } from 'src/logica/drivers/DriversService';
+import { GroupsToursService } from 'src/logica/groupTour/GroupsTourService';
+import { ProgramTypesService } from 'src/logica/programTypes/ProgramTypesService';
 
-// Inyectar el Servicio de los Drivers
-
-//const carsService: CarsService = CarsService.getInstancie();
+// Inyectar el Servicio de solicitudes
 const solicitudeService: SolicitudeService = SolicitudeService.getInstancie();
+// Inyectar el Servicio de los Cars
+const carsService: CarsService = CarsService.getInstancie();
+// Inyectar el Servicio de los Drivers
+const driversService: DriversService = DriversService.getInstancie();
+// Inyectar el Servicio de los Drivers
+const groupTourService: GroupsToursService = GroupsToursService.getInstancie();
+// Inyectar el Servicio de los Drivers
+const typeProgramsService: ProgramTypesService = ProgramTypesService.getInstancie();
+
 const columns = [
   {
     name: '',
@@ -106,7 +152,11 @@ interface FiltersSolicitudes {
 
 // Se definen las variables reactivas del componente
 const listSolicitudes: Ref<Array<SolicitudeDTO>> = ref(new Array<SolicitudeDTO>());
-const listCars: Ref<Array<CarDTO>> = ref(new Array<CarDTO>())
+const listCars: Ref<Array<CarDTO>> = ref(new Array<CarDTO>());
+const listDrivers: Ref<Array<DriverDTO>> = ref(new Array<DriverDTO>());
+const listGroups: Ref<Array<GroupTourDTO>> = ref(new Array<GroupTourDTO>());
+const listPrograms: Ref<Array<ProgramTypeDTO>> = ref(new Array<ProgramTypeDTO>());
+
 const solicitudeReactivo: Ref<{
   solicitudeDTO?: SolicitudeDTO
 }> = ref({
@@ -134,7 +184,14 @@ watch(filtersSolicitudes.value, async (newFilters: FiltersSolicitudes) => {
 const showForm = ref(false); // representa si el formulario se muestra o no
 const formSolicitudeTable: Ref<InstanceType<typeof FormSolicitude> | null> =
   ref(null);
-onMounted(actualizarSolicitudes);
+
+  onMounted( async () => {
+    await actualizarSolicitudes()
+    await actualizarListCar()
+    await actualizarListPrograms()
+    await actualizarListGroups()
+    await actualizarListDrivers()
+  });
 
 async function actualizarSolicitudes() {
   await getSolicitudes(
@@ -144,6 +201,58 @@ async function actualizarSolicitudes() {
     filtersSolicitudes.value.program_type,
     filtersSolicitudes.value.date,
   );
+}
+
+// Funciones de obtención de los filtros
+//Funcion de obtener la lista de Carros
+async function actualizarListPrograms() {
+  await getTypePrograms();
+}
+
+async function getTypePrograms() {
+  try {
+    listPrograms.value =
+      await typeProgramsService.getProgramTypes();
+  } catch (error) {
+    alert(error);
+  }
+}
+
+async function actualizarListCar() {
+  await getCars();
+}
+
+async function getCars() {
+  try {
+    listCars.value = await carsService.getCars();
+  } catch (error) {
+    alert(error);
+  }
+}
+
+
+async function actualizarListGroups() {
+  await getGroups();
+}
+
+async function getGroups() {
+  try {
+    listGroups.value = await groupTourService.getGroupsTours();
+  } catch (error) {
+    alert(error);
+  }
+}
+
+async function actualizarListDrivers() {
+  await getDrivers();
+}
+
+async function getDrivers() {
+  try {
+    listDrivers.value = await driversService.getDrivers()
+  } catch (error) {
+    alert(error);
+  }
 }
 
 // Funciones CRUD

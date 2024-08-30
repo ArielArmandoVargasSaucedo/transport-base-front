@@ -286,7 +286,7 @@ async function onReset() {
 }
 
 function setShowForm() {
-  emit('setShowFormCar');
+  emit('setShowFormSolicitud');
 }
 </script>
 

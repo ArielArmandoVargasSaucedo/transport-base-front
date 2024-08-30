@@ -10,7 +10,11 @@ export default {
     carroAsigando: 'Vehículo Asigando',
     situacionChofer: 'Situación del Conductor',
     tipoSituacionChofer: 'Tipo de Situación',
-    formularioChofer: 'Formulario Añadir Conductor',
+<<<<<<< HEAD
+    formularioChofer: 'Formulario Añadir Chofer',
+=======
+    formularioChofer: 'Formulario Añadir Chofer',
+>>>>>>> 683bfc9419584f5755fdc3af8595787494470a74
     esCopiloto: 'Es Copiloto?',
     fechaFin: 'Fecha de Finalizado',
     mensajeInsertado: 'Conductor insertado con éxito',
