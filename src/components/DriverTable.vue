@@ -24,7 +24,7 @@
           </template>
           <template v-slot:no-option>
             <q-item>
-              <q-item-section class="text-grey"> "$t('texto.noResultado')" </q-item-section>
+              <q-item-section class="text-grey"> {{ $t('texto.noResultado') }}</q-item-section>
             </q-item>
           </template>
         </q-select>
@@ -37,7 +37,7 @@
           </template>
           <template v-slot:no-option>
             <q-item>
-              <q-item-section class="text-grey">"$t('texto.noResultado')"</q-item-section>
+              <q-item-section class="text-grey">{{ $t('texto.noResultado') }}</q-item-section>
             </q-item>
           </template>
         </q-select>
@@ -90,59 +90,59 @@ const { t, locale } = useI18n(); // Importa la función de traduccion
 // se define un watch para observar los cambios de locale (lo que representa al idioma actual)
 watch(locale /* locale representa el valor de la internacionalización */, () => {
   // se asignan los nuevos valores de la función t
-    columns.value = [
-  {
-    name: 'dni',
-    required: true,
-    label: '',
-    align: 'left',
-    field: (row: DriverDTO) => row.dni_driver,
-    format: (val: any) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: 'nombre',
-    label: '',
-    align: 'left',
-    field: (row: DriverDTO) => row.driver_name,
-    sortable: true,
-  },
-  {
-    name: 'direccion',
-    label: '',
-    align: 'left',
-    field: (row: DriverDTO) => row.home_address,
-    sortable: true,
-  },
-  {
-    name: 'copiloto',
-    label: '',
-    align: 'left',
-    field: (row: DriverDTO) => row.is_copilot,
-    sortable: true,
-  },
-  {
-    name: 'carroAsig',
-    label: '',
-    align: 'left',
-    field: (row: DriverDTO) => row.car?.car_number,
-    sortable: true,
-  },
-  {
-    name: 'situacChofer',
-    label: '',
-    align: 'left',
-    field: (row: DriverDTO) => row.currentDriverSituation.type_driver_situation?.type_ds_name,
-    sortable: true,
-  },
-  {
-    name: 'Action',
-    label: '',
-    align: 'right',
-    field: 'Action',
-    sortable: true,
-  },
-];
+  columns.value = [
+    {
+      name: 'dni',
+      required: true,
+      label: t('chofer.DNI'),
+      align: 'left',
+      field: (row: DriverDTO) => row.dni_driver,
+      format: (val: any) => `${val}`,
+      sortable: true,
+    },
+    {
+      name: 'nombre',
+      label: t('chofer.nombre'),
+      align: 'left',
+      field: (row: DriverDTO) => row.driver_name,
+      sortable: true,
+    },
+    {
+      name: 'direccion',
+      label: t('chofer.direccion'),
+      align: 'left',
+      field: (row: DriverDTO) => row.home_address,
+      sortable: true,
+    },
+    {
+      name: 'copiloto',
+      label: t('chofer.copiloto'),
+      align: 'left',
+      field: (row: DriverDTO) => row.is_copilot,
+      sortable: true,
+    },
+    {
+      name: 'carroAsig',
+      label: t('chofer.carroAsigando'),
+      align: 'left',
+      field: (row: DriverDTO) => row.car?.car_number,
+      sortable: true,
+    },
+    {
+      name: 'situacChofer',
+      label: t('chofer.situacionChofer'),
+      align: 'left',
+      field: (row: DriverDTO) => row.currentDriverSituation.type_driver_situation?.type_ds_name,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      label: '',
+      align: 'right',
+      field: 'Action',
+      sortable: true,
+    },
+  ];
 })
 
 // Columnas de la tabla
@@ -150,7 +150,7 @@ const columns = ref([
   {
     name: 'dni',
     required: true,
-    label: '',
+    label: t('chofer.DNI'),
     align: 'left',
     field: (row: DriverDTO) => row.dni_driver,
     format: (val: any) => `${val}`,
@@ -158,35 +158,35 @@ const columns = ref([
   },
   {
     name: 'nombre',
-    label: '',
+    label: t('chofer.nombre'),
     align: 'left',
     field: (row: DriverDTO) => row.driver_name,
     sortable: true,
   },
   {
     name: 'direccion',
-    label: '',
+    label: t('chofer.direccion'),
     align: 'left',
     field: (row: DriverDTO) => row.home_address,
     sortable: true,
   },
   {
     name: 'copiloto',
-    label: '',
+    label: t('chofer.copiloto'),
     align: 'left',
     field: (row: DriverDTO) => row.is_copilot,
     sortable: true,
   },
   {
     name: 'carroAsig',
-    label: '',
+    label: t('chofer.carroAsigando'),
     align: 'left',
     field: (row: DriverDTO) => row.car?.car_number,
     sortable: true,
   },
   {
     name: 'situacChofer',
-    label: '',
+    label: t('chofer.situacionChofer'),
     align: 'left',
     field: (row: DriverDTO) => row.currentDriverSituation.type_driver_situation?.type_ds_name,
     sortable: true,
@@ -268,14 +268,28 @@ async function getDrivers(dni_driver: string, driver_name: string, drivSit?: Typ
 async function postDriver(driverDTO: DriverDTO) {
   try {
     await driversService.postDriver(driverDTO)
-    Notify.create({
-      message: 'Chófer insertado con éxito',
-      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-      color: 'green', // Cambia el color de la notificación
-      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-      timeout: 3000, // Cambia la duración de la notificación en milisegundos
-      icon: 'check_circle', // Añade un icono a la notificación
-    });
+    watch(locale /* locale representa el valor de la internacionalización */, () => {
+      mesIns.value = [
+        Notify.create({
+          message: t('chofer.mensajeInsertado'),
+          type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+          color: 'green', // Cambia el color de la notificación
+          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+          timeout: 3000, // Cambia la duración de la notificación en milisegundos
+          icon: 'check_circle', // Añade un icono a la notificación
+        })
+      ]
+    })
+    const mesIns = ref([
+      Notify.create({
+        message: t('chofer.mensajeInsertado'),
+        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'green', // Cambia el color de la notificación
+        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+        timeout: 3000, // Cambia la duración de la notificación en milisegundos
+        icon: 'check_circle', // Añade un icono a la notificación
+      })
+    ])
     // se cierra el formulario
     setShowFormDriver()
 
@@ -294,15 +308,28 @@ async function postDriver(driverDTO: DriverDTO) {
 async function deleteDriver() {
   try {
     await driversService.deleteDriver(id_driver_delete);
-    // se notifica de la acción
-    Notify.create({
-      message: 'Se eliminó con éxito el carro',
-      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-      color: 'green', // Cambia el color de la notificación
-      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-      timeout: 3000, // Cambia la duración de la notificación en milisegundos
-      icon: 'check_circle', // Añade un icono a la notificación
-    });
+    watch(locale /* locale representa el valor de la internacionalización */, () => {
+      mesEli.value = [
+        Notify.create({
+          message: t('chofer.mensajeEliminado'),
+          type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+          color: 'red', // Cambia el color de la notificación
+          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+          timeout: 3000, // Cambia la duración de la notificación en milisegundos
+          icon: 'cancel', // Añade un icono a la notificación
+        })
+      ]
+    })
+    const mesEli = ref([
+      Notify.create({
+        message: t('chofer.mensajeEliminado'),
+        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'red', // Cambia el color de la notificación
+        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+        timeout: 3000, // Cambia la duración de la notificación en milisegundos
+        icon: 'cancel', // Añade un icono a la notificación
+      })
+    ])
 
     // se actualiza la información
     await actualizarDrivers();
@@ -314,16 +341,28 @@ async function deleteDriver() {
 async function updateDriver(driverDTO: DriverDTO) {
   try {
     await driversService.updateDriver(driverDTO)
-
-    // se notifica de la acción
-    Notify.create({
-      message: 'Se modificó con éxito el chofer',
-      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-      color: 'green', // Cambia el color de la notificación
-      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-      timeout: 3000, // Cambia la duración de la notificación en milisegundos
-      icon: 'check_circle', // Añade un icono a la notificaciónn
-    });
+    watch(locale /* locale representa el valor de la internacionalización */, () => {
+      mesMod.value = [
+        Notify.create({
+          message: t('chofer.mensajeModificar'),
+          type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+          color: 'green', // Cambia el color de la notificación
+          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+          timeout: 3000, // Cambia la duración de la notificación en milisegundos
+          icon: 'check_circle', // Añade un icono a la notificación
+        })
+      ]
+    })
+    const mesMod = ref([
+      Notify.create({
+        message: t('chofer.mensajeModificar'),
+        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'green', // Cambia el color de la notificación
+        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+        timeout: 3000, // Cambia la duración de la notificación en milisegundos
+        icon: 'check_circle', // Añade un icono a la notificación
+      })
+    ])
 
     // se reinician los campos
     FormDriverTable.value?.onReset()

@@ -1,27 +1,21 @@
 <template>
     <div class="q-pa-md">
-        <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Car Situation"
+        <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" :title="$t('sitCarro.situacionCarro')"
             :rows="listCarSituations" :columns="columns" row-key="id">
             <template v-slot:top-right>
 
 
                 <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-                    v-model="filtersCarSituations.type_car_situation" placeholder="Tipo de Situación">
+                    v-model="filtersCarSituations.type_car_situation" :placeholder="$t('sitCarro.tipoSituacion')">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
                 </q-input>
                 <q-btn class="q-ml-sm" icon="filter_list" @click="showFilter = !showFilter" flat />
-                <q-btn
-                color="primary"
-                icon-right="archive"
-                label="Exportar a csv"
-                no-caps
-                @click="exportTable"
-              />
+                <q-btn color="primary" icon-right="archive" :label="$t('exportar.CSV')" no-caps @click="exportTable" />
             </template>
         </q-table>
-        <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="" />
+        <ModalConfirmacion ref="modalConfirmacion" :text="$t('exportar.confirmacionEliminar')" @action-confirm="" />
     </div>
 </template>
 
@@ -37,7 +31,7 @@ import { CarSituationDTO } from 'src/logica/carSituation/CarSituationDTO';
 import { CarSituationsService } from 'src/logica/carSituation/CarSituationsService';
 import { TypeCarSituationDTO } from 'src/logica/typeCarSituation/TypeCarSituationDTO';
 import { TypeCarSituationsService } from 'src/logica/typeCarSituation/TypeCarSituationsService';
-
+import { useI18n } from 'vue-i18n';
 
 // Inyectar el Servicio de Cars
 
@@ -49,12 +43,47 @@ interface Props {
 }
 
 const props: Props = defineProps<Props>()
+const { t, locale } = useI18n();
 
-const columns = [
+watch(locale /* locale representa el valor de la internacionalización */, () => {
+    columns.value = [
+        {
+            name: 'current_date',
+            required: true,
+            label: t('sitCarro.fechaActual'),
+            align: 'left',
+            field: (row: CarSituationDTO) => row.current_date_cs,
+            format: (val: any) => `${val}`,
+            sortable: true,
+        },
+        {
+            name: 'return_date',
+            label: t('sitCarro.fechaRegreso'),
+            align: 'left',
+            field: (row: CarSituationDTO) => row.return_date_cs,
+            sortable: true,
+        },
+        {
+            name: 'type_car_situation',
+            label: t('sitCarro.tipoSituacion'),
+            align: 'left',
+            field: (row: CarSituationDTO) => row.type_car_situation?.type_cs_name,
+            sortable: true,
+        },
+        {
+            name: 'Action',
+            label: '',
+            align: 'right',
+            field: 'Action',
+            sortable: true,
+        },
+    ]
+})
+const columns = ref([
     {
         name: 'current_date',
         required: true,
-        label: 'Fecha Actual',
+        label: t('sitCarro.fechaActual'),
         align: 'left',
         field: (row: CarSituationDTO) => row.current_date_cs,
         format: (val: any) => `${val}`,
@@ -62,14 +91,14 @@ const columns = [
     },
     {
         name: 'return_date',
-        label: 'Fecha de Regreso',
+        label: t('sitCarro.fechaRegreso'),
         align: 'left',
         field: (row: CarSituationDTO) => row.return_date_cs,
         sortable: true,
     },
     {
         name: 'type_car_situation',
-        label: 'Tipo de Situación',
+        label: t('sitCarro.tipoSituacion'),
         align: 'left',
         field: (row: CarSituationDTO) => row.type_car_situation?.type_cs_name,
         sortable: true,
@@ -81,7 +110,7 @@ const columns = [
         field: 'Action',
         sortable: true,
     },
-];
+]);
 
 const typeCarSitService: TypeCarSituationsService =
     TypeCarSituationsService.getInstancie();
@@ -156,54 +185,57 @@ async function getTypeCarSituations() {
 }
 
 // Eventos
-function wrapCsvValue(val: any, formatFn?: (val: any, row: any) => string, row?: any): string  {
-  let formatted = formatFn !== void 0
-    ? formatFn(val, row)
-    : val
+function wrapCsvValue(val: any, formatFn?: (val: any, row: any) => string, row?: any): string {
+    let formatted = formatFn !== void 0
+        ? formatFn(val, row)
+        : val
 
-  formatted = formatted === void 0 || formatted === null
-    ? ''
-    : String(formatted)
+    formatted = formatted === void 0 || formatted === null
+        ? ''
+        : String(formatted)
 
-  formatted = formatted.split('"').join('""')
-  /**
-   * Excel accepts \n and \r in strings, but some other CSV parsers do not
-   * Uncomment the next two lines to escape new lines
-   */
-  // .split('\n').join('\\n')
-  // .split('\r').join('\\r')
+    formatted = formatted.split('"').join('""')
+    /**
+     * Excel accepts \n and \r in strings, but some other CSV parsers do not
+     * Uncomment the next two lines to escape new lines
+     */
+    // .split('\n').join('\\n')
+    // .split('\r').join('\\r')
 
-  return `"${formatted}"`
+    return `"${formatted}"`
 }
 
 const $q = useQuasar()
 
 function exportTable() {
-  const content = [columns.map(col => wrapCsvValue(col.label))].concat(
-    listCarSituations.value.map(row => columns.map(col => wrapCsvValue(
-      typeof col.field === 'function'
-        ? col.field(row)
-        : (row as any)[col.field === void 0 ? col.name : col.field as string],
-      col.format,
-      row
-    )).join(','))
-  ).join('\r\n')
+    const content = [columns.map(col => wrapCsvValue(col.label))].concat(
+        listCarSituations.value.map(row => columns.map(col => wrapCsvValue(
+            typeof col.field === 'function'
+                ? col.field(row)
+                : (row as any)[col.field === void 0 ? col.name : col.field as string],
+            col.format,
+            row
+        )).join(','))
+    ).join('\r\n')
 
 
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
+    const status = exportFile(
+        'table-export.csv',
+        content,
+        'text/csv'
+    )
 
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
+    if (status !== true) {
+
+        $q.notify({
+            message: t('exportar.mensaje'),
+            color: 'negative',
+            icon: 'warning'
+
+        })
+    }
 }
+
 </script>
 
 <style></style>
