@@ -28,7 +28,6 @@ export default {
     chapa: 'Chapa',
     marca: 'Marca',
     asientos: 'Cantidad de Asientos',
-    situacionCarro: 'Situación del Carro',
     formularioCarro: 'Formulario añadir Carro',
     situacionCarro: 'Situación del Carro',
     fechaFin: 'Fecha de Finalizado',
@@ -56,5 +55,20 @@ export default {
   exportar: {
     CSV: 'Exportar a csv',
     message: 'Navegador denegó la descarga de archivos...',
+  },
+  rutas: {
+    pagPrincipal: 'Página Principal',
+    choferes: 'Conductores',
+    situacionChofer: 'Situación del Conductor',
+    vehiculos: 'Vehículos',
+    situacionCarro: 'Situación del Vehículo',
+    solicitudes: 'Solicitudes',
+    grupo: 'Grupos Turísticos',
+    nomencladores: 'Nomencladores',
+    admin: 'Administrador',
+    login: 'Acceso',
+    verificacionIdentidad: 'Verificación de Identidad',
+    codigoVerificacion: 'Código de Verificación',
+    cambioContrasena: 'Cambio de Contraseña',
   },
 };

@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-card class="card-campo">
       <q-card-section class="bg-primary text-white row justify-between items-center">
-        <div class="col-11 text-h5">"$t('chofer.formularioChofer')"</div>
+        <div class="col-11 text-h5">{{ $t('chofer.formularioChofer') }}</div>
         <div class="col-1 container-icon">
           <q-btn icon="cancel" @click="setShowForm()" flat />
         </div>
@@ -10,12 +10,12 @@
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <q-input filled v-model="driverDTO.dni_driver" label="$t('chofer.DNI')" lazy-rules :rules="[
+          <q-input filled v-model="driverDTO.dni_driver" :label="$t('chofer.DNI')" lazy-rules :rules="[
             (val) =>
               (val && val.length === 11 && /^[0-9]+$/.test(val)) || 'El DNI debe tener 11 números',
           ]" />
 
-          <q-input filled v-model="driverDTO.driver_name" label="$t('chofer.nombre')" lazy-rules :rules="[
+          <q-input filled v-model="driverDTO.driver_name" :label="$t('chofer.nombre')" lazy-rules :rules="[
             (val) => {
               const namePattern = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*$/;
               const words = val.trim().split(/\s+/);
@@ -25,24 +25,24 @@
             },
           ]" />
 
-          <q-input filled v-model="driverDTO.home_address" label="$t('chofer.direccion')" lazy-rules :rules="[
+          <q-input filled v-model="driverDTO.home_address" :label="$t('chofer.direccion')" lazy-rules :rules="[
             (val) => (val && val.length > 0) || 'Por favor complete este campo',
           ]" />
 
-          <q-checkbox v-model="driverDTO.is_copilot" label="$t('chofer.esCopiloto')" />
+          <q-checkbox v-model="driverDTO.is_copilot" :label="$t('chofer.esCopiloto')" />
 
-          <div class="text-h5 q-mt-lg">"$t('chofer.situacionChofer')"</div>
+          <div class="text-h5 q-mt-lg">{{ $t('chofer.situacionChofer') }}</div>
           <q-separator color="primary" inset size="16px" />
 
           <div class="seccion-car-situation q-gutter-md q-mt-lg q-mb-lg">
             <div>
-              <div class="text-h7">"$t('chofer.fechaFin')"</div>
+              <div class="text-h7">{{ $t('chofer.fechaFin') }}</div>
               <q-date v-model="fecha" mask="YYYY-MM-DD" />
             </div>
 
             <div class="select-container">
               <q-select filled v-model="driverDTO.currentDriverSituation.type_driver_situation" use-input hide-selected
-                fill-input input-debounce="0" :options="listTypeDriverSit" label="$t('chofer.tipoSituacionChofer')"
+                fill-input input-debounce="0" :options="listTypeDriverSit" :label="$t('chofer.tipoSituacionChofer')"
                 option-label="type_ds_name" class="q-mt-lg">
                 <template v-slot:no-option>
                   <q-item>
@@ -54,7 +54,7 @@
               </q-select>
 
               <q-select filled v-model="driverDTO.car" use-input hide-selected fill-input input-debounce="0"
-                :options="listCars" label="$t('chofer.carroAsigando')" option-label="car_number" class="q-mt-lg">
+                :options="listCars" :label="$t('chofer.carroAsigando')" option-label="car_number" class="q-mt-lg">
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
@@ -68,8 +68,8 @@
 
           <div class="panel-inferior justify-between q-mt-lg">
             <div>
-              <q-btn label="$t('chofer.entregar')" type="submit" color="primary" />
-              <q-btn label="$t('chofer.reiniciar')" type="reset" color="primary" flat class="q-ml-sm" />
+              <q-btn :label="$t('chofer.entregar')" type="submit" color="primary" />
+              <q-btn :label="$t('chofer.reiniciar')" type="reset" color="primary" flat class="q-ml-sm" />
             </div>
 
             <q-btn color="primary" class="q-ml-sm" icon="contact_support" />

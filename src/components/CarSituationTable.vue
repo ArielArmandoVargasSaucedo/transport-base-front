@@ -15,7 +15,7 @@
                 <q-btn color="primary" icon-right="archive" :label="$t('exportar.CSV')" no-caps @click="exportTable" />
             </template>
         </q-table>
-        <ModalConfirmacion ref="modalConfirmacion" :text="$t('exportar.confirmacionEliminar')" @action-confirm="" />
+        <ModalConfirmacion ref="modalConfirmacion" :text="$t('sitCarro.confirmacionEliminar')" @action-confirm="" />
     </div>
 </template>
 
