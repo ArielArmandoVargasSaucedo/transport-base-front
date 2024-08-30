@@ -260,7 +260,10 @@ async function getDrivers(dni_driver: string, driver_name: string, drivSit?: Typ
       !carDTO ? undefined : carDTO.id_car);
 
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -334,7 +337,10 @@ async function deleteDriver() {
     // se actualiza la información
     await actualizarDrivers();
   } catch (error) {
-    alert(error)
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -388,7 +394,10 @@ async function getCars() {
   try {
     listCars.value = await carsService.getCars();
   } catch (error) {
-    alert(error);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -401,7 +410,10 @@ async function getTypeDriversSituation() {
     listTypeDriverSit.value =
       await typeDriverSituation.getTypeDriverSituations();
   } catch (error) {
-    alert(error);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 

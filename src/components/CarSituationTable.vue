@@ -166,7 +166,10 @@ async function getCarSituations(id_car: number, date_cs?: Date, type_car_situati
     try {
         listCarSituations.value = await carsService.getHistorialCarSituations(id_car, type_car_situation)
     } catch (error) {
-        if (error instanceof Error) alert(error.message);
+        if (error instanceof BadRequestError)
+            alert(error.message)
+
+        console.log(error)
     }
 }
 
@@ -180,7 +183,10 @@ async function getTypeCarSituations() {
     try {
         listTypeCarSituations.value = await typeCarSitService.getTypeCarSituations();
     } catch (error) {
-        alert(error);
+        if (error instanceof BadRequestError)
+            alert(error.message)
+
+        console.log(error)
     }
 }
 

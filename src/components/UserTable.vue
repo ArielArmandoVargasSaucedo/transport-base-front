@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
-    <FormUserTable ref="formUserTable" v-show="showForm" :user-reactivo="userReactivo" @set-show-form-user="setShowFormUser"
-    @post-user="postUser" @update-user="updateUser" />
+    <FormUserTable ref="formUserTable" v-show="showForm" :user-reactivo="userReactivo"
+      @set-show-form-user="setShowFormUser" @post-user="postUser" @update-user="updateUser" />
     <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Usuarios" :rows="listUser"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
@@ -26,7 +26,8 @@
 
       <template v-slot:body-cell-Driver="props">
         <q-td :props="props">
-          <q-btn v-if="(props.row.driver)" icon="visibility" size="sm" flat dense class="q-ml-sm" @click="navegarTablaDriverSit(props.row.driver)" />
+          <q-btn v-if="(props.row.driver)" icon="visibility" size="sm" flat dense class="q-ml-sm"
+            @click="navegarTablaDriverSit(props.row.driver)" />
         </q-td>
       </template>
 
@@ -56,6 +57,7 @@ import { RoleDTO } from 'src/logica/role/RoleDTO';
 import FormUserTable from './forms/FormUserTable.vue';
 import { DriverDTO } from 'src/logica/drivers/DriverDTO';
 import { useRouter } from 'vue-router';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 
 // Inyectar el Servicio de los users
@@ -165,7 +167,10 @@ async function getUsers(user: string, role: RoleDTO | undefined) {
       role ? role.id_aut_role : undefined
     );
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -173,7 +178,10 @@ async function getRoles() {
   try {
     listRoles.value = await rolesService.getRoles()
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -181,14 +189,14 @@ async function getRoles() {
 
 //Funcion para insertar un user
 async function postUser(
-    user_name: string,
-    password_user: string,
-    email: string,
-    id_aut_role: number,
-    id_driver?: number,
+  user_name: string,
+  password_user: string,
+  email: string,
+  id_aut_role: number,
+  id_driver?: number,
 ) {
   try {
-    await userService.postUser(user_name,password_user,email,id_aut_role,id_driver);
+    await userService.postUser(user_name, password_user, email, id_aut_role, id_driver);
 
     // se notifica de la acción
     Notify.create({
@@ -206,7 +214,10 @@ async function postUser(
     // se actualiza la información
     await actualizarUsers();
   } catch (error) {
-    alert(error);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -227,14 +238,17 @@ async function deleteUser() {
     // se actualiza la información
     await actualizarUsers();
   } catch (error) {
-    alert(error)
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
 // Funcion para editar un user
-async function updateUser(user_id:number, user_name:string, password_user:string, email:string) {
+async function updateUser(user_id: number, user_name: string, password_user: string, email: string) {
   try {
-    await userService.updateUser(user_id,user_name,password_user === '' ? undefined : password_user, email)
+    await userService.updateUser(user_id, user_name, password_user === '' ? undefined : password_user, email)
 
     // se notifica de la acción
     Notify.create({
@@ -252,7 +266,10 @@ async function updateUser(user_id:number, user_name:string, password_user:string
     // se actualiza la información
     await actualizarUsers();
   } catch (error) {
-    alert(error)
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -262,7 +279,7 @@ function navegarTablaDriverSit(driverDTO: DriverDTO) {
     name: 'Situación del Chofer',
     params: {
       idDriver: driverDTO.id,
-       rutaAnterior: 'AdminPage'
+      rutaAnterior: 'AdminPage'
     },
   });
 }

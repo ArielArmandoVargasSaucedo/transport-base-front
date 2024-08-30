@@ -43,6 +43,7 @@ import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
 import { GroupsToursService } from 'src/logica/groupTour/GroupsTourService';
 import { watch } from 'vue';
 import { GroupTourDTO } from 'src/logica/groupTour/GroupTourDTO';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 // Inyectar el Servicio de los Drivers
 
@@ -131,7 +132,10 @@ async function getGroupsTours(group_code: number,
             number_of_tourist === 0 ? undefined : number_of_tourist
         );
     } catch (error) {
-        if (error instanceof Error) alert(error.message);
+        if (error instanceof BadRequestError)
+            alert(error.message)
+
+        console.log(error)
     }
 }
 
@@ -162,7 +166,10 @@ async function postGroupTour(
         // se actualiza la información
         await actualizarGroups();
     } catch (error) {
-        alert(error);
+        if (error instanceof BadRequestError)
+            alert(error.message)
+
+        console.log(error)
     }
 }
 
@@ -186,7 +193,10 @@ async function updateGroupTour(groupTourDTO: GroupTourDTO /* representa la infor
         // se actualiza la información
         await actualizarGroups();
     } catch (error) {
-        alert(error)
+        if (error instanceof BadRequestError)
+            alert(error.message)
+
+        console.log(error)
     }
 }
 

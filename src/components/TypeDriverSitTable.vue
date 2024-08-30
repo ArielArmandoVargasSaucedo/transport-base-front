@@ -23,7 +23,8 @@
       </template>
     </q-table>
     <ModalTypeDriverSit :type-reactivo="typeDriverReactivo" ref="modalTypeDriverSit"
-      @post-type-driver-situations="postTypeDriverSituations" @update-type-driver-situations="updateTypeDriverSituations" />
+      @post-type-driver-situations="postTypeDriverSituations"
+      @update-type-driver-situations="updateTypeDriverSituations" />
 
     <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'"
       @action-confirm="deleteTypeDriverSituations" />
@@ -113,7 +114,10 @@ async function getTypeDriverSituations() {
     listTypesDriverSituations.value =
       await typeDriverSistuationService.getTypeDriverSituations();
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
   }
 }
 
@@ -175,34 +179,34 @@ async function deleteTypeDriverSituations() {
 }
 
 async function updateTypeDriverSituations(id: number, nombre: string) {
-    try {
-      await typeDriverSistuationService.updateTypeDriverSituation(id, nombre)
-      // se notifica de la acción
+  try {
+    await typeDriverSistuationService.updateTypeDriverSituation(id, nombre)
+    // se notifica de la acción
+    Notify.create({
+      message: 'Tipo de Situación del Chofer insertada con éxito',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+    // se actualiza la información
+    await actualizarTypeDriverSituations();
+    // se cierra el modal
+    modalTypeDriverSit.value?.setShowModal(false);
+  } catch (error) {
+    // se van a mostar los errores al usuario
+    if (error instanceof BadRequestError)
       Notify.create({
-        message: 'Tipo de Situación del Chofer insertada con éxito',
-        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-        color: 'green', // Cambia el color de la notificación
+        message: error.message,
+        type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+        color: 'red', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
         timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'check_circle', // Añade un icono a la notificación
+        icon: 'cancel', // Añade un icono a la notificación
       });
-      // se actualiza la información
-      await actualizarTypeDriverSituations();
-      // se cierra el modal
-      modalTypeDriverSit.value?.setShowModal(false);
-    } catch (error) {
-      // se van a mostar los errores al usuario
-      if (error instanceof BadRequestError)
-        Notify.create({
-          message: error.message,
-          type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-          color: 'red', // Cambia el color de la notificación
-          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-          timeout: 3000, // Cambia la duración de la notificación en milisegundos
-          icon: 'cancel', // Añade un icono a la notificación
-        });
-    }
   }
+}
 
 // eventos del componente
 function activarModalTypeDriverSit(typeDriverSituationDTO?: TypeDriverSituationDTO) {
