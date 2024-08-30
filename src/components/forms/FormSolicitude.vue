@@ -153,7 +153,7 @@ const groupTourService: GroupsToursService = GroupsToursService.getInstancie();
 // Se definen las emits del componente
 // Se definen los emit del componente
 const emit = defineEmits<{
-  (e: 'setShowFormCar'): void;
+  (e: 'setShowFormSolicitud'): void;
 }>();
 
 

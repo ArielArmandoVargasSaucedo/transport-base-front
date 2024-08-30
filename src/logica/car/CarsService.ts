@@ -2,6 +2,7 @@ import { BadRequestInterface } from 'src/utils/BadRequestInterface';
 import { CarDTO } from './CarDTO';
 import { BadRequestError } from 'src/utils/BadRequestError';
 import { CarSituationDTO } from '../carSituation/CarSituationDTO';
+import { AuthService } from '../auth/AuthService';
 
 export class CarsService {
   static carsService: CarsService;
@@ -21,31 +22,38 @@ export class CarsService {
   ): Promise<Array<CarDTO>> {
     let listCars: Array<CarDTO> = new Array<CarDTO>();
 
-    //Se define los parámetros query de la petición
-    const params = new URLSearchParams();
-    if (number) params.append('car_number', number);
-    if (brand) params.append('car_brand', brand);
-    if (numOfSeats) params.append('number_of_seats', numOfSeats.toString());
+    // se obtiene el token de autenticación
+    const token = AuthService.getInstancie().getJwt()
+    // se comprueba que realmente se encuentre logeado
+    if (token) {
+      //Se define los parámetros query de la petición
+      const params = new URLSearchParams();
+      if (number) params.append('car_number', number);
+      if (brand) params.append('car_brand', brand);
+      if (numOfSeats) params.append('number_of_seats', numOfSeats.toString());
 
-    const url = 'http://localhost:5000/car?' + params;
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
+      const url = 'http://localhost:5000/car?' + params;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token.access_token
+        },
+      });
 
-    // si el código del error es igual a 400 significa que hubo una badrequest
-    if (res.status === 400) {
-      // obtener la respuesta
-      const badRequest: BadRequestInterface = await res.json()
-      throw new BadRequestError(badRequest.message)
+      // si el código del error es igual a 400 significa que hubo una badrequest
+      if (res.status === 400) {
+        // obtener la respuesta
+        const badRequest: BadRequestInterface = await res.json()
+        throw new BadRequestError(badRequest.message)
+      }
+
+      // extraer el json de la respuesta
+      const json = await res.json();
+      listCars = json;
     }
 
-    // extraer el json de la respuesta
-    const json = await res.json();
-    listCars = json;
 
     return listCars;
   }

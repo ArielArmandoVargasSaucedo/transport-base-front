@@ -20,7 +20,7 @@ export class SolicitudeService {
     id_driver?: number,
     id_prog_type?: number,
     id_group?: number,
-    id_date?: Date,
+    date?: Date,
   ): Promise<Array<SolicitudeDTO>> {
     let listSolicitudes: Array<SolicitudeDTO> = new Array<SolicitudeDTO>();
     const url = 'http://localhost:5000/solicitude';
@@ -28,11 +28,11 @@ export class SolicitudeService {
 
     //Se define los parámetros query de la petición
     const params = new URLSearchParams();
-    if (id_car) params.append('carDTO', id_car.toString());
-    if (id_driver) params.append('driverDTO', id_driver.toString());
-    if (id_prog_type) params.append('prog_typeDTO', id_prog_type.toString());
-    if (id_group) params.append('groupDTO', id_group.toString());
-    if (id_date) params.append('dateDTO', id_date.toString());
+    if (id_car) params.append('id_car', id_car.toString());
+    if (id_driver) params.append('id_driver', id_driver.toString());
+    if (id_prog_type) params.append('id_aut_prog_type', id_prog_type.toString());
+    if (id_group) params.append('id_group', id_group.toString());
+    if (date) params.append('dateD', date.toString());
 
     const res = await fetch(url, {
       method: 'GET',
@@ -86,12 +86,14 @@ export class SolicitudeService {
         mileage: mileage,
         id_car: id_car,
         id_aut_prog_type: id_aut_prog_type,
+        //nuevo grupo
         groupDTO: {
           group_code: groupDTO?.group_code,
           group_country: groupDTO?.group_country,
           number_of_tourist: groupDTO?.number_of_tourist,
         },
         dateD: dateD,
+        //nueva ruta
         routeDTO: {
           km_available_star: routeDTO.km_available_star,
           km_available_end: routeDTO.km_available_end,
@@ -107,6 +109,7 @@ export class SolicitudeService {
         mileage: mileage,
         id_car: id_car,
         id_aut_prog_type: id_aut_prog_type,
+        //grupo seleccionado
         id_group: id_group,
         dateD: dateD,
         routeDTO: {
@@ -132,4 +135,54 @@ export class SolicitudeService {
       throw new BadRequestError(badRequest.message)
     }
   }
+
+  async deleteSolicitud(id_solicitud: number): Promise<void> {
+
+    const url = 'http://localhost:5000/solicitude/' + id_solicitud;
+
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // si el código del error es igual a 400 significa que hubo una badrequest
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
+    }
+  }
+/*
+  //Metodo para actualizar
+  async updateCar(solicitudDTO: SolicitudeDTO): Promise<void> {
+    const url = 'http://localhost:5000/solicitude/' + solicitudDTO.id_solicitud;
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        car_number: carDTO.car_number,
+        car_brand: carDTO.car_brand,
+        number_of_seats: carDTO.number_of_seats,
+        currentCarSituation: {
+          return_date_cs: carDTO.currentCarSituation.return_date_cs,
+          id_aut_type_cs: carDTO.currentCarSituation.type_car_situation?.id_aut_type_cs,
+        }
+      }),
+    });
+
+    if (res.status === 400) {
+      // obtener la respuesta
+      const badRequest: BadRequestInterface = await res.json()
+      throw new BadRequestError(badRequest.message)
+    }
+
+  }
+*/
+
 }

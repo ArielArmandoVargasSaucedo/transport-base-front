@@ -174,7 +174,7 @@ watch(filtersCars.value, async (newFilters: FiltersCars) => {
 });
 
 const showForm = ref(false); // representa si el formulario se muestra o no
-const showTablaCarSit = ref(false) // define si se va a monstrar la tabla de car situations para un carro en específico
+
 // se crea una variable para el modal
 const modalConfirmacion: Ref<InstanceType<typeof ModalConfirmacion> | null> =
   ref(null);
