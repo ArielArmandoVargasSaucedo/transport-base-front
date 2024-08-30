@@ -5,83 +5,86 @@
 
 
       <div class="container-time">
-        <InfoLine :info-lines="timeline_list1" :title="$t('timelineList1.analisisCriticidad')" />
-        <InfoLine :info-lines="timeline_list2" :title="$t('timelineList2.metodosImpactos')" />
-        <InfoLine :info-lines="timeline_list3" :title="$t('timelineList3.tecnicaPareto')" />
+        <InfoLine :info-lines="timeline_list1" :title="titulo1" />
+        <InfoLine :info-lines="timeline_list2" :title="titulo2" />
+        <InfoLine :info-lines="timeline_list3" :title="titulo3" />
       </div>
     </q-page>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Todo, Meta } from 'components/models';
+// import { ref } from 'vue';
+// import { Todo, Meta } from 'components/models';
 import InfoLine from 'src/components/InfoLine.vue';
 
+const titulo1 = 'Gestión de Choferes'
+const titulo2 = 'Gestión de Usuario'
+const titulo3 = 'Gestión de Solicitudes'
 
 const timeline_list1 = [
   {
-    title: 'Tabla de frecuencias',
+    title: 'Registro de Choferes',
     side: 'left',
-    desc: 'Construcción de la tabla de frecuencias acumuladas de Ocurrencia, organizando las frecuencias de ocurrencia, de mayor a menor.',
+    desc: 'Proceso de inscripción de nuevos choferes en el sistema.',
     color: 'red',
     icon: 'thumb_up'
   },
   {
-    title: 'Definición del nivel de relevancia',
+    title: 'Asignación de Rutas',
     side: 'left',
-    desc: 'Determinación de la importancia de las clases para la Ocurrencia',
+    desc: ' Distribución de rutas y horarios a los choferes según disponibilidad y necesidades operativas.',
     color: 'orange',
     icon: 'done_all'
+  }, {
+    title: 'Evaluación de Desempeño',
+    side: 'left',
+    desc: 'Seguimiento continuo y análisis detallado del rendimiento de los choferes para garantizar un servicio de alta calidad  ',
+    color: 'blue',
+    icon: 'thumb_up'
   }
 ]
 const timeline_list2 = [
   {
-    title: 'Índices de deterioro',
+    title: 'Creación de Usuarios',
     side: 'left',
-    desc: 'Determinación de los índices de frecuencia, impacto y detectabilidad.',
+    desc: 'Proceso de alta de nuevos usuarios en el sistema, asignación de roles y permisos.',
     color: 'red',
     icon: 'thumb_up'
   },
   {
-    title: 'Criticidad calculable',
+    title: 'Actualización de Información',
     side: 'left',
-    desc: 'Cálculo del índice de criticidad por la ecuación C=F*I*D',
+    desc: 'Mantenimiento y actualización de los datos de los usuarios.',
     color: 'orange',
     icon: 'done_all'
   }, {
-    title: 'Jerarquía de entidades',
+    title: 'Gestión de Permisos',
     side: 'left',
-    desc: 'Jerarquización de los deterioros por sistemas y subsistemas',
+    desc: ' Administración y control de los permisos de acceso de los usuarios, asegurando que cada usuario tenga los privilegios adecuados según su rol.',
     color: 'blue',
     icon: 'thumb_up'
-  }, {
-    title: 'Niveles de criticidad',
-    side: 'left',
-    desc: 'Determinación de los niveles de criticidad por la matriz patrón',
-    color: 'yellow',
-    icon: 'done_all'
   }
 ]
 
 const timeline_list3 = [
   {
-    title: 'Evaluación por deterioro',
+    title: ' Recepción de Solicitudes',
     side: 'left',
-    desc: 'Evaluación de cada deterioro analizando todos los parámetros.',
+    desc: 'Registro de las solicitudes recibidas de los usuarios.',
     color: 'red',
     icon: 'thumb_up'
   },
   {
-    title: 'Categorización de deterioros',
+    title: 'Procesamiento de Solicitudes',
     side: 'left',
-    desc: 'Sumatoria de las categorías en cada deterioro.',
+    desc: 'Revisión y gestión de las solicitudes , incluyendo la verificación de disponibilidad, la asignación de choferes y vehículos, y la confirmación de itinerarios .',
     color: 'orange',
     icon: 'done_all'
   }, {
-    title: 'Homologación de criterios',
+    title: 'Seguimiento y Cierre',
     side: 'left',
-    desc: 'Determinación de la categoría definitiva y homologación con los criterios de criticidad ',
+    desc: 'Monitoreo del estado de las solicitudes y confirmación de su resolución y cierre.',
     color: 'blue',
     icon: 'thumb_up'
   }
@@ -95,13 +98,13 @@ defineOptions({
   name: 'IndexPage'
 });
 
-const todos = ref<Todo[]>([
-  // Inicializa aquí tus tareas
-]);
+// const todos = ref<Todo[]>([
+//   // Inicializa aquí tus tareas
+// ]);
 
-const meta = ref<Meta>({
-  totalCount: 1200
-});
+// const meta = ref<Meta>({
+//   totalCount: 1200
+// });
 </script>
 
 <style scoped>
