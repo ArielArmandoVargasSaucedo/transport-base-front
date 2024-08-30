@@ -8,6 +8,7 @@
         <InfoLine :info-lines="timeline_list1" :title="titulo1" />
         <InfoLine :info-lines="timeline_list2" :title="titulo2" />
         <InfoLine :info-lines="timeline_list3" :title="titulo3" />
+        <InfoLine :info-lines="timeline_list4" :title="titulo4" />
       </div>
     </q-page>
   </q-page>
@@ -21,45 +22,46 @@ import InfoLine from 'src/components/InfoLine.vue';
 const titulo1 = 'Gestión de Choferes'
 const titulo2 = 'Gestión de Usuario'
 const titulo3 = 'Gestión de Solicitudes'
+const titulo4 = 'Gestión de Vehículos'
 
 const timeline_list1 = [
   {
-    title: 'Registro de Choferes',
+    title: 'Registro de choferes',
     side: 'left',
     desc: 'Proceso de inscripción de nuevos choferes en el sistema.',
     color: 'red',
     icon: 'thumb_up'
   },
   {
-    title: 'Asignación de Rutas',
+    title: 'Asignación de Vehículo',
     side: 'left',
-    desc: ' Distribución de rutas y horarios a los choferes según disponibilidad y necesidades operativas.',
+    desc: ' Distribución de Vehículos a los choferes.',
     color: 'orange',
     icon: 'done_all'
   }, {
-    title: 'Evaluación de Desempeño',
+    title: 'Creación de las situaciones de los choferes',
     side: 'left',
-    desc: 'Seguimiento continuo y análisis detallado del rendimiento de los choferes para garantizar un servicio de alta calidad  ',
+    desc: ' Asignación de tipos de situaciones disponibles de los Choferes. ',
     color: 'blue',
     icon: 'thumb_up'
   }
 ]
 const timeline_list2 = [
   {
-    title: 'Creación de Usuarios',
+    title: 'Creación de usuarios',
     side: 'left',
     desc: 'Proceso de alta de nuevos usuarios en el sistema, asignación de roles y permisos.',
     color: 'red',
     icon: 'thumb_up'
   },
   {
-    title: 'Actualización de Información',
+    title: 'Actualización de información',
     side: 'left',
     desc: 'Mantenimiento y actualización de los datos de los usuarios.',
     color: 'orange',
     icon: 'done_all'
   }, {
-    title: 'Gestión de Permisos',
+    title: 'Gestión de permisos',
     side: 'left',
     desc: ' Administración y control de los permisos de acceso de los usuarios, asegurando que cada usuario tenga los privilegios adecuados según su rol.',
     color: 'blue',
@@ -69,22 +71,44 @@ const timeline_list2 = [
 
 const timeline_list3 = [
   {
-    title: ' Recepción de Solicitudes',
+    title: ' Recepción de solicitudes',
     side: 'left',
     desc: 'Registro de las solicitudes recibidas de los usuarios.',
     color: 'red',
     icon: 'thumb_up'
   },
   {
-    title: 'Procesamiento de Solicitudes',
+    title: 'Procesamiento de solicitudes',
     side: 'left',
     desc: 'Revisión y gestión de las solicitudes , incluyendo la verificación de disponibilidad, la asignación de choferes y vehículos, y la confirmación de itinerarios .',
     color: 'orange',
     icon: 'done_all'
   }, {
-    title: 'Seguimiento y Cierre',
+    title: 'Asignación de rutas',
     side: 'left',
-    desc: 'Monitoreo del estado de las solicitudes y confirmación de su resolución y cierre.',
+    desc: 'Distribución de las rutas y duración del viaje.',
+    color: 'blue',
+    icon: 'thumb_up'
+  }
+]
+const timeline_list4 = [
+  {
+    title: ' Registro de vehículos',
+    side: 'left',
+    desc: 'Proceso de inscripción de nuevos vehículos en el sistema.',
+    color: 'red',
+    icon: 'thumb_up'
+  },
+  {
+    title: 'Asignación de vehículos',
+    side: 'left',
+    desc: 'Asignación de los vehículos según su disponibilidad.',
+    color: 'orange',
+    icon: 'done_all'
+  }, {
+    title: 'Exportar información',
+    side: 'left',
+    desc: 'Exportar en formato excel las situciones de los vehículos.',
     color: 'blue',
     icon: 'thumb_up'
   }
