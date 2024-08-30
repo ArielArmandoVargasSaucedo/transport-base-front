@@ -106,7 +106,7 @@ const meta = ref<Meta>({
 
 <style scoped>
 .container {
-  background-image: url("src/images/pantalla_principal.jpg");
+  background-image: url("src/images/fondo-login4.jpg");
   padding: 20px;
   display: flex;
   justify-content: center;
