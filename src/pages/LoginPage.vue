@@ -6,15 +6,15 @@
 
     <q-card class="spa">
       <q-card-section>
-        <span class="text-h3 log">Login
+        <span class="text-h3 log">{{ $t('login.login') }}
           <internationalizationButton color="primary" class="internationalitation" />
         </span>
       </q-card-section>
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset">
-          <q-input class="full-width inp" clearable filled v-model="datosLogin.nameUser" label="User Name *" lazy-rules
-            :rules="[
+          <q-input class="full-width inp" clearable filled v-model="datosLogin.nameUser"
+            :label="$t('login.nombreUsuario')" lazy-rules :rules="[
               (val) => (val && val.length > 0) || 'This field is required',
               (val) =>
                 /^[a-zA-Z0-9]*$/.test(val) || 'No special characters allowed',
@@ -25,7 +25,7 @@
           </q-input>
 
           <q-input class="full-width inp" clearable filled :type="showPassword ? 'text' : 'password'"
-            v-model="datosLogin.password" label="Password *" lazy-rules :rules="[
+            v-model="datosLogin.password" :label="$t('login.contraseña')" lazy-rules :rules="[
               (val) => (val && val.length > 0) || 'This field is required',
             ]">
             <template v-slot:append>
@@ -38,7 +38,7 @@
 
           <div>
             <q-btn label="Login" type="submit" color="primary" class="btn" />
-            <router-link :to="{ name: 'Verificacion de Identidad' }">¿Has olvidado la contraseña?</router-link>
+            <router-link :to="{ name: 'Verificacion de Identidad' }">{{ $t('login.olvidadoContrasena') }}</router-link>
           </div>
         </q-form>
       </q-card-section>

@@ -112,5 +112,62 @@ export default {
     cantidad: 'Cantidad de Turistas',
     confirmacionEliminar: 'Seguro que desea eliminar?',
   },
-  login: {},
+  login: {
+    login: 'login',
+    nombreUsuario: 'Nombre de Usuario *',
+    contraseña: 'Contraseña *',
+    olvidadoContrasena: '¿Has olvidado la contraseña?',
+  },
+  maynlay: {
+    cerrarSesion: 'Cerrar Sesión',
+    seguroCerrarSesion: '¿Seguro que desea cerrar la sesión?',
+  },
+  modalConfirmacion: {
+    alerta: 'Alerta',
+    confirmar: 'CONFIRMAR',
+    cancelar: 'CANCELAR',
+  },
+  perfil: {
+    info: 'Información del Perfil',
+    foto: 'Agregar Foto',
+    nombre: 'Nombre de Usuario:',
+    editarNombre: 'Editar Nombre de Usuario',
+    email: 'Email:',
+    rol: 'Rol:',
+    volver: 'Volver',
+  },
+  cambioContraseña: {
+    cambio: 'Cambio de contraseña',
+    porFavor:
+      ' Por favor, ingrese su nueva contraseña en los campos a continuación para completar el proceso de cambio de contraseña.',
+    nueva: 'Nueva Contraseña',
+    confirmar: 'Confirmar Nueva Contraseña',
+    cambiar: 'Cambiar Contraseña',
+  },
+  cambioContraseña2: {
+    cambio: 'Cambio de Contraseña',
+    cambia: 'Cambie su Contraseña',
+    contraAnterior: 'Contraseña Anterior',
+    nuevaContra: 'Nueva Contraseña',
+    confirmarNueva: 'Confirmar Nueva Contraseña',
+    olvidasteContra: '¿Olvidaste la contraseña?',
+    solicitarCambio: 'Solicita un cambio de contraseña por olvido',
+    cancelar: 'Cancelar',
+    cambiar: 'Cambiar Contraseña',
+  },
+  identificacion: {
+    identifica: 'Identifique su cuenta',
+    correo: '¿Cuál es el correo electrónico de su cuenta?',
+    ejemplo: 'correo@ejemplo.com',
+    continuar: 'Continuar',
+    volver: 'Volver',
+    ayuda: 'Obtenga ayuda para identificar su cuenta',
+  },
+  codigoVerificacion: {
+    titulo: '`Código de Verificación Requerido`',
+    parrafo:
+      '`Hemos enviado un código de verificación a su dirección de correo electrónico. Por favor, ingrese el código en el campo a continuación para verificar su identidad y proceder con el cambio de su contraseña.`',
+    info: '`Si no ha recibido el código, por favor verifique su dirección de correo o intente nuevamente.`',
+    botonNombre: 'Verificar Código',
+  },
 };

@@ -2,11 +2,9 @@
     <q-layout>
         <q-page-container>
             <q-page class="flex container flex-center">
-                <ModalCodigoVerificacion :titulo="`Código de Verificación Requerido`"
-                    :parrafo="`Hemos enviado un código de verificación a su dirección de correo electrónico. Por favor, ingrese el
-                    código en el campo a continuación para verificar su identidad y proceder con el cambio de su contraseña.`"
-                    :informacion="`Si no ha recibido el código, por favor verifique su dirección de correo o intente nuevamente.`"
-                    :nombre-boton="'Verificar Código'" @action="verificarCodigoIdentidad" />
+                <ModalCodigoVerificacion :titulo="$t('codigoVerificacion.titulo')"
+                    :parrafo="$t('codigoVerificacion.parrafo')" :informacion="$t('codigoVerificacion.info')"
+                    :nombre-boton="$t('codigoVerificacion.botonNombre')" @action="verificarCodigoIdentidad" />
             </q-page>
         </q-page-container>
     </q-layout>

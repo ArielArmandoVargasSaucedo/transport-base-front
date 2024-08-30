@@ -11,7 +11,7 @@
         <div class="div-lateral">
           <internationalizationButton />
           <ModalProfile />
-          <q-btn flat label="Cerrar Sesion" @click="activarModalConfirmacion()" />
+          <q-btn flat :label="$t('maynlay.cerrarSesion')" @click="activarModalConfirmacion()" />
         </div>
       </q-toolbar>
     </q-header>
@@ -20,7 +20,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <ModalConfirmacion ref="modalConfirmacion" :text="'¿Seguro que desea cerrar la sesión?'" @action-confirm="logout" />
+    <ModalConfirmacion ref="modalConfirmacion" :text="$t('maynlay.seguroCerrarSesion')" @action-confirm="logout" />
   </q-layout>
 </template>
 

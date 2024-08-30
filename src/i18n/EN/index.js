@@ -114,5 +114,60 @@ export default {
   },
   login: {
     login: 'login',
+    nombreUsuario: 'Username *',
+    contraseña: 'Password *',
+    olvidadoContrasena: 'Do you forget the password?',
+  },
+  maynlay: {
+    cerrarSesion: 'log out',
+    seguroCerrarSesion: ' Are sure you want log out?',
+  },
+  modalConfirmacion: {
+    alerta: 'Alert',
+    confirmar: 'CONFIRM',
+    cancelar: 'CANCEL',
+  },
+  perfil: {
+    info: 'Profile Information',
+    foto: 'Add photo',
+    nombre: 'Username:',
+    editarNombre: 'Edit Username',
+    email: 'Email:',
+    rol: 'Rol:',
+    volver: 'Return',
+  },
+  cambioContraseña: {
+    cambio: 'Password Change',
+    porFavor:
+      'Please enter your new password in the fields below to complete the password change process',
+    nueva: 'New Password',
+    confirmar: 'Confirm New Password',
+    cambiar: 'Change Password',
+  },
+  cambioContraseña2: {
+    cambio: 'Password Change',
+    cambia: 'Change your Password',
+    contraAnterior: 'Old Password',
+    nuevaContra: 'New Password',
+    confirmarNueva: 'Confirm New Password',
+    olvidasteContra: 'Do you forget the password?',
+    solicitarCambio: 'Request a password change if you forget it',
+    cancelar: 'Cancel',
+    cambiar: 'Change Password',
+  },
+  identificacion: {
+    identifica: 'Identify your account',
+    correo: 'What is your account email?',
+    ejemplo: 'email@example.com',
+    continuar: 'Continue',
+    volver: 'Return',
+    ayuda: 'Get help to identify your account',
+  },
+  codigoVerificacion: {
+    titulo: '`Verification Code Required`',
+    parrafo:
+      '`We have sent a verification code to your email address. Please enter the code in the field below to verify your identity and proceed with changing your password.`',
+    info: '`If you have not received the code, please check your email address or try again.`',
+    botonNombre: 'Verify Code',
   },
 };
