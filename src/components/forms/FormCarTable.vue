@@ -54,17 +54,19 @@
           </div>
           <q-btn color="primary" icon="contact_support" />
 
-        </q-form>
-      </q-card-section>
-
-      <!-- Panel Inferior con Botones -->
-      <q-card-section class="panel-inferior">
+            <!-- Panel Inferior con Botones -->
+      <div class="panel-inferior justify-between q-mt-lg">
         <div>
           <q-btn :label="$t('carro.entregar')" type="submit" color="primary" />
           <q-btn :label="$t('carro.reiniciar')" type="reset" color="primary" flat />
         </div>
         <q-btn color="primary" icon="contact_support" />
+      </div>
+
+        </q-form>
       </q-card-section>
+
+
     </q-card>
   </div>
 </template>
@@ -162,6 +164,7 @@ async function getTypeCarSituation() {
 }
 
 async function onSubmit() {
+
   if (datosCar.value.carSituation.typeCarSit) {
     if (!props.carReactivo.carDTO) {
       await emit(

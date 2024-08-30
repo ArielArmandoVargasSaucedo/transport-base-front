@@ -11,7 +11,7 @@ export default {
     situacionChofer: 'Situación del Chofer',
     tipoSituacionChofer: 'Tipo de Situación',
     formularioChofer: 'Formulario Añadir Chofer',
-    esCopilto: 'Es Copiloto?',
+    esCopiloto: 'Es Copiloto?',
     fechaFin: 'Fecha de Finalizado',
     mensajeInsertado: 'Chofer insertado con éxito',
     mensajeEliminado: 'Se eliminó con éxito el chofer',
