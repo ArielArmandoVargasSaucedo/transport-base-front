@@ -28,7 +28,7 @@ export class DriversService {
       if (driver_name) params.append('driver_name', driver_name);
       if (type_driver_situation) params.append('type_driver_situation', type_driver_situation.toString());
       if (id_car) params.append('id_car', id_car.toString());
-
+console.log(token.access_token)
       const url = 'http://localhost:5000/driver?' + params;
       const res = await fetch(url, {
         method: 'GET',
@@ -173,31 +173,35 @@ export class DriversService {
 
     const url = 'http://localhost:5000/driver';
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        dni_driver: driverDTO.dni_driver,
-        driver_name: driverDTO.driver_name,
-        home_address: driverDTO.home_address,
-        is_copilot: driverDTO.is_copilot,
-        currentDriverSituation: {
-          return_date_ds: driverDTO.currentDriverSituation.return_date_ds,
-          id_aut_type_ds: driverDTO.currentDriverSituation.type_driver_situation?.id_aut_type_ds
+    // se obtiene el token
+    const token = AuthService.getInstancie().getJwt()
+    if ( token) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token.access_token
         },
-        id_car: driverDTO.car?.id_car
-      })
-    });
+        body: JSON.stringify({
+          dni_driver: driverDTO.dni_driver,
+          driver_name: driverDTO.driver_name,
+          home_address: driverDTO.home_address,
+          is_copilot: driverDTO.is_copilot,
+          currentDriverSituation: {
+            return_date_ds: driverDTO.currentDriverSituation.return_date_ds,
+            id_aut_type_ds: driverDTO.currentDriverSituation.type_driver_situation?.id_aut_type_ds
+          },
+          id_car: driverDTO.car?.id_car
+        })
+      });
 
-    if (res.status === 400) {
-      // obtener la respuesta
-      const badRequest: BadRequestInterface = await res.json()
-      throw new BadRequestError(badRequest.message)
+      if (res.status === 400) {
+        // obtener la respuesta
+        const badRequest: BadRequestInterface = await res.json()
+        throw new BadRequestError(badRequest.message)
+      }
     }
-
   }
 
   async updateDriver(driverDTO: DriverDTO): Promise<void> {

@@ -60,13 +60,12 @@ export class SolicitudeService {
 
   //Metodo para insertar un Carro
   async postSolicitude(
-    programming_start_time: string,
     programming_to_be_done: string,
-    duration_time: string,
     mileage: number,
     id_car: number,
+    id_driver: number,
     id_aut_prog_type: number,
-    id_group: number,
+    id_group: number | undefined,
     groupDTO: GroupTourDTO | undefined,
     dateD: Date,
     routeDTO: RouteDTO,
@@ -74,20 +73,20 @@ export class SolicitudeService {
   ): Promise<void> {
     const url = 'http://localhost:5000/solicitude';
 
+    console.log(groupDTO)
     // se construye el body de la petición
     let body = {}
 
     // si se va a construir el grupo
     if (groupDTO)
       body = {
-        programming_start_time: programming_start_time,
         programming_to_be_done: programming_to_be_done,
-        duration_time: duration_time,
         mileage: mileage,
         id_car: id_car,
+        id_driver: id_driver,
         id_aut_prog_type: id_aut_prog_type,
         //nuevo grupo
-        groupDTO: {
+        group: {
           group_code: groupDTO?.group_code,
           group_country: groupDTO?.group_country,
           number_of_tourist: groupDTO?.number_of_tourist,
@@ -103,11 +102,10 @@ export class SolicitudeService {
       }
     else // se va a asignar el grupo
       body = {
-        programming_start_time: programming_start_time,
         programming_to_be_done: programming_to_be_done,
-        duration_time: duration_time,
         mileage: mileage,
         id_car: id_car,
+        id_driver: id_driver,
         id_aut_prog_type: id_aut_prog_type,
         //grupo seleccionado
         id_group: id_group,
@@ -155,10 +153,25 @@ export class SolicitudeService {
       throw new BadRequestError(badRequest.message)
     }
   }
-/*
+
   //Metodo para actualizar
-  async updateCar(solicitudDTO: SolicitudeDTO): Promise<void> {
-    const url = 'http://localhost:5000/solicitude/' + solicitudDTO.id_solicitud;
+  async updateSolicitud(id_solicitud: number,
+
+    programming_to_be_done: string,
+
+    mileage: number,
+
+    id_car: number,
+
+    id_aut_prog_type: number,
+
+    dateD: Date,
+
+    id_driver: number,
+
+    routeDTO: RouteDTO): Promise<void> {
+      console.log(id_car + "asd")
+    const url = 'http://localhost:5000/solicitude/' + id_solicitud;
     const res = await fetch(url, {
       method: 'PATCH',
       headers: {
@@ -166,13 +179,24 @@ export class SolicitudeService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        car_number: carDTO.car_number,
-        car_brand: carDTO.car_brand,
-        number_of_seats: carDTO.number_of_seats,
-        currentCarSituation: {
-          return_date_cs: carDTO.currentCarSituation.return_date_cs,
-          id_aut_type_cs: carDTO.currentCarSituation.type_car_situation?.id_aut_type_cs,
+        programming_to_be_done: programming_to_be_done,
+
+        mileage: mileage,
+
+        id_car: id_car,
+
+        id_aut_prog_type: id_aut_prog_type,
+
+        dateD: dateD,
+        id_driver: id_driver,
+
+        route: {
+          km_available_star: routeDTO.km_available_star,
+          km_available_end: routeDTO.km_available_end,
+          pick_up_location: routeDTO.pick_up_location,
+          end_time: routeDTO.end_time,
         }
+
       }),
     });
 
@@ -183,6 +207,6 @@ export class SolicitudeService {
     }
 
   }
-*/
+
 
 }

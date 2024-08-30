@@ -4,42 +4,36 @@ import { GroupTourDTO } from "../groupTour/GroupTourDTO";
 import { ProgramTypeDTO } from "../programTypes/ProgramTypeDTO";
 import { RouteDTO } from "../route/Route.DTO";
 
-export class SolicitudeDTO{
-    id_solicitud: number;
-    programming_start_time: string;
-    programming_to_be_done: string;
-    duration_time: string;
-    mileage: number;
-    carDTO: CarDTO;
-    driverDTO: DriverDTO;
-    prog_typeDTO: ProgramTypeDTO ;
-    groupDTO: GroupTourDTO;
-    dateDTO: Date;
-    routeDTO: RouteDTO;
+export class SolicitudeDTO {
+  id_solicitude: number;
+  programming_to_be_done: string;
+  mileage: number;
+  car: CarDTO;
+  driver: DriverDTO;
+  programmingType: ProgramTypeDTO;
+  groupTour: GroupTourDTO;
+  dateD: Date;
+  route: RouteDTO;
 
-    constructor(
-        id_solicitud: number,
-        programming_start_time: string,
-        programming_to_be_done: string,
-        duration_time: string,
-        mileage: number,
-        carDTO: CarDTO,
-        driverDTO: DriverDTO,
-        prog_typeDTO: ProgramTypeDTO,
-        groupDTO: GroupTourDTO,
-        dateDTO: Date,
-        routeDTO: RouteDTO,
-    ){
-        this.id_solicitud = id_solicitud
-        this.programming_start_time= programming_start_time;
-        this.programming_to_be_done= programming_to_be_done;
-        this.duration_time= duration_time;
-        this.mileage= mileage;
-        this.carDTO= carDTO;
-        this.driverDTO= driverDTO;
-        this.prog_typeDTO= prog_typeDTO;
-        this.groupDTO= groupDTO;
-        this.dateDTO= dateDTO;
-        this.routeDTO= routeDTO;
-    }
+  constructor(
+    id_solicitude: number,
+    programming_to_be_done: string,
+    mileage: number,
+    car: CarDTO,
+    driver: DriverDTO,
+    programmingType: ProgramTypeDTO,
+    groupTour: GroupTourDTO,
+    dateD: Date,
+    route: RouteDTO,
+  ) {
+    this.id_solicitude = id_solicitude
+    this.programming_to_be_done = programming_to_be_done;
+    this.mileage = mileage;
+    this.car = car
+    this.driver = driver
+    this.programmingType = programmingType
+    this.groupTour = groupTour
+    this.dateD = dateD
+    this.route = route
+  }
 }

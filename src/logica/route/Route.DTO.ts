@@ -1,16 +1,17 @@
 export class RouteDTO{
-  id_route: number;
+  id_route?: number;
   km_available_star: number;
   km_available_end: number;
   pick_up_location: string;
-  end_time: string;
+  end_time: Date;
 
   constructor(
-    id_route: number,
+
     km_available_star: number,
     km_available_end: number,
     pick_up_location: string,
-    end_time: string,
+    end_time: Date,
+    id_route?: number,
   ){
       this.id_route = id_route;
       this.km_available_star= km_available_star;

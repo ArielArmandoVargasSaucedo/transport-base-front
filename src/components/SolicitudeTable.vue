@@ -1,6 +1,8 @@
 <template>
   <div class="q-pa-md">
-    <FormSolicitude v-show="showForm" @set-show-form-solicitud="setShowFormSolicitud" />
+    <FormSolicitude :solicitud-reactiva="solicitudeReactivo" v-show="showForm"
+      @set-show-form-solicitud="setShowFormSolicitud" @post-solicitude="postSolicitude"
+      @update-solicitud="updateSolicitud" />
     <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Solicitudes" :rows="listSolicitudes"
       :columns="columns" row-key="id">
       <template v-slot:top-right>
@@ -59,7 +61,7 @@
 
       <template v-slot:body-cell-Action="props">
         <q-td :props="props">
-          <q-btn icon="edit" size="sm" flat dense />
+          <q-btn icon="edit" size="sm" flat dense @click="activarFormularioEditar(props.row)" />
           <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense @click=""></q-btn>
         </q-td>
       </template>
@@ -81,6 +83,9 @@ import { GroupTourDTO } from 'src/logica/groupTour/GroupTourDTO';
 import { DriversService } from 'src/logica/drivers/DriversService';
 import { GroupsToursService } from 'src/logica/groupTour/GroupsTourService';
 import { ProgramTypesService } from 'src/logica/programTypes/ProgramTypesService';
+import { RouteDTO } from 'src/logica/route/Route.DTO';
+import { BadRequestError } from 'src/utils/BadRequestError';
+import { Notify } from 'quasar';
 
 // Inyectar el Servicio de solicitudes
 const solicitudeService: SolicitudeService = SolicitudeService.getInstancie();
@@ -99,7 +104,7 @@ const columns = [
     required: true,
     label: 'Fecha',
     align: 'left',
-    field: (row: SolicitudeDTO) => row.dateDTO,
+    field: (row: SolicitudeDTO) => row.dateD,
     format: (val: any) => `${val}`,
     sortable: true,
   },
@@ -107,28 +112,35 @@ const columns = [
     name: '',
     label: 'Tipo de Programación',
     align: 'left',
-    field: (row: SolicitudeDTO) => row.prog_typeDTO.prog_type_name,
+    field: (row: SolicitudeDTO) => row.programmingType.prog_type_name,
     sortable: true,
   },
   {
     name: '',
     label: 'Código del Grupo',
     align: 'left',
-    field: (row: SolicitudeDTO) => row.groupDTO.id_group,// VEEEEEEEEEEEEERRRRRRRRRRRR
+    field: (row: SolicitudeDTO) => row.groupTour.group_code,// VEEEEEEEEEEEEERRRRRRRRRRRR
     sortable: true,
   },
   {
     name: '',
     label: 'País de Procendecia',
     align: 'left',
-    field: (row: SolicitudeDTO) => row.groupDTO.group_country,
+    field: (row: SolicitudeDTO) => row.groupTour.group_country,
     sortable: true,
   },
   {
     name: '',
-    label: 'Hora de Comienzo',
+    label: 'Chofer',
     align: 'left',
-    field: (row: SolicitudeDTO) => row.programming_start_time,
+    field: (row: SolicitudeDTO) => row.driver.driver_name,
+    sortable: true,
+  },
+  {
+    name: '',
+    label: 'Carro',
+    align: 'left',
+    field: (row: SolicitudeDTO) => row.car.car_number,
     sortable: true,
   },
   {
@@ -158,9 +170,9 @@ const listGroups: Ref<Array<GroupTourDTO>> = ref(new Array<GroupTourDTO>());
 const listPrograms: Ref<Array<ProgramTypeDTO>> = ref(new Array<ProgramTypeDTO>());
 
 const solicitudeReactivo: Ref<{
-  solicitudeDTO?: SolicitudeDTO
+  solicitudDTO?: SolicitudeDTO;
 }> = ref({
-  solicitudeDTO: undefined
+  solicitudDTO: undefined
 })
 
 const showFilter = ref(false);
@@ -185,13 +197,13 @@ const showForm = ref(false); // representa si el formulario se muestra o no
 const formSolicitudeTable: Ref<InstanceType<typeof FormSolicitude> | null> =
   ref(null);
 
-  onMounted( async () => {
-    await actualizarSolicitudes()
-    await actualizarListCar()
-    await actualizarListPrograms()
-    await actualizarListGroups()
-    await actualizarListDrivers()
-  });
+onMounted(async () => {
+  await actualizarSolicitudes()
+  await actualizarListCar()
+  await actualizarListPrograms()
+  await actualizarListGroups()
+  await actualizarListDrivers()
+});
 
 async function actualizarSolicitudes() {
   await getSolicitudes(
@@ -267,16 +279,136 @@ async function getSolicitudes(carDTO?: CarDTO, driverDTO?: DriverDTO, groupDTO?:
       date ? date : undefined
     )
   } catch (error) {
-    if (error instanceof Error) alert(error.message);
+    if (error instanceof BadRequestError) alert(error.message);
   }
 }
 
+async function postSolicitude(programming_to_be_done: string,
+  mileage: number,
+  id_car: number,
+  id_driver: number,
+  id_aut_prog_type: number,
+  id_group: number | undefined,
+  groupDTO: GroupTourDTO | undefined,
+  dateD: Date,
+  routeDTO: RouteDTO) {
+
+  try {
+    await solicitudeService.postSolicitude(programming_to_be_done, mileage, id_car, id_driver,
+      id_aut_prog_type, id_group, groupDTO, dateD, routeDTO)
+    // se notifica de la acción
+    Notify.create({
+      message: 'Solicitud insertado con éxito',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+
+    // se cierra el formulario
+
+
+    // se actualiza la información
+    await actualizarSolicitudes();
+  } catch (error) {
+    if (error instanceof BadRequestError) alert(error.message);
+  }
+}
+
+
+
+
+//Funcion para eliminar un carro
+async function deleteCar() {
+  try {
+    // await carsService.deleteCar(id_car_delete);
+    // se notifica de la acción
+    Notify.create({
+      message: 'Se eliminó con éxito la solicitud',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+
+    // se actualiza la información
+    await actualizarSolicitudes();
+  } catch (error) {
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
+  }
+}
+
+// Funcion para editar un carro
+async function updateSolicitud(id_solicitud: number,
+
+  programming_to_be_done: string,
+
+  mileage: number,
+
+  id_car: number,
+
+  id_aut_prog_type: number,
+
+  dateD: Date,
+
+  id_driver: number,
+
+  routeDTO: RouteDTO
+) {
+  try {
+    await solicitudeService.updateSolicitud(id_solicitud,
+      programming_to_be_done,
+      mileage,
+      id_car,
+      id_aut_prog_type,
+      dateD,
+      id_driver,
+      routeDTO)
+
+    // se notifica de la acción
+    Notify.create({
+      message: 'Se modificó con éxito la solicitud',
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+
+    // se cierra el formulario
+    setShowFormSolicitud();
+
+    // se actualiza la información
+    await actualizarSolicitudes();
+  } catch (error) {
+    if (error instanceof BadRequestError)
+      alert(error.message)
+
+    console.log(error)
+  }
+}
+
+
+
 // Eventos
 function setShowFormSolicitud() {
+  solicitudeReactivo.value.solicitudDTO = undefined
   // si esta activado el form
   if (showForm.value) showForm.value = false; // se desactiva
   // esta desactivado
   else showForm.value = true; // se activa
+}
+
+function activarFormularioEditar(solicitudDTO: SolicitudeDTO) {
+  solicitudeReactivo.value.solicitudDTO = solicitudDTO
+  // se muestra el forumulario
+  showForm.value = false
+  showForm.value = true
 }
 
 function actionCancelSelectCar() {
