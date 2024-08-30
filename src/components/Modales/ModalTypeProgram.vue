@@ -2,32 +2,19 @@
   <div class="q-pa-md">
     <q-dialog v-model="showModal">
       <q-card class="card-campo">
-        <q-card-section class="bg-primary text-white"
-          >Formulario Tipo de Situación de las Programaciones</q-card-section
-        >
+        <q-card-section class="bg-primary text-white">{{ $t('tipoProgramacion.formulario') }}</q-card-section>
 
         <q-card-section>
           <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-            <q-input
-              filled
-              v-model="datosTypeProgram.nombre"
-              label="Nombre Tipo de Situación de la Programación *"
-              lazy-rules
-              :rules="[
+            <q-input filled v-model="datosTypeProgram.nombre" :label="$t('tipoProgramacion.nombreProgramacion')"
+              lazy-rules :rules="[
                 (val) =>
                   (val && val.length > 0) || 'Por favor complete este campo',
-              ]"
-            />
+              ]" />
 
             <q-card-section>
-              <q-btn label="Submit" type="submit" color="primary" />
-              <q-btn
-                label="Reset"
-                type="reset"
-                color="primary"
-                flat
-                class="q-ml-sm"
-              />
+              <q-btn :label="$t('tipoProgramacion.entregar')" type="submit" color="primary" />
+              <q-btn :label="$t('tipoProgramacion.reiniciar')" type="reset" color="primary" flat class="q-ml-sm" />
             </q-card-section>
           </q-form>
         </q-card-section>
@@ -55,7 +42,7 @@ onUpdated(onReset)
 // Se definen los emit del componente
 const emit = defineEmits<{
   (e: 'postTypeProgram', nombre: string): Promise<void>;
-    (e: 'updateTypeProgram', id: number, nombre: string): Promise<void>;
+  (e: 'updateTypeProgram', id: number, nombre: string): Promise<void>;
 }>();
 
 // Se define la interfaz para representar los datos del Campo
@@ -97,7 +84,7 @@ function setShowModal(estado: boolean) {
   showModal.value = estado;
   // Luego de cambiar de estado, se limpian los campos
   // Siempre que se activa el modal se vuelven a establecer los valores por defecto
-  }
+}
 
 // Se definen las funciones que expone el componente
 defineExpose({ setShowModal });
@@ -108,4 +95,3 @@ defineExpose({ setShowModal });
   width: 600px;
 }
 </style>
-

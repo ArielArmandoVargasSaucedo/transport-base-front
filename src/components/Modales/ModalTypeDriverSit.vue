@@ -2,19 +2,20 @@
   <div class="q-pa-md">
     <q-dialog v-model="showModal">
       <q-card class="card-campo">
-        <q-card-section class="bg-primary text-white">Formulario Tipo de Situación de los Choferes</q-card-section>
+        <q-card-section class="bg-primary text-white">{{ $t('tipoSituacionesChofer.formulario') }}</q-card-section>
 
         <q-card-section>
           <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-            <q-input filled v-model="datosTypeDriverSit.nombre" label="Nombre Tipo de Situación del Chofer *" lazy-rules
-              :rules="[
+            <q-input filled v-model="datosTypeDriverSit.nombre" :label="$t('tipoSituacionesChofer.nombreSituacion')"
+              lazy-rules :rules="[
                 (val) =>
                   (val && val.length > 0) || 'Por favor complete este campo',
               ]" />
-            <q-checkbox v-model="datosTypeDriverSit.is_fecha" label="Desea que la situación tenga fecha de retorno?" :disable="!isOpenToInsert()" />
+            <q-checkbox v-model="datosTypeDriverSit.is_fecha" :label="$t('tipoSituacionesChofer.deseaFechaRetorno')"
+              :disable="!isOpenToInsert()" />
             <q-card-section>
-              <q-btn label="Submit" type="submit" color="primary" />
-              <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+              <q-btn :label="$t('tipoSituacionesChofer.entregar')" type="submit" color="primary" />
+              <q-btn :label="$t('tipoSituacionesChofer.reiniciar')" type="reset" color="primary" flat class="q-ml-sm" />
             </q-card-section>
           </q-form>
         </q-card-section>
@@ -90,7 +91,7 @@ function setShowModal(estado: boolean) {
 
 }
 
-function isOpenToInsert () {
+function isOpenToInsert() {
   return !props.typeReactivo.typeSeleccionado
 }
 // Se definen las funciones que expone el componente
