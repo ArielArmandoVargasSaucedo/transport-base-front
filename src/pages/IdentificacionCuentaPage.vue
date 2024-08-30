@@ -5,18 +5,20 @@
                 <q-card class="q-pa-lg card-style" bordered flat>
                     <div class="text-center q-mb-md">
                         <q-icon name="badge" size="64px" class="text-primary" />
-                        <h2 class="text-h5 q-mt-md">Identifica tu cuenta</h2>
-                        <p class="text-subtitle2">¿Cuál es el correo electrónico de tu cuenta?</p>
+                        <h2 class="text-h5 q-mt-md">{{ $t('identificacion.identifica') }}</h2>
+                        <p class="text-subtitle2">{{ $t('identificacion.correo') }}</p>
                     </div>
                     <q-card-section>
-                        <q-input v-model="email" filled dense placeholder="correo@ejemplo.com" class="q-mb-md" clearable
-                            type="email"
+                        <q-input v-model="email" filled dense :placeholder="$t('identificacion.ejemplo')"
+                            class="q-mb-md" clearable type="email"
                             :rules="[val => !!val || 'El correo es obligatorio', val => /.+@.+\..+/.test(val) || 'Ingresa un correo válido']" />
-                        <q-btn label="Continuar" color="primary" class="full-width q-mb-sm" @click="onSubmit" />
-                        <q-btn flat label="Volver" color="primary" class="full-width q-mb-md" @click="onBack" />
+                        <q-btn :label="$t('identificacion.continuar')" color="primary" class="full-width q-mb-sm"
+                            @click="onSubmit" />
+                        <q-btn flat :label="$t('identificacion.volver')" color="primary" class="full-width q-mb-md"
+                            @click="onBack" />
                         <q-separator />
-                        <q-btn flat label="Obtén ayuda para identificar tu cuenta" color="primary"
-                            class="full-width q-mt-md" @click="onHelp" />
+                        <q-btn flat :label="$t('identificacion.ayuda')" color="primary" class="full-width q-mt-md"
+                            @click="onHelp" />
                     </q-card-section>
                 </q-card>
             </q-page>

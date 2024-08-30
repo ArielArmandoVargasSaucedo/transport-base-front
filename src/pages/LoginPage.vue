@@ -6,13 +6,15 @@
 
     <q-card class="spa">
       <q-card-section>
-        <span class="text-h3 log">Login</span>
+        <span class="text-h3 log">{{ $t('login.login') }}
+          <internationalizationButton color="primary" class="internationalitation" />
+        </span>
       </q-card-section>
 
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset">
-          <q-input class="full-width inp" clearable filled v-model="datosLogin.nameUser" label="User Name *" lazy-rules
-            :rules="[
+          <q-input class="full-width inp" clearable filled v-model="datosLogin.nameUser"
+            :label="$t('login.nombreUsuario')" lazy-rules :rules="[
               (val) => (val && val.length > 0) || 'This field is required',
               (val) =>
                 /^[a-zA-Z0-9]*$/.test(val) || 'No special characters allowed',
@@ -23,7 +25,7 @@
           </q-input>
 
           <q-input class="full-width inp" clearable filled :type="showPassword ? 'text' : 'password'"
-            v-model="datosLogin.password" label="Password *" lazy-rules :rules="[
+            v-model="datosLogin.password" :label="$t('login.contraseña')" lazy-rules :rules="[
               (val) => (val && val.length > 0) || 'This field is required',
             ]">
             <template v-slot:append>
@@ -36,7 +38,7 @@
 
           <div>
             <q-btn label="Login" type="submit" color="primary" class="btn" />
-            <router-link :to="{ name: 'Verificacion de Identidad' }">¿Has olvidado la contraseña?</router-link>
+            <router-link :to="{ name: 'Verificacion de Identidad' }">{{ $t('login.olvidadoContrasena') }}</router-link>
           </div>
         </q-form>
       </q-card-section>
@@ -50,9 +52,14 @@ import { AuthService } from 'src/logica/auth/AuthService';
 import { BadRequestError } from 'src/utils/BadRequestError';
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
+import internationalizationButton from 'src/components/internationalizationButton.vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // se inyecta el servicio de Auth
 const authService: AuthService = AuthService.getInstancie()
+
+const { t } = useI18n();
 
 // se crea un router
 const router = useRouter()
@@ -78,10 +85,11 @@ async function onSubmit() {
     await authService.login(datosLogin.value.nameUser, datosLogin.value.password)
     // si no hay problemas en el logeo se redirige a la pagina principal
     router.push({ name: 'principal' })
+    router.push({ name: 'Página Principal' })
   } catch (error) {
     if (error instanceof BadRequestError)
       Notify.create({
-        message: error.message,
+        message: t('login.error'),
         type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
         color: 'red', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -110,7 +118,7 @@ function onReset() {
 
 .log {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .inp {
@@ -120,6 +128,10 @@ function onReset() {
 .spa {
   padding: 20px;
   width: 600px;
+}
+
+.internationalitation {
+  margin-left: 150px;
 }
 
 .btn {

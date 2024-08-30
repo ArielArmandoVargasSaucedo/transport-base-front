@@ -1,38 +1,42 @@
 <template>
-    <q-btn label="Cambiar Contraseña" class="text-capitalize" rounded color="primary"
+    <q-btn :label="$t('cambioContraseña2.cambio')" class="text-capitalize" rounded color="primary"
         @click="setShowModal(true)"></q-btn>
     <q-dialog v-model="isDialogOpen">
         <q-card class="password-reset-card" bordered>
 
             <q-card-section class="header-reset-password bg-primary text-center text-white">
-                <div class="text-h6">Cambia tu contraseña</div>
+                <div class="text-h6">{{ $t('cambioContraseña2.cambia') }}</div>
             </q-card-section>
 
             <q-card-section>
                 <q-form @submit="submitPassword">
 
-                    <q-input v-model="currentPassword" type="password" label="Contraseña anterior" clearable
-                        :rules="[val => !!val || 'La contraseña anterior es obligatoria']" filled
+                    <q-input v-model="currentPassword" type="password" :label="$t('cambioContraseña2.contraAnterior')"
+                        clearable :rules="[val => !!val || 'La contraseña anterior es obligatoria']" filled
                         prepend-inner-icon="mdi-lock" class="q-mb-md" />
 
-                    <q-input v-model="newPassword" type="password" label="Nueva contraseña" clearable
+                    <q-input v-model="newPassword" type="password" :label="$t('cambioContraseña2.nuevaContra')"
+                        clearable
                         :rules="[val => !!val || 'La nueva contraseña es obligatoria', val => val.length >= 8 || 'Debe tener al menos 8 caracteres']"
                         filled prepend-inner-icon="mdi-lock" class="q-mb-md" />
 
-                    <q-input v-model="confirmPassword" type="password" label="Confirmar nueva contraseña" clearable
+                    <q-input v-model="confirmPassword" type="password" :label="$t('cambioContraseña2.confirmarNueva')"
+                        clearable
                         :rules="[val => !!val || 'La confirmación es obligatoria', val => val === newPassword || 'Las contraseñas no coinciden']"
                         filled prepend-inner-icon="mdi-lock" class="q-mb-md" />
 
                     <div class="forgot-password-link text-center q-my-md">
-                        <q-btn flat size="sm" label="¿Olvidaste la contraseña?" color="primary"
+                        <q-btn flat size="sm" :label="$t('cambioContraseña2.olvidasteContra')" color="primary"
                             @click="cambiarContrasenaPorOlvido">
-                            <q-tooltip>Solicita un cambio de contraseña por olvido</q-tooltip>
+                            <q-tooltip>{{ $t('cambioContraseña2.solicitarCambio') }}</q-tooltip>
                         </q-btn>
                     </div>
 
                     <q-card-actions class="seccion-botones" align="right">
-                        <q-btn flat label="Cancelar" color="primary" @click="setShowModal(false)" />
-                        <q-btn label="Cambiar contraseña" color="primary" type="submit" :disable="!isFormValid" />
+                        <q-btn flat :label="$t('cambioContraseña2.cancelar')" color="primary"
+                            @click="setShowModal(false)" />
+                        <q-btn :label="$t('cambioContraseña2.cambiar')" color="primary" type="submit"
+                            :disable="!isFormValid" />
                     </q-card-actions>
 
                 </q-form>

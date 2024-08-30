@@ -1,10 +1,11 @@
 <template>
   <div class="q-pa-md">
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Tipos de Situaciones de los Carros"
-      :rows="listTypesCarSituations" :columns="columns" row-key="id">
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'"
+      :title="$t('tipoSituacionesCarro.tiposSituacionesCarro')" :rows="listTypesCarSituations" :columns="columns"
+      row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-          v-model="filtersTypeCarSit.nombre" placeholder="Buscar por Nombre">
+          v-model="filtersTypeCarSit.nombre" :placeholder="$t('tipoSituacionesCarro.buscarNombre')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -25,7 +26,7 @@
     <ModalTypeCarSit :type-reactivo="typeCarReactivo" ref="modalTypeCarSit"
       @post-type-car-situations="postTypeCarSituations" @update-type-car-situations="updateTypeCarSituations" />
 
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'"
+    <ModalConfirmacion ref="modalConfirmacion" :text="$t('tipoSituacionesCarro.confirmacionEliminar')"
       @action-confirm="deleteTypeCarSituations" />
   </div>
 </template>
@@ -37,23 +38,56 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import ModalTypeCarSit from './Modales/ModalTypeCarSit.vue';
 import { Notify } from 'quasar';
 import ModalConfirmacion from './Modales/ModalConfirmacion.vue';
+import { useI18n } from 'vue-i18n';
+import { BadRequestError } from 'src/utils/BadRequestError';
 
 // Inyectar el Servicio de los Type Car Situations
 
 const typeCarSistuationService: TypeCarSituationsService =
   TypeCarSituationsService.getInstancie();
 
-const columns = [
+const { t, locale } = useI18n(); // Importa la función de traduccion
+
+// se define un watch para observar los cambios de locale (lo que representa al idioma actual)
+watch(locale /* locale representa el valor de la internacionalización */, () => {
+  // se asignan los nuevos valores de la función t
+  columns.value = [
+    {
+      name: 'nombre',
+      label: t('tipoSituacionesCarro.nombre'),
+      align: 'left',
+      field: (row: TypeCarSituationDTO) => row.type_cs_name,
+      sortable: true,
+    },
+    {
+      name: 'fecha',
+      label: t('tipoSituacionesCarro.tieneFechaRetorno'),
+      align: 'left',
+      field: (row: TypeCarSituationDTO) => row.is_return ? 'Si' : 'No',
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      label: '',
+      align: 'right',
+      field: 'Action',
+      sortable: true,
+    },
+  ];
+})
+
+// Columnas de la tabla
+const columns = ref([
   {
     name: 'nombre',
-    label: 'Nombre',
+    label: t('tipoSituacionesCarro.nombre'),
     align: 'left',
     field: (row: TypeCarSituationDTO) => row.type_cs_name,
     sortable: true,
   },
   {
     name: 'fecha',
-    label: 'Tiene fecha de retorno?',
+    label: t('tipoSituacionesCarro.tieneFechaRetorno'),
     align: 'left',
     field: (row: TypeCarSituationDTO) => row.is_return ? 'Si' : 'No',
     sortable: true,
@@ -65,7 +99,10 @@ const columns = [
     field: 'Action',
     sortable: true,
   },
-];
+]);
+
+
+
 
 interface FiltersTypeCarSit {
   nombre: string;

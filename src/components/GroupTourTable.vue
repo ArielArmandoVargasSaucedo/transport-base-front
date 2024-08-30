@@ -1,22 +1,22 @@
 <template>
     <div class="q-pa-md">
-        <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Group Tourist"
+        <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" :title="$t('grupo.grupos')"
             :rows="listGroupsTours" :columns="columns" row-key="id">
             <template v-slot:top-right>
                 <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-                    v-model="filtersGroups.group_code" placeholder="Código del Grupo" :type="'number'">
+                    v-model="filtersGroups.group_code" :placeholder="$t('grupo.codigo')" :type="'number'">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
                 </q-input>
                 <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-                    v-model="filtersGroups.group_country" placeholder="País de Prcedencia">
+                    v-model="filtersGroups.group_country" :placeholder="$t('grupo.pais')">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
                 </q-input>
                 <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-                    v-model="filtersGroups.number_of_tourist" placeholder="Cantidad de turistas" :type="'number'">
+                    v-model="filtersGroups.number_of_tourist" :placeholder="$t('grupo.cantidad')" :type="'number'">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
@@ -31,7 +31,7 @@
                 </q-td>
             </template>
         </q-table>
-        <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="" />
+        <ModalConfirmacion ref="modalConfirmacion" :text="$t('grupo.confirmacionEliminar')" @action-confirm="" />
     </div>
 </template>
 
@@ -44,16 +44,55 @@ import { GroupsToursService } from 'src/logica/groupTour/GroupsTourService';
 import { watch } from 'vue';
 import { GroupTourDTO } from 'src/logica/groupTour/GroupTourDTO';
 import { BadRequestError } from 'src/utils/BadRequestError';
+import { useI18n } from 'vue-i18n';
 
-// Inyectar el Servicio de los Drivers
+// Inyectar el Servicio de los Group Tour
 
 const groupTourService: GroupsToursService = GroupsToursService.getInstancie();
 
-const columns = [
+const { t, locale } = useI18n();
+
+watch(locale, () => {
+    columns.value = [
+        {
+            name: 'code',
+            required: true,
+            label: t('grupo.codigo'),
+            align: 'left',
+            field: (row: GroupTourDTO) => row.group_code,
+            format: (val: any) => `${val}`,
+            sortable: true,
+        },
+        {
+            name: 'country',
+            label: t('grupo.pais'),
+            align: 'left',
+            field: (row: GroupTourDTO) => row.group_country,
+            sortable: true,
+        },
+        {
+            name: 'number_of_tourist',
+            label: t('grupo.cantidad'),
+            align: 'left',
+            field: (row: GroupTourDTO) => row.number_of_tourist,
+            sortable: true,
+        },
+        {
+            name: 'Action',
+            label: '',
+            align: 'right',
+            field: 'Action',
+            sortable: true,
+        },
+    ];
+})
+
+
+const columns = ref([
     {
         name: 'code',
         required: true,
-        label: 'Code',
+        label: t('grupo.codigo'),
         align: 'left',
         field: (row: GroupTourDTO) => row.group_code,
         format: (val: any) => `${val}`,
@@ -61,14 +100,14 @@ const columns = [
     },
     {
         name: 'country',
-        label: 'Country',
+        label: t('grupo.pais'),
         align: 'left',
         field: (row: GroupTourDTO) => row.group_country,
         sortable: true,
     },
     {
         name: 'number_of_tourist',
-        label: 'Number of Tourist',
+        label: t('grupo.cantidad'),
         align: 'left',
         field: (row: GroupTourDTO) => row.number_of_tourist,
         sortable: true,
@@ -80,7 +119,9 @@ const columns = [
         field: 'Action',
         sortable: true,
     },
-];
+]);
+
+
 
 //Se define una interfaz para los Filtros
 interface FiltersGroups {

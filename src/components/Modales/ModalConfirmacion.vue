@@ -3,7 +3,7 @@
     <q-dialog v-model="alert">
         <q-card>
             <q-card-section>
-                <div class="text-h6">Alert</div>
+                <div class="text-h6">{{ $t('modalConfirmacion.alerta') }}</div>
             </q-card-section>
 
             <q-card-section class="q-pt-none">
@@ -11,8 +11,10 @@
             </q-card-section>
 
             <q-card-actions align="right">
-                <q-btn flat label="CONFIRM" color="primary" v-close-popup @click="confirmAction" />
-                <q-btn flat label="CANCEL" color="primary" v-close-popup @click="desactivarModalConfirmacion" />
+                <q-btn flat :label="$t('modalConfirmacion.confirmar')" color="primary" v-close-popup
+                    @click="confirmAction" />
+                <q-btn flat :label="$t('modalConfirmacion.cancelar')" color="primary" v-close-popup
+                    @click="desactivarModalConfirmacion" />
             </q-card-actions>
         </q-card>
     </q-dialog>

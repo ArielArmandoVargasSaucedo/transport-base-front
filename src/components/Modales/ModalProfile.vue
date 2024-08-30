@@ -5,7 +5,7 @@
         <q-card class="card-profile-info" bordered>
 
             <q-card-section class="header-profile-info text-white bg-primary">
-                <div class="text-h5">Información de Perfil</div>
+                <div class="text-h5">{{ $t('perfil.info') }}</div>
             </q-card-section>
 
             <q-card-section>
@@ -16,17 +16,17 @@
                             <q-avatar size="100px">
                                 <img src="https://cdn.quasar.dev/img/boy-avatar.png">
                             </q-avatar>
-                            <q-btn label="Añadir Foto" class="text-capitalize" rounded color="primary"
+                            <q-btn :label="$t('perfil.foto')" class="text-capitalize" rounded color="primary"
                                 style="max-width: 120px"></q-btn>
                         </q-item-section>
                     </q-item>
 
                     <q-item class="list-campos">
                         <q-item-section class="campo-profile">
-                            <div class="campo-label">Nombre de Usuario:</div>
+                            <div class="campo-label">{{ $t('perfil.nombre') }}</div>
                             <div class="campo-value">
                                 {{ user.user_name }}
-                                <q-popup-edit v-model="user.user_name" title="Editar nombre de usuario" auto-save
+                                <q-popup-edit v-model="user.user_name" :title="$t('perfil.editarNombre')" auto-save
                                     v-slot="scope" @save="actionPopupMenuNombreUsuario">
                                     <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
                                 </q-popup-edit>
@@ -35,12 +35,12 @@
                         </q-item-section>
 
                         <q-item-section class="campo-profile">
-                            <div class="campo-label">Email:</div>
+                            <div class="campo-label">{{ $t('perfil.email') }}</div>
                             <div class="campo-value">{{ user.email }}</div>
                         </q-item-section>
 
                         <q-item-section class="campo-profile">
-                            <div class="campo-label">Rol:</div>
+                            <div class="campo-label">{{ $t('perfil.rol') }}</div>
                             <div class="campo-value">{{ user.role?.role_type }}</div>
                         </q-item-section>
                     </q-item>
@@ -54,7 +54,7 @@
             </q-card-section>
 
             <q-card-actions align="right">
-                <q-btn color="primary" @click="setShowModal(false)" class="text-white">Volver Atrás</q-btn>
+                <q-btn color="primary" @click="setShowModal(false)" class="text-white">{{ $t('perfil.volver') }}</q-btn>
             </q-card-actions>
 
         </q-card>

@@ -1,10 +1,11 @@
 <template>
   <div class="q-pa-md">
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Tipos de Situaciones de los Choferes"
-      :rows="listTypesDriverSituations" :columns="columns" row-key="id">
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'"
+      :title="$t('tipoSituacionesChofer.tiposSituacionesChofer')" :rows="listTypesDriverSituations" :columns="columns"
+      row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-          v-model="filtersTypeDriverSit.nombre" placeholder="Buscar por Nombre">
+          v-model="filtersTypeDriverSit.nombre" :placeholder="$t('tipoSituacionesChofer.buscarNombre')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -26,7 +27,7 @@
       @post-type-driver-situations="postTypeDriverSituations"
       @update-type-driver-situations="updateTypeDriverSituations" />
 
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'"
+    <ModalConfirmacion ref="modalConfirmacion" :text="$t('tipoSituacionesChofer.confirmacionEliminar')"
       @action-confirm="deleteTypeDriverSituations" />
   </div>
 </template>
@@ -39,23 +40,54 @@ import { TypeDriverSituationsService } from 'src/logica/typeDriverSituation/Type
 import { TypeDriverSituationDTO } from 'src/logica/typeDriverSituation/TypeDriverSituationDTO';
 import ModalTypeDriverSit from './Modales/ModalTypeDriverSit.vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
+import { useI18n } from 'vue-i18n';
 
 // Inyectar el Servicio de los Type Car Situations
 
 const typeDriverSistuationService: TypeDriverSituationsService =
   TypeDriverSituationsService.getInstancie();
 
-const columns = [
+const { t, locale } = useI18n(); // Importa la función de traduccion
+
+// se define un watch para observar los cambios de locale (lo que representa al idioma actual)
+watch(locale /* locale representa el valor de la internacionalización */, () => {
+  columns.value = [
+    {
+      name: 'nombre',
+      label: t('tipoSituacionesChofer.nombre'),
+      align: 'left',
+      field: (row: TypeDriverSituationDTO) => row.type_ds_name,
+      sortable: true,
+    },
+    {
+      name: 'fecha',
+      label: t('tipoSituacionesChofer.tieneFechaRetorno'),
+      align: 'left',
+      field: (row: TypeDriverSituationDTO) => row.is_return ? 'Si' : 'No',
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      label: '',
+      align: 'right',
+      field: 'Action',
+      sortable: true,
+    },
+  ];
+})
+
+// Columnas de la tabla
+const columns = ref([
   {
     name: 'nombre',
-    label: 'Nombre',
+    label: t('tipoSituacionesChofer.nombre'),
     align: 'left',
     field: (row: TypeDriverSituationDTO) => row.type_ds_name,
     sortable: true,
   },
   {
     name: 'fecha',
-    label: 'Tiene fecha de retorno?',
+    label: t('tipoSituacionesChofer.tieneFechaRetorno'),
     align: 'left',
     field: (row: TypeDriverSituationDTO) => row.is_return ? 'Si' : 'No',
     sortable: true,
@@ -67,7 +99,8 @@ const columns = [
     field: 'Action',
     sortable: true,
   },
-];
+]);
+
 
 interface FiltersTypeDriverSit {
   nombre: string;

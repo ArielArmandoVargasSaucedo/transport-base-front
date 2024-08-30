@@ -55,7 +55,8 @@
         </q-td>
       </template>
     </q-table>
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'" @action-confirm="deleteDriver" />
+    <ModalConfirmacion ref="modalConfirmacion" :text="$t('chofer.confirmacionEliminar')"
+      @action-confirm="deleteDriver" />
   </div>
 </template>
 
@@ -271,31 +272,19 @@ async function getDrivers(dni_driver: string, driver_name: string, drivSit?: Typ
 async function postDriver(driverDTO: DriverDTO) {
   try {
     await driversService.postDriver(driverDTO)
-    watch(locale /* locale representa el valor de la internacionalización */, () => {
-      mesIns.value = [
-        Notify.create({
-          message: t('chofer.mensajeInsertado'),
-          type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-          color: 'green', // Cambia el color de la notificación
-          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-          timeout: 3000, // Cambia la duración de la notificación en milisegundos
-          icon: 'check_circle', // Añade un icono a la notificación
-        })
-      ]
-    })
-    const mesIns = ref([
-      Notify.create({
-        message: t('chofer.mensajeInsertado'),
-        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-        color: 'green', // Cambia el color de la notificación
-        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-        timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'check_circle', // Añade un icono a la notificación
-      })
-    ])
-    // se cierra el formulario
-    setShowFormDriver()
+    Notify.create({
+      message: t('chofer.mensajeInsertado'),
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
 
+    // se reinician los campos
+    FormDriverTable.value?.onReset()
+    // se cierra el formulario
+    setShowFormDriver();
 
     // se actualiza la información
     await actualizarDrivers();
@@ -310,29 +299,20 @@ async function postDriver(driverDTO: DriverDTO) {
 //Funcion para eliminar un chofer
 async function deleteDriver() {
   try {
-    await driversService.deleteDriver(id_driver_delete);
-    watch(locale /* locale representa el valor de la internacionalización */, () => {
-      mesEli.value = [
-        Notify.create({
-          message: t('chofer.mensajeEliminado'),
-          type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-          color: 'red', // Cambia el color de la notificación
-          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-          timeout: 3000, // Cambia la duración de la notificación en milisegundos
-          icon: 'cancel', // Añade un icono a la notificación
-        })
-      ]
-    })
-    const mesEli = ref([
-      Notify.create({
-        message: t('chofer.mensajeEliminado'),
-        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-        color: 'red', // Cambia el color de la notificación
-        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-        timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'cancel', // Añade un icono a la notificación
-      })
-    ])
+    await driversService.deleteDriver(id_driver_delete)
+    Notify.create({
+      message: t('chofer.mensajeEliminado'),
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'red', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
+    });
+
+    //se reinician los campos
+    FormDriverTable.value?.onReset()
+    // se cierra el formulario
+    setShowFormDriver();
 
     // se actualiza la información
     await actualizarDrivers();
@@ -347,28 +327,15 @@ async function deleteDriver() {
 async function updateDriver(driverDTO: DriverDTO) {
   try {
     await driversService.updateDriver(driverDTO)
-    watch(locale /* locale representa el valor de la internacionalización */, () => {
-      mesMod.value = [
-        Notify.create({
-          message: t('chofer.mensajeModificar'),
-          type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-          color: 'green', // Cambia el color de la notificación
-          position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-          timeout: 3000, // Cambia la duración de la notificación en milisegundos
-          icon: 'check_circle', // Añade un icono a la notificación
-        })
-      ]
+    Notify.create({
+      message: t('chofer.mensajeModificar'),
+      type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
+      color: 'green', // Cambia el color de la notificación
+      position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
+      timeout: 3000, // Cambia la duración de la notificación en milisegundos
+      icon: 'check_circle', // Añade un icono a la notificación
     })
-    const mesMod = ref([
-      Notify.create({
-        message: t('chofer.mensajeModificar'),
-        type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
-        color: 'green', // Cambia el color de la notificación
-        position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
-        timeout: 3000, // Cambia la duración de la notificación en milisegundos
-        icon: 'check_circle', // Añade un icono a la notificación
-      })
-    ])
+
 
     // se reinician los campos
     FormDriverTable.value?.onReset()

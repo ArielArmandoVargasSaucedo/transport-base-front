@@ -1,10 +1,10 @@
 <template>
   <div class="q-pa-md">
-    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'" title="Tipos de Programaciones"
-      :rows="listProgramsType" :columns="columns" row-key="id">
+    <q-table :table-header-class="'bg-primary'" :title-class="'text-h4'"
+      :title="$t('tipoProgramacion.tiposProgramacion')" :rows="listProgramsType" :columns="columns" row-key="id">
       <template v-slot:top-right>
         <q-input class="q-mr-md" v-if="showFilter" filled borderless dense debounce="300"
-          v-model="filtersProgramType.nombre" placeholder="Buscar por Nombre">
+          v-model="filtersProgramType.nombre" :placeholder="$t('tipoProgramacion.buscarNombre')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -24,7 +24,7 @@
     </q-table>
     <ModalTypeProgram :type-reactivo="typeProgramReactivo" ref="modalTypeProgram" @post-type-program="postTypeProgram"
       @update-type-program="updateTypeProgram" />
-    <ModalConfirmacion ref="modalConfirmacion" :text="'Seguro que desea eliminar?'"
+    <ModalConfirmacion ref="modalConfirmacion" :text="$t('tipoProgramacion.confirmacionEliminar')"
       @action-confirm="deleteTypeProgram" />
   </div>
 </template>
@@ -38,16 +38,40 @@ import { Ref, onMounted, ref } from 'vue';
 import ModalTypeProgram from './Modales/ModalTypeProgram.vue';
 import { watch } from 'vue';
 import { BadRequestError } from 'src/utils/BadRequestError';
+import { useI18n } from 'vue-i18n';
 
-// Inyectar el Servicio de los Drivers
+// Inyectar el Servicio de Program Type
 
 const programTypesService: ProgramTypesService =
   ProgramTypesService.getInstancie();
+const { t, locale } = useI18n(); // Importa la función de traduccion
 
-const columns = [
+// se define un watch para observar los cambios de locale (lo que representa al idioma actual)
+watch(locale /* locale representa el valor de la internacionalización */, () => {
+  // se asignan los nuevos valores de la función t
+  columns.value = [
+    {
+      name: 'nombre',
+      label: t('tipoProgramacion.nombre'),
+      align: 'left',
+      field: (row: ProgramTypeDTO) => row.prog_type_name,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      label: '',
+      align: 'right',
+      field: 'Action',
+      sortable: true,
+    },
+  ];
+})
+
+// Columnas de la tabla
+const columns = ref([
   {
     name: 'nombre',
-    label: 'Nombre',
+    label: t('tipoProgramacion.nombre'),
     align: 'left',
     field: (row: ProgramTypeDTO) => row.prog_type_name,
     sortable: true,
@@ -59,7 +83,8 @@ const columns = [
     field: 'Action',
     sortable: true,
   },
-];
+]);
+
 
 interface FiltersProgramType {
   nombre: string;
