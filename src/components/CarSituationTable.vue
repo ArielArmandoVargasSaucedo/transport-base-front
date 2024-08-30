@@ -208,8 +208,8 @@ function wrapCsvValue(val: any, formatFn?: (val: any, row: any) => string, row?:
 const $q = useQuasar()
 
 function exportTable() {
-    const content = [columns.map(col => wrapCsvValue(col.label))].concat(
-        listCarSituations.value.map(row => columns.map(col => wrapCsvValue(
+    const content = [columns.value.map(col => wrapCsvValue(col.label))].concat(
+        listCarSituations.value.map(row => columns.value.map(col => wrapCsvValue(
             typeof col.field === 'function'
                 ? col.field(row)
                 : (row as any)[col.field === void 0 ? col.name : col.field as string],
