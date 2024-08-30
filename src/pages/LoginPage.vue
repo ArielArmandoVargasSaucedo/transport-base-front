@@ -101,7 +101,7 @@ function onReset() {
 
 <style scoped>
 .container {
-  background-image: url("src/images/fondo-login.jpg");
+  background-image: url("src/images/fondo-login3.jpg");
   padding: 120px;
   display: flex;
   justify-content: center;
