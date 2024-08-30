@@ -121,6 +121,7 @@ export default {
     nombreUsuario: 'Username *',
     contraseña: 'Password *',
     olvidadoContrasena: 'Do you forget the password?',
+    error: 'Incorrect username or password',
   },
   maynlay: {
     cerrarSesion: 'log out',

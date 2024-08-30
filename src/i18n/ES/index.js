@@ -121,6 +121,7 @@ export default {
     nombreUsuario: 'Nombre de Usuario *',
     contraseña: 'Contraseña *',
     olvidadoContrasena: '¿Has olvidado la contraseña?',
+    error: 'Nombre de usuario o contraseña incorrecta',
   },
   maynlay: {
     cerrarSesion: 'Cerrar Sesión',

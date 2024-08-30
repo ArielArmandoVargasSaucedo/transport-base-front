@@ -53,9 +53,13 @@ import { BadRequestError } from 'src/utils/BadRequestError';
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import internationalizationButton from 'src/components/internationalizationButton.vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // se inyecta el servicio de Auth
 const authService: AuthService = AuthService.getInstancie()
+
+const { t } = useI18n();
 
 // se crea un router
 const router = useRouter()
@@ -81,10 +85,11 @@ async function onSubmit() {
     await authService.login(datosLogin.value.nameUser, datosLogin.value.password)
     // si no hay problemas en el logeo se redirige a la pagina principal
     router.push({ name: 'principal' })
+    router.push({ name: 'Página Principal' })
   } catch (error) {
     if (error instanceof BadRequestError)
       Notify.create({
-        message: error.message,
+        message: t('login.error'),
         type: 'negative', // Cambia el tipo a 'negative', 'warning', 'info', etc.
         color: 'red', // Cambia el color de la notificación
         position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
