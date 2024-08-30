@@ -227,7 +227,7 @@ async function postCar(
 
     // se notifica de la acción
     Notify.create({
-      message: 'Carro insertado con éxito',
+      message: t('carro.mensajeInsertado'),
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -255,7 +255,7 @@ async function deleteCar() {
     await carsService.deleteCar(id_car_delete);
     // se notifica de la acción
     Notify.create({
-      message: 'Se eliminó con éxito el carro',
+      message: t('carro.mensajeEliminado'),
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
@@ -280,7 +280,7 @@ async function updateCar(carDTO: CarDTO /* representa la información del carro 
 
     // se notifica de la acción
     Notify.create({
-      message: 'Se modificó con éxito el carro',
+      message: t('carro.mensajeModificar'),
       type: 'positive', // Cambia el tipo a 'negative', 'warning', 'info', etc.
       color: 'green', // Cambia el color de la notificación
       position: 'bottom-right', // Cambia la posición a 'top', 'bottom', 'left', 'right', etc.
